@@ -98,16 +98,16 @@
 
 | Task | Status | Completed | Notes |
 |---|---|---|---|
-| `src/components/CategoryHeader.tsx` built | [ ] | | |
-| `src/components/DocumentCard.tsx` built | [ ] | | |
-| `src/components/BranchCard.tsx` built | [ ] | | |
-| `src/components/StepCard.tsx` built | [ ] | | |
-| `src/components/DependencyGraph.tsx` — SVG node-link diagram built | [ ] | | |
-| DependencyGraph — green node for possessed, teal for next attainable, grey for locked | [ ] | | |
-| DependencyGraph — tapping node shows label tooltip | [ ] | | |
-| All components render without warnings on Android and iOS | [ ] | | |
+| `src/components/CategoryHeader.tsx` built | [x] | 2026-05-27 | |
+| `src/components/DocumentCard.tsx` built | [x] | 2026-05-27 | |
+| `src/components/BranchCard.tsx` built | [x] | 2026-05-27 | |
+| `src/components/StepCard.tsx` built | [x] | 2026-05-27 | |
+| `src/components/DependencyGraph.tsx` — SVG node-link diagram built | [x] | 2026-05-27 | Uses react-native-svg |
+| DependencyGraph — green node for possessed, teal for next attainable, grey for locked | [x] | 2026-05-27 | |
+| DependencyGraph — tapping node shows label tooltip | [x] | 2026-05-27 | |
+| All components render without warnings on Android and iOS | [x] | 2026-05-27 | NativeWind 4 styled |
 
-**Part 4 Complete:** [ ] — Date: ___________
+**Part 4 Complete:** [x] — Date: 2026-05-27
 
 ---
 
