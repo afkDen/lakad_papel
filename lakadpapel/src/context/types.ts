@@ -10,6 +10,10 @@ export type AgencyType =
   | 'PRC'
   | 'SSS'
   | 'GSIS'
+  | 'PHILHEALTH'
+  | 'PAGIBIG'
+  | 'PHLPOST'
+  | 'BIR'
   | 'BARANGAY'
   | 'SCHOOL';
 
