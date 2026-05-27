@@ -1,0 +1,8 @@
+# LakadPapel Root Git Ignore
+# Ignore project guide and design planning files in the repo
+BUILD_GUIDE.md
+DESIGN_DOCUMENT.md
+PID.md
+PROGRESS.md
+lakadpapel/AGENTS.md
+lakadpapel/CLAUDE.md
