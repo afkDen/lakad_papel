@@ -19,7 +19,7 @@
       "package": "com.group4.lakadpapel",
       "adaptiveIcon": {
         "backgroundColor": "#ffffff",
-        "foregroundImage": "./assets/adaptive-icon.png"
+        "foregroundImage": "./assets/android-icon-foreground.png"
       }
     },
     "web": {
