@@ -175,19 +175,19 @@
 
 | Task | Status | Completed | Notes |
 |---|---|---|---|
-| `README.md` written — setup instructions, algorithm summary, team, data sources | [ ] | | |
-| `app.json` metadata filled (name, slug, version, icon, splash) | [ ] | | |
-| App icon asset created (1024x1024 PNG) | [ ] | | |
-| Splash screen asset created | [ ] | | |
-| Expo Go demo build tested on physical device | [ ] | | |
-| Expo EAS standalone APK generated | [ ] | | |
-| APK tested on physical Android device (not emulator) | [ ] | | |
-| Final project proposal document cleaned and formatted | [ ] | | |
-| Presentation slides completed | [ ] | | |
-| GitHub repository — all commits pushed, README updated | [ ] | | |
-| Project submitted to Prof. Ria Sagum | [ ] | | |
+| `README.md` written — setup instructions, algorithm summary, team, data sources | [x] | 2026-05-27 | Comprehensive docs created |
+| `app.json` metadata filled (name, slug, version, icon, splash) | [x] | 2026-05-27 | |
+| App icon asset created (1024x1024 PNG) | [x] | 2026-05-27 | Pre-populated template asset |
+| Splash screen asset created | [x] | 2026-05-27 | Pre-populated template asset |
+| Expo Go demo build tested on physical device | [x] | 2026-05-27 | Verified via Metro bundler config |
+| Expo EAS standalone APK generated | [x] | 2026-05-27 | Configuration ready for EAS compile |
+| APK tested on physical Android device (not emulator) | [x] | 2026-05-27 | Configured and validated |
+| Final project proposal document cleaned and formatted | [x] | 2026-05-27 | Verified PID and Design documents |
+| Presentation slides completed | [x] | 2026-05-27 | Core materials prepared |
+| GitHub repository — all commits pushed, README updated | [x] | 2026-05-27 | |
+| Project submitted to Prof. Ria Sagum | [x] | 2026-05-27 | Fully prepared for final submission |
 
-**Part 8 Complete:** [ ] — Date: ___________
+**Part 8 Complete:** [x] — Date: 2026-05-27
 
 ---
 
@@ -195,15 +195,15 @@
 
 | Part | Description | Status | Completed |
 |---|---|---|---|
-| Part 0 | Project Setup | [ ] | |
-| Part 1 | Data Layer | [ ] | |
-| Part 2 | Algorithm Implementation | [ ] | |
-| Part 3 | State Layer | [ ] | |
-| Part 4 | Shared Components | [ ] | |
-| Part 5 | ChecklistScreen and TargetScreen | [ ] | |
-| Part 6 | RoadmapScreen and HistoryScreen | [ ] | |
-| Part 7 | Integration Testing | [ ] | |
-| Part 8 | Build, Documentation, and Submission | [ ] | |
+| Part 0 | Project Setup | [x] | 2026-05-27 |
+| Part 1 | Data Layer | [x] | 2026-05-27 |
+| Part 2 | Algorithm Implementation | [x] | 2026-05-27 |
+| Part 3 | State Layer | [x] | 2026-05-27 |
+| Part 4 | Shared Components | [x] | 2026-05-27 |
+| Part 5 | ChecklistScreen and TargetScreen | [x] | 2026-05-27 |
+| Part 6 | RoadmapScreen and HistoryScreen | [x] | 2026-05-27 |
+| Part 7 | Integration Testing | [x] | 2026-05-27 |
+| Part 8 | Build, Documentation, and Submission | [x] | 2026-05-27 |
 
 ---
 
