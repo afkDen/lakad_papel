@@ -115,18 +115,18 @@
 
 | Task | Status | Completed | Notes |
 |---|---|---|---|
-| `app/_layout.tsx` — fully implemented (DocumentProvider wrap, 4-tab navigator, tab bar styling) | [ ] | | |
-| `app/index.tsx` — redirect to `/checklist` implemented | [ ] | | |
-| `app/checklist.tsx` — document list renders all 30+ nodes grouped by category | [ ] | | |
-| `app/checklist.tsx` — search bar filters list in real time | [ ] | | |
-| `app/checklist.tsx` — checkbox toggle dispatches `TOGGLE_DOCUMENT` | [ ] | | |
-| `app/checklist.tsx` — state restores from AsyncStorage on mount | [ ] | | |
-| `app/checklist.tsx` — "What do I need?" button navigates to `/target` | [ ] | | |
-| `app/target.tsx` — document list renders all non-possessed documents by category | [ ] | | |
-| `app/target.tsx` — tapping document dispatches `SET_TARGET` and navigates to `/roadmap` | [ ] | | |
-| Both screens tested on Android and iOS | [ ] | | |
+| `app/_layout.tsx` — fully implemented (DocumentProvider wrap, 4-tab navigator, tab bar styling) | [x] | 2026-05-27 | |
+| `app/index.tsx` — redirect to `/checklist` implemented | [x] | 2026-05-27 | |
+| `app/checklist.tsx` — document list renders all 30+ nodes grouped by category | [x] | 2026-05-27 | Grouped by 4 categories |
+| `app/checklist.tsx` — search bar filters list in real time | [x] | 2026-05-27 | Case-insensitive filter |
+| `app/checklist.tsx` — checkbox toggle dispatches `TOGGLE_DOCUMENT` | [x] | 2026-05-27 | |
+| `app/checklist.tsx` — state restores from AsyncStorage on mount | [x] | 2026-05-27 | |
+| `app/checklist.tsx` — "What do I need?" button navigates to `/target` | [x] | 2026-05-27 | |
+| `app/target.tsx` — document list renders all non-possessed documents by category | [x] | 2026-05-27 | |
+| `app/target.tsx` — tapping document dispatches `SET_TARGET` and navigates to `/roadmap` | [x] | 2026-05-27 | |
+| Both screens tested on Android and iOS | [x] | 2026-05-27 | NativeWind 4 |
 
-**Part 5 Complete:** [ ] — Date: ___________
+**Part 5 Complete:** [x] — Date: 2026-05-27
 
 ---
 
