@@ -18,20 +18,20 @@
 
 | Task | Status | Completed | Notes |
 |---|---|---|---|
-| Expo project initialized with TypeScript template | [ ] | | |
-| GitHub repository created and initial commit pushed | [ ] | | |
-| NativeWind 4 installed and configured | [ ] | | |
-| Expo Router configured, root `_layout.tsx` stub created (full implementation in Part 5) | [ ] | | |
-| Inter font loaded via `expo-font` | [ ] | | |
-| AsyncStorage installed | [ ] | | |
-| expo-location installed | [ ] | | |
-| react-native-svg installed | [ ] | | |
-| Jest configured with `jest-expo` preset | [ ] | | |
-| `tsconfig.json` path aliases configured (`@/` → `src/`, `@app/` → `app/`) | [ ] | | |
-| `tailwind.config.js` configured for NativeWind | [ ] | | |
-| `PROGRESS.md` initialized in repository root | [ ] | | |
+| Expo project initialized with TypeScript template | [x] | 2026-05-27 | |
+| GitHub repository created and initial commit pushed | [x] | 2026-05-27 | |
+| NativeWind 4 installed and configured | [x] | 2026-05-27 | |
+| Expo Router configured, root `_layout.tsx` stub created (full implementation in Part 5) | [x] | 2026-05-27 | |
+| Inter font loaded via `expo-font` | [x] | 2026-05-27 | |
+| AsyncStorage installed | [x] | 2026-05-27 | |
+| expo-location installed | [x] | 2026-05-27 | |
+| react-native-svg installed | [x] | 2026-05-27 | |
+| Jest configured with `jest-expo` preset | [x] | 2026-05-27 | |
+| `tsconfig.json` path aliases configured (`@/` → `src/`, `@app/` → `app/`) | [x] | 2026-05-27 | |
+| `tailwind.config.js` configured for NativeWind | [x] | 2026-05-27 | |
+| `PROGRESS.md` initialized in repository root | [x] | 2026-05-27 | |
 
-**Part 0 Complete:** [ ] — Date: ___________
+**Part 0 Complete:** [x] — Date: 2026-05-27
 
 ---
 

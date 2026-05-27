@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "LakadPapel",
+    "slug": "lakadpapel",
+    "scheme": "lakadpapel",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.group4.lakadpapel"
+    },
+    "android": {
+      "package": "com.group4.lakadpapel",
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/adaptive-icon.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
