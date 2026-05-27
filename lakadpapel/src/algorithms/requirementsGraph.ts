@@ -33,12 +33,13 @@ export const REQUIREMENTS_GRAPH: Record<DocumentId, DocumentNode> = {
   // PRIMARY IDS
   voters_id: {
     id: 'voters_id',
-    label: "Voter's ID (COMELEC)",
+    label: "Voter's Certification (COMELEC)",
     agency: 'COMELEC',
     prerequisites: ['psa_birth_cert', 'barangay_cert'],
-    fees: 'Free',
-    typicalDays: 'Varies by registration period',
+    fees: 'PHP 75 (Free for Seniors/PWDs/Indigents)',
+    typicalDays: 'Same day',
     officeType: 'COMELEC Local Office',
+    notes: 'Physical Voter\'s ID card printing is permanently suspended by COMELEC. The Voter\'s Certification is issued in its place and is widely accepted as a valid primary ID.',
   },
   philsys_id: {
     id: 'philsys_id',
@@ -57,17 +58,17 @@ export const REQUIREMENTS_GRAPH: Record<DocumentId, DocumentNode> = {
     fees: 'PHP 950 (regular) / PHP 1,200 (expedite)',
     typicalDays: '15–20 working days (regular)',
     officeType: 'DFA Consular Office',
-    notes: 'One valid government-issued photo ID required. Voter\'s ID is the minimum path; PhilSys ID also accepted.',
+    notes: 'One valid government-issued photo ID required. Voter\'s Certification is the minimum path; PhilSys ID also accepted.',
   },
   nbi_clearance: {
     id: 'nbi_clearance',
     label: 'NBI Clearance',
     agency: 'NBI',
     prerequisites: ['voters_id'],
-    fees: 'PHP 130',
+    fees: 'PHP 155 (including ₱25 e-payment fee)',
     typicalDays: 'Same day (no hit) / 5–15 working days (with hit)',
     officeType: 'NBI Clearance Center or Satellite Office',
-    notes: 'Minimum prerequisite path: Voter\'s ID. PhilSys ID and Passport are also accepted government IDs.',
+    notes: 'Minimum prerequisite path: Voter\'s Certification. PhilSys ID and Passport are also accepted government IDs. Free for first-time job seekers under RA 11261.',
   },
 
   // LICENSES
@@ -76,19 +77,20 @@ export const REQUIREMENTS_GRAPH: Record<DocumentId, DocumentNode> = {
     label: 'LTO Student Permit',
     agency: 'LTO',
     prerequisites: ['psa_birth_cert', 'lto_medical_cert'],
-    fees: 'PHP 727.63',
+    fees: 'PHP 317.63 (LTO fee)',
     typicalDays: 'Same day',
     officeType: 'LTO District Office',
+    notes: 'Requires a mandatory 15-hour Theoretical Driving Course (TDC) certificate from an LTO-accredited driving school.',
   },
   lto_nonpro_license: {
     id: 'lto_nonpro_license',
     label: 'LTO Non-Professional Driver\'s License',
     agency: 'LTO',
     prerequisites: ['lto_student_permit', 'lto_medical_cert'],
-    fees: 'PHP 585',
+    fees: 'PHP 685 (Total LTO fees)',
     typicalDays: 'Same day',
     officeType: 'LTO District Office',
-    notes: 'Student Permit must be held for at least 1 year before applying.',
+    notes: 'Student Permit must be held for at least 1 month. Requires a mandatory Practical Driving Course (PDC) certificate.',
   },
 
   // PROFESSIONAL / EMPLOYMENT
@@ -113,13 +115,13 @@ export const REQUIREMENTS_GRAPH: Record<DocumentId, DocumentNode> = {
   },
   sss_id: {
     id: 'sss_id',
-    label: 'SSS ID (Unified Multi-Purpose ID)',
+    label: 'SSS UMID / ATM Pay Card',
     agency: 'SSS',
     prerequisites: ['psa_birth_cert', 'voters_id'],
     fees: 'Free',
     typicalDays: '5–10 working days',
     officeType: 'SSS Branch',
-    notes: 'Two valid secondary IDs required. Voter\'s ID qualifies as one.',
+    notes: 'Standard UMID physical card printing is suspended. SSS now issues UMID ATM Pay Cards co-branded with UnionBank/RCBC. Voter\'s Certification counts as a valid primary ID.',
   },
   gsis_ecard: {
     id: 'gsis_ecard',
