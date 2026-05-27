@@ -1,1 +1,0 @@
-// NativeWind type references removed — using React Native StyleSheet
