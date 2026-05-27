@@ -59,18 +59,18 @@
 
 | Task | Status | Completed | Notes |
 |---|---|---|---|
-| `src/algorithms/topologicalSort.ts` — `buildSubgraph()` implemented | [ ] | | |
-| `src/algorithms/topologicalSort.ts` — `topologicalSort()` (Kahn's Algorithm) implemented | [ ] | | |
-| `src/algorithms/topologicalSort.ts` — cycle detection implemented | [ ] | | |
-| `src/algorithms/bfsLocator.ts` — `buildLocationGraph()` implemented | [ ] | | |
-| `src/algorithms/bfsLocator.ts` — `bfsNearestBranch()` implemented | [ ] | | |
-| `__tests__/topologicalSort.test.ts` — all document chain tests written | [ ] | | |
-| `__tests__/topologicalSort.test.ts` — all tests passing | [ ] | | |
-| `__tests__/bfsLocator.test.ts` — BFS accuracy and edge tests written | [ ] | | |
-| `__tests__/bfsLocator.test.ts` — all tests passing | [ ] | | |
-| Performance benchmark run: full pipeline < 10ms confirmed | [ ] | | |
+| `src/algorithms/topologicalSort.ts` — `buildSubgraph()` implemented | [x] | 2026-05-27 | |
+| `src/algorithms/topologicalSort.ts` — `topologicalSort()` (Kahn's Algorithm) implemented | [x] | 2026-05-27 | |
+| `src/algorithms/topologicalSort.ts` — cycle detection implemented | [x] | 2026-05-27 | |
+| `src/algorithms/bfsLocator.ts` — `buildLocationGraph()` implemented | [x] | 2026-05-27 | |
+| `src/algorithms/bfsLocator.ts` — `bfsNearestBranch()` implemented | [x] | 2026-05-27 | |
+| `__tests__/topologicalSort.test.ts` — all document chain tests written | [x] | 2026-05-27 | |
+| `__tests__/topologicalSort.test.ts` — all tests passing | [x] | 2026-05-27 | 100% passed |
+| `__tests__/bfsLocator.test.ts` — BFS accuracy and edge tests written | [x] | 2026-05-27 | |
+| `__tests__/bfsLocator.test.ts` — all tests passing | [x] | 2026-05-27 | 100% passed |
+| Performance benchmark run: full pipeline < 10ms confirmed | [x] | 2026-05-27 | Sub-millisecond execution |
 
-**Part 2 Complete:** [ ] — Date: ___________
+**Part 2 Complete:** [x] — Date: 2026-05-27
 
 ---
 
