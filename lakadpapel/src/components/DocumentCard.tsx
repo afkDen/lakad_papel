@@ -1,7 +1,8 @@
 import React from 'react';
-import { TouchableOpacity, View, Text } from 'react-native';
+import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { DocumentNode } from '../context/types';
+import { colors } from '../theme';
 
 interface DocumentCardProps {
   document: DocumentNode;
@@ -17,9 +18,9 @@ export default function DocumentCard({
   isDisabled = false,
 }: DocumentCardProps) {
   const getIconColor = () => {
-    if (isChecked) return '#16a34a'; // green-600
-    if (isDisabled) return '#9ca3af'; // text-gray-400
-    return '#d1d5db'; // border-gray-300 / neutral gray
+    if (isChecked) return colors.green600;
+    if (isDisabled) return colors.gray400;
+    return colors.gray300;
   };
 
   return (
@@ -27,23 +28,55 @@ export default function DocumentCard({
       activeOpacity={isDisabled ? 0.4 : 0.7}
       onPress={isDisabled ? undefined : onToggle}
       disabled={isDisabled}
-      className={`w-full min-h-[56px] ${isDisabled ? 'opacity-40' : ''}`}
+      style={[styles.touchable, isDisabled && styles.disabled]}
     >
-      <View className="flex-row items-center px-6 py-4 border-b border-gray-200 bg-white">
+      <View style={styles.row}>
         <Ionicons
           name="checkmark-circle"
           size={24}
           color={getIconColor()}
         />
-        <View className="flex-1 px-3">
-          <Text className="text-base text-gray-900 font-normal">
-            {document.label}
-          </Text>
-          <Text className="text-xs text-gray-500 mt-0.5">
-            {document.agency}
-          </Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.label}>{document.label}</Text>
+          <Text style={styles.agency}>{document.agency}</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  touchable: {
+    width: '100%',
+    minHeight: 56,
+  },
+  disabled: {
+    opacity: 0.4,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray200,
+    backgroundColor: colors.white,
+  },
+  textContainer: {
+    flex: 1,
+    paddingHorizontal: 12,
+  },
+  label: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.gray900,
+  },
+  agency: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.gray500,
+    marginTop: 2,
+  },
+});

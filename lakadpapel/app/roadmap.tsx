@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import { useLocation } from '../src/hooks/useLocation';
 import StepCard from '../src/components/StepCard';
 import DependencyGraph from '../src/components/DependencyGraph';
 import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
 import { buildSubgraph } from '../src/algorithms/topologicalSort';
+import { colors } from '../src/theme';
 
 export default function RoadmapScreen() {
   const { state, dispatch } = useDocumentContext();
@@ -42,11 +43,9 @@ export default function RoadmapScreen() {
     }
     const targetLabel = REQUIREMENTS_GRAPH[state.targetDocument]?.label ?? state.targetDocument;
     return (
-      <View className="px-6 pt-6 pb-4">
-        <Text className="text-2xl font-bold text-gray-900 leading-tight">
-          {targetLabel}
-        </Text>
-        <Text className="text-sm text-gray-500 mt-1">
+      <View style={styles.headerContainer}>
+        <Text style={styles.targetLabel}>{targetLabel}</Text>
+        <Text style={styles.stepCount}>
           {remainingSteps.length} {remainingSteps.length === 1 ? 'step' : 'steps'} remaining
         </Text>
       </View>
@@ -56,8 +55,8 @@ export default function RoadmapScreen() {
   const renderEmptyState = () => {
     if (!state.targetDocument) {
       return (
-        <View className="flex-1 items-center justify-center py-20 px-6">
-          <Text className="text-base text-gray-500 text-center leading-normal">
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
             Select a document from 'What do I need?' to generate your roadmap.
           </Text>
         </View>
@@ -65,8 +64,8 @@ export default function RoadmapScreen() {
     }
     if (remainingSteps.length === 0) {
       return (
-        <View className="flex-1 items-center justify-center py-20 px-6">
-          <Text className="text-base text-gray-500 text-center leading-normal">
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
             All steps complete. Check your History tab.
           </Text>
         </View>
@@ -76,7 +75,7 @@ export default function RoadmapScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {renderHeader()}
         {renderEmptyState()}
@@ -103,9 +102,9 @@ export default function RoadmapScreen() {
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => setShowGraph(!showGraph)}
-              className="mx-6 my-4 border border-gray-200 rounded-lg py-3 items-center justify-center"
+              style={styles.toggleButton}
             >
-              <Text className="text-sm text-blue-600 font-semibold">
+              <Text style={styles.toggleButtonText}>
                 {showGraph ? 'Hide Dependency Map' : 'View Dependency Map'}
               </Text>
             </TouchableOpacity>
@@ -123,3 +122,58 @@ export default function RoadmapScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  headerContainer: {
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 16,
+  },
+  targetLabel: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 22,
+    lineHeight: 28,
+    color: colors.gray900,
+  },
+  stepCount: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.gray500,
+    marginTop: 4,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 80,
+    paddingHorizontal: 24,
+  },
+  emptyText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.gray500,
+    textAlign: 'center',
+  },
+  toggleButton: {
+    marginHorizontal: 24,
+    marginVertical: 16,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toggleButtonText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.blue600,
+  },
+});

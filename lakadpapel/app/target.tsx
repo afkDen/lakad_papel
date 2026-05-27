@@ -1,11 +1,12 @@
 import React from 'react';
-import { SafeAreaView, View, Text, SectionList } from 'react-native';
+import { SafeAreaView, View, Text, SectionList, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import DocumentCard from '../src/components/DocumentCard';
 import CategoryHeader from '../src/components/CategoryHeader';
 import { REQUIREMENTS_GRAPH, DOCUMENT_CATEGORIES } from '../src/algorithms/requirementsGraph';
 import { DocumentId } from '../src/context/types';
+import { colors } from '../src/theme';
 
 export default function TargetScreen() {
   const router = useRouter();
@@ -32,19 +33,17 @@ export default function TargetScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView style={styles.container}>
       {/* Header and Subheader */}
       <View>
-        <Text className="text-2xl font-bold text-gray-900 px-6 pt-6 pb-2">
-          What do you need?
-        </Text>
-        <Text className="text-sm text-gray-500 px-6 pb-4">
+        <Text style={styles.screenTitle}>What do you need?</Text>
+        <Text style={styles.subtitle}>
           Select the document you want to obtain.
         </Text>
 
         {/* Notice Info Box */}
-        <View className="mx-6 mb-4 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
-          <Text className="text-xs text-gray-500 leading-normal">
+        <View style={styles.infoBox}>
+          <Text style={styles.infoText}>
             Documents you already have are greyed out and cannot be selected as a target.
           </Text>
         </View>
@@ -71,3 +70,43 @@ export default function TargetScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  screenTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 22,
+    lineHeight: 28,
+    color: colors.gray900,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 8,
+  },
+  subtitle: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.gray500,
+    paddingHorizontal: 24,
+    paddingBottom: 16,
+  },
+  infoBox: {
+    marginHorizontal: 24,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.gray50,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 8,
+  },
+  infoText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 18,
+    color: colors.gray500,
+  },
+});

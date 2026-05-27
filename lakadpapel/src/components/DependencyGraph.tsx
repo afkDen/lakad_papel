@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Dimensions } from 'react-native';
+import { View, Text, ScrollView, Dimensions, StyleSheet } from 'react-native';
 import Svg, { Line, Circle, Text as SvgText } from 'react-native-svg';
 import { DocumentNode, DocumentId } from '../context/types';
+import { colors } from '../theme';
 
 interface DependencyGraphProps {
   subgraph: Record<DocumentId, DocumentNode>;
@@ -19,8 +20,8 @@ export default function DependencyGraph({
 
   if (subgraphKeys.length === 0) {
     return (
-      <View className="items-center justify-center p-6 bg-gray-50 border border-gray-200 rounded-lg mx-6 my-4">
-        <Text className="text-sm font-semibold text-gray-500">No steps remaining.</Text>
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>No steps remaining.</Text>
       </View>
     );
   }
@@ -33,7 +34,7 @@ export default function DependencyGraph({
 
   let changed = true;
   let iterations = 0;
-  const maxIterations = subgraphKeys.length * 2; // prevent infinite loops in case of unexpected cycles
+  const maxIterations = subgraphKeys.length * 2;
 
   while (changed && iterations < maxIterations) {
     changed = false;
@@ -81,12 +82,9 @@ export default function DependencyGraph({
   levelKeys.forEach((lvl, lvlIdx) => {
     const ids = nodesByLevel[lvl];
     const k = ids.length;
-
-    // Distribute horizontally
     const x = paddingX + lvlIdx * levelWidth + levelWidth / 2;
 
     ids.forEach((id, nodeIdx) => {
-      // Distribute vertically
       const y = ((nodeIdx + 1) * graphHeight) / (k + 1);
       coords[id] = { x, y };
     });
@@ -94,16 +92,15 @@ export default function DependencyGraph({
 
   // 4. Determine node colors
   const getNodeColor = (id: DocumentId) => {
-    if (possessed.has(id)) return '#16a34a'; // green
-    if (nextAttainable.has(id)) return '#0d9488'; // teal
-    return '#9ca3af'; // grey
+    if (possessed.has(id)) return colors.green600;
+    if (nextAttainable.has(id)) return colors.teal600;
+    return colors.gray400;
   };
 
   // 5. Build lines and circles
   const lines: React.ReactNode[] = [];
   const circles: React.ReactNode[] = [];
 
-  // Draw lines first (so they render behind circles)
   subgraphKeys.forEach((id) => {
     const node = subgraph[id];
     const fromCoord = coords[id];
@@ -119,7 +116,7 @@ export default function DependencyGraph({
             y1={toCoord.y}
             x2={fromCoord.x}
             y2={fromCoord.y}
-            stroke="#d1d5db"
+            stroke={colors.gray300}
             strokeWidth={2}
           />
         );
@@ -127,7 +124,6 @@ export default function DependencyGraph({
     });
   });
 
-  // Draw circles and text on top
   subgraphKeys.forEach((id) => {
     const node = subgraph[id];
     const coord = coords[id];
@@ -142,7 +138,7 @@ export default function DependencyGraph({
           cy={coord.y}
           r={20}
           fill={color}
-          stroke="#ffffff"
+          stroke={colors.white}
           strokeWidth={2}
           onPress={() => setSelectedLabel(node.label)}
         />
@@ -151,7 +147,7 @@ export default function DependencyGraph({
           y={coord.y + 3}
           fontSize="8"
           fontWeight="bold"
-          fill="#ffffff"
+          fill={colors.white}
           textAnchor="middle"
           onPress={() => setSelectedLabel(node.label)}
         >
@@ -162,10 +158,8 @@ export default function DependencyGraph({
   });
 
   return (
-    <View className="bg-white border border-gray-200 rounded-lg mx-6 my-4 p-4">
-      <Text className="text-xs text-gray-500 font-semibold mb-2">
-        Prerequisite Dependency Map
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Prerequisite Dependency Map</Text>
 
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <Svg width={svgWidth} height={graphHeight}>
@@ -174,9 +168,54 @@ export default function DependencyGraph({
         </Svg>
       </ScrollView>
 
-      <Text className="text-center text-xs text-gray-400 mt-2 min-h-[16px]">
+      <Text style={styles.selectedLabel}>
         {selectedLabel ? `Selected: ${selectedLabel}` : 'Tap a node to view document details'}
       </Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: colors.gray50,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 8,
+    marginHorizontal: 24,
+    marginVertical: 16,
+  },
+  emptyText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.gray500,
+  },
+  container: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 8,
+    marginHorizontal: 24,
+    marginVertical: 16,
+    padding: 16,
+  },
+  title: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.gray500,
+    marginBottom: 8,
+  },
+  selectedLabel: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.gray400,
+    textAlign: 'center',
+    marginTop: 8,
+    minHeight: 16,
+  },
+});

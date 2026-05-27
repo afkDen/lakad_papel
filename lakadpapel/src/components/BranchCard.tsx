@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AgencyBranch, AgencyType } from '../context/types';
+import { colors } from '../theme';
 
 interface BranchCardProps {
   branch: AgencyBranch | null;
@@ -18,8 +19,8 @@ export default function BranchCard({ branch, agencyType }: BranchCardProps) {
     }
 
     return (
-      <View className="bg-gray-50 rounded-lg p-4 mt-3">
-        <Text className="text-xs text-gray-500 italic">{fallbackText}</Text>
+      <View style={styles.container}>
+        <Text style={styles.fallbackText}>{fallbackText}</Text>
       </View>
     );
   }
@@ -33,29 +34,88 @@ export default function BranchCard({ branch, agencyType }: BranchCardProps) {
   };
 
   return (
-    <View className="bg-gray-50 rounded-lg p-4 mt-3">
-      <Text className="text-sm font-semibold text-gray-900">{branch.name}</Text>
+    <View style={styles.container}>
+      <Text style={styles.branchName}>{branch.name}</Text>
 
-      <View className="flex-row items-center mt-2">
-        <Ionicons name="location-outline" size={14} color="#6b7280" />
-        <Text className="text-xs text-gray-500 ml-1 flex-1">{branch.address}</Text>
+      <View style={styles.infoRow}>
+        <Ionicons name="location-outline" size={14} color={colors.gray500} />
+        <Text style={styles.infoTextFlex}>{branch.address}</Text>
       </View>
 
-      <View className="flex-row items-center mt-1">
-        <Ionicons name="time-outline" size={14} color="#6b7280" />
-        <Text className="text-xs text-gray-500 ml-1">{branch.hours}</Text>
+      <View style={styles.infoRowTight}>
+        <Ionicons name="time-outline" size={14} color={colors.gray500} />
+        <Text style={styles.infoText}>{branch.hours}</Text>
       </View>
 
       {branch.mapsUrl && (
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={handleGetDirections}
-          className="flex-row items-center mt-3"
+          style={styles.directionsRow}
         >
-          <Ionicons name="map-outline" size={14} color="#2563eb" />
-          <Text className="text-xs text-blue-600 font-semibold ml-1">Get Directions</Text>
+          <Ionicons name="map-outline" size={14} color={colors.blue600} />
+          <Text style={styles.directionsText}>Get Directions</Text>
         </TouchableOpacity>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.gray50,
+    borderRadius: 8,
+    padding: 16,
+    marginTop: 12,
+  },
+  fallbackText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.gray500,
+    fontStyle: 'italic',
+  },
+  branchName: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.gray900,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  infoRowTight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  infoTextFlex: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.gray500,
+    marginLeft: 4,
+    flex: 1,
+  },
+  infoText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.gray500,
+    marginLeft: 4,
+  },
+  directionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  directionsText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.blue600,
+    marginLeft: 4,
+  },
+});

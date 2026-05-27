@@ -1,7 +1,8 @@
 import React from 'react';
-import { SafeAreaView, View, Text, FlatList } from 'react-native';
+import { SafeAreaView, View, Text, FlatList, StyleSheet } from 'react-native';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
+import { colors } from '../src/theme';
 
 export default function HistoryScreen() {
   const { state } = useDocumentContext();
@@ -24,12 +25,12 @@ export default function HistoryScreen() {
   const renderItem = ({ item }: { item: any }) => {
     const docLabel = REQUIREMENTS_GRAPH[item.targetDocumentId]?.label ?? item.targetDocumentId;
     return (
-      <View className="bg-white border border-gray-200 rounded-lg mx-6 mb-3 p-4">
-        <Text className="text-base font-semibold text-gray-900">{docLabel}</Text>
-        <Text className="text-xs text-gray-500 mt-1">
+      <View style={styles.historyCard}>
+        <Text style={styles.docLabel}>{docLabel}</Text>
+        <Text style={styles.dateText}>
           Completed on {formatDate(item.completedAt)}
         </Text>
-        <Text className="text-xs text-gray-400 mt-0.5">
+        <Text style={styles.stepCountText}>
           {item.stepCount} {item.stepCount === 1 ? 'step' : 'steps'} completed
         </Text>
       </View>
@@ -38,11 +39,9 @@ export default function HistoryScreen() {
 
   const renderEmptyState = () => {
     return (
-      <View className="flex-1 items-center justify-center py-20 px-6">
-        <Text className="text-base text-gray-500 text-center font-medium">
-          No completed flows yet.
-        </Text>
-        <Text className="text-sm text-gray-400 text-center mt-2 leading-normal">
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyTitle}>No completed flows yet.</Text>
+        <Text style={styles.emptySubtitle}>
           Complete all steps in a roadmap to see it recorded here.
         </Text>
       </View>
@@ -50,10 +49,10 @@ export default function HistoryScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="px-6 pt-6 pb-2">
-        <Text className="text-2xl font-bold text-gray-900">History</Text>
-        <Text className="text-xs text-gray-500 mt-1">
+    <SafeAreaView style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.screenTitle}>History</Text>
+        <Text style={styles.headerSubtitle}>
           A log of all document acquisition roadmaps you have successfully completed.
         </Text>
       </View>
@@ -69,3 +68,79 @@ export default function HistoryScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  headerContainer: {
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 8,
+  },
+  screenTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 22,
+    lineHeight: 28,
+    color: colors.gray900,
+  },
+  headerSubtitle: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.gray500,
+    marginTop: 4,
+  },
+  historyCard: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 8,
+    marginHorizontal: 24,
+    marginBottom: 12,
+    padding: 16,
+  },
+  docLabel: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.gray900,
+  },
+  dateText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.gray500,
+    marginTop: 4,
+  },
+  stepCountText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.gray400,
+    marginTop: 2,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 80,
+    paddingHorizontal: 24,
+  },
+  emptyTitle: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.gray500,
+    textAlign: 'center',
+  },
+  emptySubtitle: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.gray400,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+});

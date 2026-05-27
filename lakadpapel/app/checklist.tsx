@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TextInput, SectionList, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, SectionList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import DocumentCard from '../src/components/DocumentCard';
 import CategoryHeader from '../src/components/CategoryHeader';
 import { REQUIREMENTS_GRAPH, DOCUMENT_CATEGORIES } from '../src/algorithms/requirementsGraph';
+import { colors } from '../src/theme';
 
 export default function ChecklistScreen() {
   const router = useRouter();
@@ -28,19 +29,17 @@ export default function ChecklistScreen() {
     .filter((section) => section.data.length > 0);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView style={styles.container}>
       {/* Header & Search Bar */}
       <View>
-        <Text className="text-2xl font-bold text-gray-900 px-6 pt-6 pb-2">
-          My Documents
-        </Text>
-        <Text className="text-xs text-gray-500 px-6 pb-4">
+        <Text style={styles.screenTitle}>My Documents</Text>
+        <Text style={styles.subtitle}>
           Check off the documents you already possess to personalize your roadmaps.
         </Text>
         <TextInput
-          className="mx-6 mb-4 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-base text-gray-900"
+          style={styles.searchInput}
           placeholder="Search documents..."
-          placeholderTextColor="#9ca3af"
+          placeholderTextColor={colors.gray400}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
@@ -65,17 +64,78 @@ export default function ChecklistScreen() {
       />
 
       {/* Sticky Bottom Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0 border-t border-gray-200 bg-white px-6 py-4">
+      <View style={styles.bottomBar}>
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => router.push('/target')}
-          className="bg-blue-600 rounded-lg py-4 items-center justify-center min-h-[48px]"
+          style={styles.ctaButton}
         >
-          <Text className="text-white text-base font-semibold">
-            What do I need?
-          </Text>
+          <Text style={styles.ctaButtonText}>What do I need?</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  screenTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 22,
+    lineHeight: 28,
+    color: colors.gray900,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 8,
+  },
+  subtitle: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.gray500,
+    paddingHorizontal: 24,
+    paddingBottom: 16,
+  },
+  searchInput: {
+    marginHorizontal: 24,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.gray50,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 8,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.gray900,
+  },
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderTopWidth: 1,
+    borderTopColor: colors.gray200,
+    backgroundColor: colors.white,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+  },
+  ctaButton: {
+    backgroundColor: colors.blue600,
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+  },
+  ctaButtonText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.white,
+  },
+});
