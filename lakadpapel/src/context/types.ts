@@ -54,6 +54,7 @@ export interface AppState {
   targetDocument: DocumentId | null;
   roadmap: RoadmapStep[];
   history: CompletedFlow[];
+  userMode: 'simple' | 'advanced';
 }
 
 export type AppAction =
@@ -61,4 +62,5 @@ export type AppAction =
   | { type: 'SET_TARGET'; payload: DocumentId }
   | { type: 'MARK_DONE'; payload: DocumentId }
   | { type: 'ADD_TO_HISTORY'; payload: CompletedFlow }
-  | { type: 'HYDRATE'; payload: { possessedDocuments: DocumentId[]; history: CompletedFlow[] } };
+  | { type: 'TOGGLE_USER_MODE' }
+  | { type: 'HYDRATE'; payload: { possessedDocuments: DocumentId[]; history: CompletedFlow[]; userMode: 'simple' | 'advanced' } };

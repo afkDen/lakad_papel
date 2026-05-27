@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import { useLocation } from '../src/hooks/useLocation';
 import StepCard from '../src/components/StepCard';
 import DependencyGraph from '../src/components/DependencyGraph';
 import AlgorithmTrace from '../src/components/AlgorithmTrace';
+import LinearTimeline from '../src/components/LinearTimeline';
 import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
 import { buildSubgraph, topologicalSort, topologicalSortWithTrace, TraceStep } from '../src/algorithms/topologicalSort';
 import { buildLocationGraph, bfsNearestBranch } from '../src/algorithms/bfsLocator';
@@ -22,6 +22,8 @@ export default function RoadmapScreen() {
   const [showGraph, setShowGraph] = useState(false);
   const [showTrace, setShowTrace] = useState(false);
   const [viewMode, setViewMode] = useState<'remaining' | 'full'>('remaining');
+
+  const isSimple = state.userMode === 'simple';
 
   // Location Re-trigger: regenerate roadmap when GPS updates
   useEffect(() => {
@@ -63,10 +65,10 @@ export default function RoadmapScreen() {
     const lat = latitude ?? 14.5841; // Fallback SM Megamall coordinates
     const lon = longitude ?? 121.0573;
 
-    if (viewMode === 'remaining') {
+    if (isSimple || viewMode === 'remaining') {
       return state.roadmap.filter((step) => !step.isDone);
     } else {
-      // Full Path: build subgraph ignoring possessed documents
+      // Full Path (Advanced Mode only): build subgraph ignoring possessed documents
       try {
         const fullSubgraph = buildSubgraph(REQUIREMENTS_GRAPH, new Set(), state.targetDocument);
         const sortedIds = topologicalSort(fullSubgraph);
@@ -122,36 +124,76 @@ export default function RoadmapScreen() {
 
     return (
       <View style={styles.headerContainer}>
-        <Text style={styles.headerSubtitle}>ACTIVE ROADMAP</Text>
-        <Text style={styles.targetLabel}>{targetLabel}</Text>
-
-        {/* Minimum vs Full Path Toggle */}
-        <View style={styles.segmentedControl}>
-          <TouchableOpacity
-            style={[styles.segmentBtn, viewMode === 'remaining' && styles.segmentBtnActive]}
-            onPress={() => setViewMode('remaining')}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.segmentText, viewMode === 'remaining' && styles.segmentTextActive]}>
-              Remaining ({remainingCount})
+        <View style={styles.headerRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.headerSubtitle}>
+              {isSimple ? 'YOUR JOURNEY TO GET' : 'ACTIVE ROADMAP'}
             </Text>
-          </TouchableOpacity>
+            <Text style={styles.targetLabel}>{targetLabel}</Text>
+          </View>
+
+          {/* Mode Switcher Toggle */}
           <TouchableOpacity
-            style={[styles.segmentBtn, viewMode === 'full' && styles.segmentBtnActive]}
-            onPress={() => setViewMode('full')}
+            style={[styles.modeToggleBtn, !isSimple && styles.modeToggleBtnActive]}
+            onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
             activeOpacity={0.8}
           >
-            <Text style={[styles.segmentText, viewMode === 'full' && styles.segmentTextActive]}>
-              Full Path
+            <Ionicons
+              name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
+              size={12}
+              color={isSimple ? colors.teal600 : colors.white}
+              style={{ marginRight: 4 }}
+            />
+            <Text style={[styles.modeToggleText, !isSimple && styles.modeToggleTextActive]}>
+              {isSimple ? 'Simple' : 'Advanced'}
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* Minimum vs Full Path Toggle (Advanced Mode Only) */}
+        {!isSimple && (
+          <View style={styles.segmentedControl}>
+            <TouchableOpacity
+              style={[styles.segmentBtn, viewMode === 'remaining' && styles.segmentBtnActive]}
+              onPress={() => setViewMode('remaining')}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.segmentText, viewMode === 'remaining' && styles.segmentTextActive]}>
+                Remaining ({remainingCount})
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.segmentBtn, viewMode === 'full' && styles.segmentBtnActive]}
+              onPress={() => setViewMode('full')}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.segmentText, viewMode === 'full' && styles.segmentTextActive]}>
+                Full Path
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   };
 
   const renderStatsBar = () => {
     if (!state.targetDocument) return null;
+
+    if (isSimple) {
+      // Clean, senior-friendly simple stats card
+      return (
+        <View style={styles.simpleStatsCard}>
+          <Ionicons name="information-circle" size={18} color={colors.blue600} style={{ marginRight: 8 }} />
+          <Text style={styles.simpleStatsText}>
+            You have <Text style={{ fontFamily: 'Inter_700Bold' }}>{remainingCount}</Text> steps left • approx.{' '}
+            <Text style={{ fontFamily: 'Inter_700Bold' }}>{estDays}</Text> days • est. cost ₱{estCost}
+          </Text>
+        </View>
+      );
+    }
+
+    // Advanced Stats Bar
     return (
       <View style={styles.statsBarContainer}>
         <ScrollView
@@ -194,12 +236,14 @@ export default function RoadmapScreen() {
         <View style={styles.emptyContainer}>
           <Ionicons name="map-outline" size={48} color={colors.gray400} style={styles.emptyIcon} />
           <Text style={styles.emptyText}>
-            Select a document from 'What do I need?' to generate your roadmap.
+            {isSimple
+              ? "Select a document you want to get in the 'Find' tab to start."
+              : "Select a document from 'What do I need?' to generate your roadmap."}
           </Text>
         </View>
       );
     }
-    if (viewMode === 'remaining' && stepsToRender.length === 0) {
+    if (stepsToRender.length === 0) {
       return (
         <View style={styles.emptyContainer}>
           <Ionicons name="checkmark-circle-outline" size={48} color={colors.green600} style={styles.emptyIcon} />
@@ -219,6 +263,11 @@ export default function RoadmapScreen() {
         {renderStatsBar()}
         {renderEmptyState()}
 
+        {/* 1. RENDER LINEAR TIMELINE (Simple Mode Only) */}
+        {isSimple && state.targetDocument && stepsToRender.length > 0 && (
+          <LinearTimeline roadmap={stepsToRender} />
+        )}
+
         {/* Roadmap Steps */}
         {stepsToRender.length > 0 && (
           <View style={styles.stepsContainer}>
@@ -235,8 +284,8 @@ export default function RoadmapScreen() {
           </View>
         )}
 
-        {/* Dependency Map Section */}
-        {state.targetDocument && (
+        {/* Dependency Map Section (Advanced Mode Only) */}
+        {!isSimple && state.targetDocument && (
           <View>
             <TouchableOpacity
               activeOpacity={0.7}
@@ -296,20 +345,50 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 12,
+    paddingTop: 20,
+    paddingBottom: 4,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+    gap: 8,
   },
   headerSubtitle: {
     ...typography.caption,
     fontSize: 9,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 1,
-    marginBottom: 4,
+    color: colors.gray500,
   },
   targetLabel: {
     ...typography.screenTitle,
     fontSize: 22,
     lineHeight: 28,
+  },
+  modeToggleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#eff6ff',
+    borderWidth: 1,
+    borderColor: '#bfdbfe',
+    borderRadius: radii.full,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginTop: 2,
+  },
+  modeToggleBtnActive: {
+    backgroundColor: colors.blue600,
+    borderColor: colors.blue600,
+  },
+  modeToggleText: {
+    fontSize: 10,
+    fontFamily: 'Inter_600SemiBold',
+    color: colors.teal600,
+  },
+  modeToggleTextActive: {
+    color: colors.white,
   },
   segmentedControl: {
     flexDirection: 'row',
@@ -336,6 +415,25 @@ const styles = StyleSheet.create({
   },
   segmentTextActive: {
     color: colors.gray900,
+  },
+  simpleStatsCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.blueLight,
+    borderColor: colors.blueBorder,
+    borderWidth: 1,
+    borderRadius: radii.md,
+    padding: 12,
+    marginHorizontal: 24,
+    marginBottom: 16,
+    marginTop: 8,
+  },
+  simpleStatsText: {
+    ...typography.body,
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.blueText,
+    flex: 1,
   },
   statsBarContainer: {
     height: 64,

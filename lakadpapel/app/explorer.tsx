@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import DAGExplorer from '../src/components/DAGExplorer';
 import NodeDetailSheet from '../src/components/NodeDetailSheet';
+import LinearTimeline from '../src/components/LinearTimeline';
 import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
 import { colors, spacing, radii, typography, shadows } from '../src/theme';
 import { DocumentId } from '../src/context/types';
@@ -16,7 +16,9 @@ export default function ExplorerScreen() {
   const [highlightAttainable, setHighlightAttainable] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState<DocumentId | null>(null);
 
-  // Derived Graph Stats
+  const isSimple = state.userMode === 'simple';
+
+  // Derived Graph Stats (Advanced Mode Only)
   const totalNodes = Object.keys(REQUIREMENTS_GRAPH).length;
   
   const totalEdges = Object.values(REQUIREMENTS_GRAPH).reduce(
@@ -26,7 +28,7 @@ export default function ExplorerScreen() {
 
   const ownedCount = state.possessedDocuments.size;
 
-  // Calculate attainable documents (in-degree 0 in the current unpossessed set)
+  // Calculate attainable documents
   const attainableCount = Object.entries(REQUIREMENTS_GRAPH).filter(([id, node]) => {
     if (state.possessedDocuments.has(id)) return false;
     return node.prerequisites.every((prereq) => state.possessedDocuments.has(prereq));
@@ -64,32 +66,118 @@ export default function ExplorerScreen() {
     dispatch({ type: 'TOGGLE_DOCUMENT', payload: id });
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* 1. Header Navigation Bar */}
+  const renderHeader = () => {
+    return (
       <View style={styles.header}>
         <View style={styles.headerTitleCol}>
-          <Text style={styles.headerTitle}>Graph Explorer</Text>
-          <Text style={styles.headerSubtitle}>Explore Philippine Document Dependencies</Text>
+          <Text style={styles.headerTitle}>
+            {isSimple ? 'Guide & Journey' : 'Graph Explorer'}
+          </Text>
+          <Text style={styles.headerSubtitle}>
+            {isSimple ? 'Step-by-step help for getting your documents' : 'Explore Philippine Document Dependencies'}
+          </Text>
         </View>
         
-        {/* Toggle Mode */}
+        {/* Simple / Advanced Mode Toggler */}
         <TouchableOpacity
-          style={[styles.highlightBtn, highlightAttainable && styles.highlightBtnActive]}
-          onPress={() => setHighlightAttainable(!highlightAttainable)}
+          style={[styles.modeToggleBtn, !isSimple && styles.modeToggleBtnActive]}
+          onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
           activeOpacity={0.8}
         >
           <Ionicons
-            name={highlightAttainable ? "flash" : "flash-outline"}
-            size={18}
-            color={highlightAttainable ? colors.white : colors.teal600}
-            style={styles.highlightBtnIcon}
+            name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
+            size={12}
+            color={isSimple ? colors.teal600 : colors.white}
+            style={{ marginRight: 4 }}
           />
-          <Text style={[styles.highlightBtnText, highlightAttainable && styles.highlightBtnTextActive]}>
-            Next Steps
+          <Text style={[styles.modeToggleText, !isSimple && styles.modeToggleTextActive]}>
+            {isSimple ? 'Simple' : 'Advanced'}
           </Text>
         </TouchableOpacity>
       </View>
+    );
+  };
+
+  // Senior FAQ view for Simple Mode
+  const renderSimpleHelp = () => {
+    const activeRoadmapSteps = state.roadmap.filter((step) => !step.isDone);
+
+    return (
+      <ScrollView style={styles.simpleScroll} contentContainerStyle={styles.simpleScrollContent}>
+        {/* Display Milestone Timeline inside Guide page if target selected */}
+        {state.targetDocument && activeRoadmapSteps.length > 0 ? (
+          <View style={{ marginBottom: 20 }}>
+            <LinearTimeline roadmap={activeRoadmapSteps} />
+          </View>
+        ) : (
+          <View style={styles.helpBanner}>
+            <Ionicons name="compass-outline" size={32} color={colors.blue600} style={{ marginBottom: 8 }} />
+            <Text style={styles.bannerTitle}>No Active Journey Yet</Text>
+            <Text style={styles.bannerText}>
+              Go to the **Find** tab and choose a document you want to get. We will lay out a simple timeline here to guide you!
+            </Text>
+            <TouchableOpacity
+              style={styles.bannerBtn}
+              onPress={() => router.push('/target')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.bannerBtnText}>Choose a Target ID</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Senior Frequently Asked Questions */}
+        <Text style={styles.faqSectionTitle}>Frequently Asked Questions</Text>
+
+        <View style={styles.faqItem}>
+          <Text style={styles.faqQuestion}>1. What documents should I get first?</Text>
+          <Text style={styles.faqAnswer}>
+            Foundational documents like your **PSA Birth Certificate** and **Barangay Cedula** have no prerequisites. They are required to get almost all other primary government IDs, so we recommend acquiring them first!
+          </Text>
+        </View>
+
+        <View style={styles.faqItem}>
+          <Text style={styles.faqQuestion}>2. How do I use this app?</Text>
+          <Text style={styles.faqAnswer}>
+            * Go to the **Documents** tab first. Check the boxes for any IDs you already possess.{"\n"}
+            * Go to the **Find** tab and choose the ID you need (e.g. Philippine Passport).{"\n"}
+            * We will generate a step-by-step roadmap showing you exactly what to do!
+          </Text>
+        </View>
+
+        <View style={styles.faqItem}>
+          <Text style={styles.faqQuestion}>3. Do I need an internet connection?</Text>
+          <Text style={styles.faqAnswer}>
+            No! LakadPapel runs completely offline on your device, making it perfect to use in physical government waiting rooms where cellular signal is often weak.
+          </Text>
+        </View>
+
+        <View style={styles.faqItem}>
+          <Text style={styles.faqQuestion}>4. How is my nearest branch computed?</Text>
+          <Text style={styles.faqAnswer}>
+            The app securely checks your device's GPS and looks through our preloaded list of Metro Manila branch coordinates to find the branch closest to you instantly.
+          </Text>
+        </View>
+      </ScrollView>
+    );
+  };
+
+  // ----------------------------------------------------
+  // ADVANCED MODE VIEW
+  // ----------------------------------------------------
+  if (isSimple) {
+    return (
+      <SafeAreaView style={styles.container}>
+        {renderHeader()}
+        {renderSimpleHelp()}
+      </SafeAreaView>
+    );
+  }
+
+  // Advanced Mode DAG rendering
+  return (
+    <SafeAreaView style={styles.container}>
+      {renderHeader()}
 
       {/* 2. Color Legend */}
       <View style={styles.legendRow}>
@@ -155,7 +243,26 @@ export default function ExplorerScreen() {
         </ScrollView>
       </View>
 
-      {/* 4. Canvas View Area (Horizontal + Vertical Scrollable Grid) */}
+      {/* 4. Top control tools */}
+      <View style={styles.topControlBar}>
+        <TouchableOpacity
+          style={[styles.highlightBtn, highlightAttainable && styles.highlightBtnActive]}
+          onPress={() => setHighlightAttainable(!highlightAttainable)}
+          activeOpacity={0.8}
+        >
+          <Ionicons
+            name={highlightAttainable ? "flash" : "flash-outline"}
+            size={16}
+            color={highlightAttainable ? colors.white : colors.teal600}
+            style={styles.highlightBtnIcon}
+          />
+          <Text style={[styles.highlightBtnText, highlightAttainable && styles.highlightBtnTextActive]}>
+            Highlight Next Steps
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 5. Canvas View Area (Horizontal + Vertical Scrollable Grid) */}
       <View style={styles.canvasContainer}>
         <ScrollView style={styles.vertScroll} contentContainerStyle={styles.vertScrollContent}>
           <ScrollView horizontal style={styles.horizScroll} contentContainerStyle={styles.horizScrollContent}>
@@ -170,7 +277,7 @@ export default function ExplorerScreen() {
         </ScrollView>
       </View>
 
-      {/* 5. Details Drawer Bottom Sheet */}
+      {/* 6. Details Drawer Bottom Sheet */}
       <NodeDetailSheet
         documentId={selectedNodeId}
         onClose={() => setSelectedNodeId(null)}
@@ -193,8 +300,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
+    paddingTop: 20,
+    paddingBottom: 4,
     backgroundColor: colors.white,
   },
   headerTitleCol: {
@@ -209,30 +316,29 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.gray500,
     marginTop: 2,
+    lineHeight: 15,
   },
-  highlightBtn: {
+  modeToggleBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.white,
+    backgroundColor: '#eff6ff',
     borderWidth: 1,
-    borderColor: colors.teal600,
-    borderRadius: radii.md,
-    paddingHorizontal: spacing.md,
-    height: 34,
+    borderColor: '#bfdbfe',
+    borderRadius: radii.full,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginTop: 2,
   },
-  highlightBtnActive: {
-    backgroundColor: colors.teal600,
-    borderColor: colors.teal600,
+  modeToggleBtnActive: {
+    backgroundColor: colors.blue600,
+    borderColor: colors.blue600,
   },
-  highlightBtnIcon: {
-    marginRight: 4,
-  },
-  highlightBtnText: {
-    fontSize: 12,
+  modeToggleText: {
+    fontSize: 10,
     fontFamily: 'Inter_600SemiBold',
     color: colors.teal600,
   },
-  highlightBtnTextActive: {
+  modeToggleTextActive: {
     color: colors.white,
   },
   legendRow: {
@@ -293,6 +399,38 @@ const styles = StyleSheet.create({
     color: colors.gray500,
     marginTop: 1,
   },
+  topControlBar: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray100,
+    backgroundColor: colors.white,
+  },
+  highlightBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.teal600,
+    borderRadius: radii.md,
+    paddingVertical: 8,
+    backgroundColor: colors.white,
+  },
+  highlightBtnActive: {
+    backgroundColor: colors.teal600,
+    borderColor: colors.teal600,
+  },
+  highlightBtnIcon: {
+    marginRight: 4,
+  },
+  highlightBtnText: {
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+    color: colors.teal600,
+  },
+  highlightBtnTextActive: {
+    color: colors.white,
+  },
   canvasContainer: {
     flex: 1,
     backgroundColor: '#ffffff',
@@ -308,5 +446,77 @@ const styles = StyleSheet.create({
   },
   horizScrollContent: {
     flexGrow: 1,
+  },
+  // Simple Mode styles
+  simpleScroll: {
+    flex: 1,
+    backgroundColor: colors.gray50,
+  },
+  simpleScrollContent: {
+    padding: spacing.xl,
+    paddingBottom: spacing.xxl,
+  },
+  helpBanner: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: radii.md,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
+    ...shadows.sm,
+  },
+  bannerTitle: {
+    ...typography.cardSemibold,
+    color: colors.gray900,
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  bannerText: {
+    ...typography.secondary,
+    textAlign: 'center',
+    lineHeight: 18,
+    marginBottom: 16,
+    color: colors.gray500,
+  },
+  bannerBtn: {
+    backgroundColor: colors.blue600,
+    borderRadius: radii.md,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  bannerBtnText: {
+    color: colors.white,
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 13,
+  },
+  faqSectionTitle: {
+    ...typography.sectionHeader,
+    fontSize: 12,
+    color: colors.gray900,
+    marginBottom: 12,
+    letterSpacing: 0.5,
+  },
+  faqItem: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: radii.md,
+    padding: 16,
+    marginBottom: 12,
+    ...shadows.sm,
+  },
+  faqQuestion: {
+    ...typography.cardSemibold,
+    fontSize: 14,
+    color: colors.gray900,
+    marginBottom: 6,
+  },
+  faqAnswer: {
+    ...typography.secondary,
+    fontSize: 13,
+    lineHeight: 19,
+    color: colors.gray600,
   },
 });

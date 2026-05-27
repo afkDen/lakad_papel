@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, SectionList, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import DocumentCard from '../src/components/DocumentCard';
 import CategoryHeader from '../src/components/CategoryHeader';
 import { REQUIREMENTS_GRAPH, DOCUMENT_CATEGORIES } from '../src/algorithms/requirementsGraph';
-import { colors } from '../src/theme';
+import { colors, spacing, radii, typography, shadows } from '../src/theme';
 
 export default function ChecklistScreen() {
   const router = useRouter();
   const { state, dispatch } = useDocumentContext();
   const [searchQuery, setSearchQuery] = useState('');
+
+  const isSimple = state.userMode === 'simple';
 
   // 1. Transform and filter sections based on search query
   const sections = Object.keys(DOCUMENT_CATEGORIES)
@@ -32,13 +35,37 @@ export default function ChecklistScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header & Search Bar */}
-      <View>
-        <Text style={styles.screenTitle}>My Documents</Text>
-        <Text style={styles.subtitle}>
-          Check off the documents you already possess to personalize your roadmaps.
-        </Text>
+      <View style={styles.headerContainer}>
+        <View style={styles.headerRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.screenTitle}>My Documents</Text>
+            <Text style={styles.subtitle}>
+              {isSimple
+                ? 'Check the documents you already have:'
+                : 'Check off the documents you already possess to personalize your roadmaps.'}
+            </Text>
+          </View>
+          
+          {/* Senior Accessibility Mode Switcher */}
+          <TouchableOpacity
+            style={[styles.modeToggleBtn, !isSimple && styles.modeToggleBtnActive]}
+            onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
+            activeOpacity={0.8}
+          >
+            <Ionicons
+              name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
+              size={12}
+              color={isSimple ? colors.teal600 : colors.white}
+              style={{ marginRight: 4 }}
+            />
+            <Text style={[styles.modeToggleText, !isSimple && styles.modeToggleTextActive]}>
+              {isSimple ? 'Simple' : 'Advanced'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, isSimple && styles.searchInputLarge]}
           placeholder="Search documents..."
           placeholderTextColor={colors.gray400}
           value={searchQuery}
@@ -50,28 +77,29 @@ export default function ChecklistScreen() {
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.id}
-        renderSectionHeader={({ section: { title } }) => (
-          <CategoryHeader title={title} />
-        )}
+        contentContainerStyle={{ paddingBottom: 110 }}
         renderItem={({ item }) => (
           <DocumentCard
             document={item}
-            isChecked={state.possessedDocuments.has(item.id)}
+            isPossessed={state.possessedDocuments.has(item.id)}
             onToggle={() => dispatch({ type: 'TOGGLE_DOCUMENT', payload: item.id })}
           />
         )}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
+        renderSectionHeader={({ section: { title } }) => (
+          <CategoryHeader title={title} />
+        )}
       />
 
-      {/* Sticky Bottom Navigation Bar */}
+      {/* Sticky Bottom Call-to-Action */}
       <View style={styles.bottomBar}>
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => router.push('/target')}
-          style={styles.ctaButton}
+          style={[styles.ctaButton, isSimple && styles.ctaButtonLarge]}
         >
-          <Text style={styles.ctaButtonText}>What do I need?</Text>
+          <Text style={styles.ctaButtonText}>
+            {isSimple ? 'Find a Document' : 'What do I need?'}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -83,36 +111,69 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
+  headerContainer: {
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 4,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+    gap: 8,
+  },
   screenTitle: {
     fontFamily: 'Inter_700Bold',
     fontSize: 22,
     lineHeight: 28,
     color: colors.gray900,
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 8,
   },
   subtitle: {
     fontFamily: 'Inter_400Regular',
-    fontSize: 12,
-    lineHeight: 16,
+    fontSize: 13,
+    lineHeight: 18,
     color: colors.gray500,
-    paddingHorizontal: 24,
-    paddingBottom: 16,
+    marginTop: 4,
+  },
+  modeToggleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#eff6ff',
+    borderWidth: 1,
+    borderColor: '#bfdbfe',
+    borderRadius: radii.full,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginTop: 2,
+  },
+  modeToggleBtnActive: {
+    backgroundColor: colors.blue600,
+    borderColor: colors.blue600,
+  },
+  modeToggleText: {
+    fontSize: 10,
+    fontFamily: 'Inter_600SemiBold',
+    color: colors.teal600,
+  },
+  modeToggleTextActive: {
+    color: colors.white,
   },
   searchInput: {
-    marginHorizontal: 24,
-    marginBottom: 16,
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: colors.gray50,
     borderWidth: 1,
     borderColor: colors.gray200,
-    borderRadius: 8,
+    borderRadius: radii.md,
     fontFamily: 'Inter_400Regular',
     fontSize: 16,
     lineHeight: 24,
     color: colors.gray900,
+  },
+  searchInputLarge: {
+    fontSize: 17,
+    paddingVertical: 14,
   },
   bottomBar: {
     position: 'absolute',
@@ -127,11 +188,15 @@ const styles = StyleSheet.create({
   },
   ctaButton: {
     backgroundColor: colors.blue600,
-    borderRadius: 8,
+    borderRadius: radii.md,
     paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 48,
+    ...shadows.sm,
+  },
+  ctaButtonLarge: {
+    paddingVertical: 18,
   },
   ctaButtonText: {
     fontFamily: 'Inter_600SemiBold',

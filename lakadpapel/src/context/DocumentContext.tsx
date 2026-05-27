@@ -25,6 +25,7 @@ const initialState: AppState = {
   targetDocument: null,
   roadmap: [],
   history: [],
+  userMode: 'simple',
 };
 
 function generateRoadmap(
@@ -62,6 +63,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'HYDRATE': {
       const possessedSet = new Set<DocumentId>(action.payload.possessedDocuments);
       const history = action.payload.history;
+      const userMode = action.payload.userMode ?? 'simple';
       // Regenerate roadmap if target is set
       const roadmap = generateRoadmap(possessedSet, state.targetDocument);
       return {
@@ -69,6 +71,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         possessedDocuments: possessedSet,
         history,
         roadmap,
+        userMode,
       };
     }
 
@@ -139,6 +142,13 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       };
     }
 
+    case 'TOGGLE_USER_MODE': {
+      return {
+        ...state,
+        userMode: state.userMode === 'simple' ? 'advanced' : 'simple',
+      };
+    }
+
     default:
       return state;
   }
@@ -161,13 +171,15 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
       try {
         const possessedJson = await AsyncStorage.getItem('@lakadpapel/possessed_documents');
         const historyJson = await AsyncStorage.getItem('@lakadpapel/history');
+        const userModeVal = await AsyncStorage.getItem('@lakadpapel/user_mode');
 
         const possessedDocuments = possessedJson ? JSON.parse(possessedJson) : [];
         const history = historyJson ? JSON.parse(historyJson) : [];
+        const userMode = (userModeVal === 'advanced') ? 'advanced' : 'simple';
 
         dispatch({
           type: 'HYDRATE',
-          payload: { possessedDocuments, history },
+          payload: { possessedDocuments, history, userMode },
         });
       } catch (err) {
         console.error('Failed to load state from AsyncStorage:', err);
@@ -188,12 +200,13 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
           JSON.stringify(Array.from(state.possessedDocuments))
         );
         await AsyncStorage.setItem('@lakadpapel/history', JSON.stringify(state.history));
+        await AsyncStorage.setItem('@lakadpapel/user_mode', state.userMode);
       } catch (err) {
         console.error('Failed to save state to AsyncStorage:', err);
       }
     }
     sync();
-  }, [state.possessedDocuments, state.history, isHydrated]);
+  }, [state.possessedDocuments, state.history, state.userMode, isHydrated]);
 
   return (
     <DocumentContext.Provider value={{ state, dispatch }}>
