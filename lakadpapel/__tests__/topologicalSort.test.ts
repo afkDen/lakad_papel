@@ -74,6 +74,48 @@ describe('Topological Sort & Prerequisite Graph Tests', () => {
       expect(nbiIndex).toBeLessThan(prcIndex);
       expect(torIndex).toBeLessThan(prcIndex);
     });
+
+    it('should order the new documents (bir_tin, philhealth_id, pagibig_loyalty, postal_id) correctly', () => {
+      const possessed = new Set<DocumentId>();
+      
+      // 1. bir_tin
+      const subgraphTin = buildSubgraph(REQUIREMENTS_GRAPH, possessed, 'bir_tin');
+      const orderTin = topologicalSort(subgraphTin);
+      expect(orderTin).toContain('psa_birth_cert');
+      expect(orderTin).toContain('barangay_cert');
+      expect(orderTin).toContain('bir_tin');
+      expect(orderTin.indexOf('psa_birth_cert')).toBeLessThan(orderTin.indexOf('bir_tin'));
+      expect(orderTin.indexOf('barangay_cert')).toBeLessThan(orderTin.indexOf('bir_tin'));
+      
+      // 2. philhealth_id
+      const subgraphPhilhealth = buildSubgraph(REQUIREMENTS_GRAPH, possessed, 'philhealth_id');
+      const orderPhilhealth = topologicalSort(subgraphPhilhealth);
+      expect(orderPhilhealth).toContain('psa_birth_cert');
+      expect(orderPhilhealth).toContain('barangay_cert');
+      expect(orderPhilhealth).toContain('philhealth_id');
+      expect(orderPhilhealth.indexOf('psa_birth_cert')).toBeLessThan(orderPhilhealth.indexOf('philhealth_id'));
+      expect(orderPhilhealth.indexOf('barangay_cert')).toBeLessThan(orderPhilhealth.indexOf('philhealth_id'));
+
+      // 3. pagibig_loyalty
+      const subgraphPagibig = buildSubgraph(REQUIREMENTS_GRAPH, possessed, 'pagibig_loyalty');
+      const orderPagibig = topologicalSort(subgraphPagibig);
+      expect(orderPagibig).toContain('psa_birth_cert');
+      expect(orderPagibig).toContain('barangay_cert');
+      expect(orderPagibig).toContain('voters_id');
+      expect(orderPagibig).toContain('pagibig_loyalty');
+      expect(orderPagibig.indexOf('psa_birth_cert')).toBeLessThan(orderPagibig.indexOf('voters_id'));
+      expect(orderPagibig.indexOf('barangay_cert')).toBeLessThan(orderPagibig.indexOf('voters_id'));
+      expect(orderPagibig.indexOf('voters_id')).toBeLessThan(orderPagibig.indexOf('pagibig_loyalty'));
+
+      // 4. postal_id
+      const subgraphPostal = buildSubgraph(REQUIREMENTS_GRAPH, possessed, 'postal_id');
+      const orderPostal = topologicalSort(subgraphPostal);
+      expect(orderPostal).toContain('psa_birth_cert');
+      expect(orderPostal).toContain('barangay_cert');
+      expect(orderPostal).toContain('postal_id');
+      expect(orderPostal.indexOf('psa_birth_cert')).toBeLessThan(orderPostal.indexOf('postal_id'));
+      expect(orderPostal.indexOf('barangay_cert')).toBeLessThan(orderPostal.indexOf('postal_id'));
+    });
   });
 
   describe('Possessed Document Exclusion Tests', () => {
