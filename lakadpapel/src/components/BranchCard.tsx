@@ -30,6 +30,16 @@ export default function BranchCard({ branch, agencyType }: BranchCardProps) {
         : "Makipag-ugnayan sa registrar ng inyong paaralan";
     }
 
+    if (agencyType === 'BARANGAY' || agencyType === 'SCHOOL') {
+      return (
+        <View style={[styles.warningCallout, isDarkMode && { backgroundColor: 'rgba(120, 53, 4, 0.3)' }]}>
+          <Text style={[styles.fallbackText, { color: isDarkMode ? '#FBBF24' : '#92400E', fontWeight: '500', fontStyle: 'normal' }]}>
+            {fallbackText}
+          </Text>
+        </View>
+      );
+    }
+
     return (
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#262626' : colors.gray50 }]}>
         <Text style={[styles.fallbackText, { color: themeColors.subText }]}>{fallbackText}</Text>
@@ -89,6 +99,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     marginTop: 12,
+  },
+  warningCallout: {
+    backgroundColor: '#FEF3C7',
+    borderLeftWidth: 4,
+    borderLeftColor: '#F59E0B',
+    padding: 12,
+    borderRadius: 4,
+    marginVertical: 8,
   },
   fallbackText: {
     fontFamily: 'Inter_400Regular',

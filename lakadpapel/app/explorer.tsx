@@ -12,6 +12,20 @@ import { DocumentId } from '../src/context/types';
 import { useTheme } from '../src/context/ThemeContext';
 import { useLanguage } from '../src/context/LanguageContext';
 
+const BulletPoint = ({ children }: { children: React.ReactNode }) => {
+  const { colors: themeColors } = useTheme();
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 6 }}>
+      <Text style={{ color: themeColors.subText, fontSize: 13, marginRight: 8 }}>•</Text>
+      <View style={{ flex: 1 }}>
+        <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 13, lineHeight: 18, color: themeColors.subText }}>
+          {children}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
 export default function ExplorerScreen() {
   const { state, dispatch } = useDocumentContext();
   const router = useRouter();
@@ -80,6 +94,11 @@ export default function ExplorerScreen() {
           <Text style={[styles.headerSubtitle, { color: themeColors.subText }]}>
             {isSimple ? t.explorerSubtitleSimple : t.explorerSubtitleAdvanced}
           </Text>
+          <View style={[styles.statBadge, isDarkMode && { backgroundColor: 'rgba(15, 118, 110, 0.2)' }]}>
+            <Text style={[styles.statBadgeText, { color: isDarkMode ? '#34D399' : '#137333' }]}>
+              {language === 'en' ? '✓ 114 verified branches nationwide' : '✓ 114 na-verify na sangay sa buong bansa'}
+            </Text>
+          </View>
         </View>
         
         {/* Simple / Advanced Mode Toggler */}
@@ -149,60 +168,78 @@ export default function ExplorerScreen() {
           <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
             {language === 'en' ? '1. What documents should I get first?' : '1. Anong mga dokumento ang dapat kong makuha muna?'}
           </Text>
-          <Text style={[styles.faqAnswer, { color: themeColors.subText }]}>
-            {language === 'en' ? (
-              <>Foundational documents like your <Text style={styles.boldText}>PSA Birth Certificate</Text> and <Text style={styles.boldText}>Barangay Cedula</Text> have no prerequisites. They are required to get almost all other primary government IDs, so we recommend acquiring them first!</>
-            ) : (
-              <>Ang mga foundational na dokumento tulad ng iyong <Text style={styles.boldText}>PSA Birth Certificate</Text> at <Text style={styles.boldText}>Barangay Cedula</Text> ay walang prerequisite. Kinakailangan ang mga ito upang makuha ang halos lahat ng iba pang pangunahing government ID, kaya inirerekomenda naming kunin muna ang mga ito!</>
-            )}
-          </Text>
+          <View style={styles.faqContainer}>
+            <Text style={[styles.faqAnswerText, { color: themeColors.subText }]}>
+              {language === 'en' ? (
+                <>Foundational documents like your <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>PSA Birth Certificate</Text> and <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Barangay Cedula</Text> have no prerequisites. They are required to get almost all other primary government IDs, so we recommend acquiring them first!</>
+              ) : (
+                <>Ang mga foundational na dokumento tulad ng iyong <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>PSA Birth Certificate</Text> at <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Barangay Cedula</Text> ay walang prerequisite. Kinakailangan ang mga ito upang makuha ang halos lahat ng iba pang pangunahing government ID, kaya inirerekomenda naming kunin muna ang mga ito!</>
+              )}
+            </Text>
+          </View>
         </View>
 
         <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
             {language === 'en' ? '2. How do I use this app?' : '2. Paano ko gagamitin ang app na ito?'}
           </Text>
-          <Text style={[styles.faqAnswer, { color: themeColors.subText }]}>
+          <View style={styles.faqContainer}>
             {language === 'en' ? (
-              <>
-                • Go to the <Text style={styles.boldText}>Documents</Text> tab first. Check the boxes for any IDs you already possess.{"\n"}
-                • Go to the <Text style={styles.boldText}>Find ID</Text> tab and choose the ID you need (e.g. Philippine Passport).{"\n"}
-                • We will generate a step-by-step roadmap showing you exactly what to do!
-              </>
+              <View style={{ gap: 4 }}>
+                <BulletPoint>
+                  Go to the <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Documents</Text> tab first. Check the boxes for any IDs you already possess.
+                </BulletPoint>
+                <BulletPoint>
+                  Go to the <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Find ID</Text> tab and choose the ID you need (e.g. Philippine Passport).
+                </BulletPoint>
+                <BulletPoint>
+                  We will generate a step-by-step roadmap showing you exactly what to do!
+                </BulletPoint>
+              </View>
             ) : (
-              <>
-                • Pumunta muna sa <Text style={styles.boldText}>Dokumento</Text> tab. Markahan ang mga ID na mayroon ka na.{"\n"}
-                • Pumunta sa <Text style={styles.boldText}>Maghanap ng ID</Text> tab at piliin ang ID na kailangan mo (hal. Philippine Passport).{"\n"}
-                • Gagawa kami ng sunod-sunod na gabay na nagpapakita kung ano mismo ang dapat mong gawin!
-              </>
+              <View style={{ gap: 4 }}>
+                <BulletPoint>
+                  Pumunta muna sa <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Dokumento</Text> tab. Markahan ang mga ID na mayroon ka na.
+                </BulletPoint>
+                <BulletPoint>
+                  Pumunta sa <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Maghanap ng ID</Text> tab at piliin ang ID na kailangan mo (hal. Philippine Passport).
+                </BulletPoint>
+                <BulletPoint>
+                  Gagawa kami ng sunod-sunod na gabay na nagpapakita kung ano mismo ang dapat mong gawin!
+                </BulletPoint>
+              </View>
             )}
-          </Text>
+          </View>
         </View>
 
         <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
             {language === 'en' ? '3. Do I need an internet connection?' : '3. Kailangan ko ba ng internet connection?'}
           </Text>
-          <Text style={[styles.faqAnswer, { color: themeColors.subText }]}>
-            {language === 'en' ? (
-              <>No! LakadPapel runs completely offline on your device, making it perfect to use in physical government waiting rooms where cellular signal is often weak.</>
-            ) : (
-              <>Hindi! Ang LakadPapel ay ganap na gumagana offline sa iyong device, kaya perpekto itong gamitin sa mga waiting room ng gobyerno kung saan madalas na mahina ang signal ng cellular.</>
-            )}
-          </Text>
+          <View style={styles.faqContainer}>
+            <Text style={[styles.faqAnswerText, { color: themeColors.subText }]}>
+              {language === 'en' ? (
+                <>No! LakadPapel runs completely offline on your device, making it perfect to use in physical government waiting rooms where cellular signal is often weak.</>
+              ) : (
+                <>Hindi! Ang LakadPapel ay ganap na gumagana offline sa iyong device, kaya perpekto itong gamitin sa mga waiting room ng gobyerno kung saan madalas na mahina ang signal ng cellular.</>
+              )}
+            </Text>
+          </View>
         </View>
 
         <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
             {language === 'en' ? '4. How is my nearest branch computed?' : '4. Paano kinakalkula ang aking pinakamalapit na sangay?'}
           </Text>
-          <Text style={[styles.faqAnswer, { color: themeColors.subText }]}>
-            {language === 'en' ? (
-              <>The app securely checks your device's GPS and looks through our preloaded list of Philippine branch coordinates to find the branch closest to you instantly.</>
-            ) : (
-              <>Ligtas na sinusuri ng app ang GPS ng iyong device at hinahanap sa aming preloaded na listahan ng mga coordinate ng sangay sa Pilipinas upang mahanap agad ang sangay na pinakamalapit sa iyo.</>
-            )}
-          </Text>
+          <View style={styles.faqContainer}>
+            <Text style={[styles.faqAnswerText, { color: themeColors.subText }]}>
+              {language === 'en' ? (
+                <>The app securely checks your device's GPS and looks through our preloaded list of Philippine branch coordinates to find the branch closest to you instantly.</>
+              ) : (
+                <>Ligtas na sinusuri ng app ang GPS ng iyong device at hinahanap sa aming preloaded na listahan ng mga coordinate ng sangay sa Pilipinas upang mahanap agad ang sangay na pinakamalapit sa iyo.</>
+              )}
+            </Text>
+          </View>
         </View>
       </ScrollView>
     );
@@ -576,9 +613,31 @@ const styles = StyleSheet.create({
     color: colors.gray500,
     textAlign: 'justify',
   },
+  faqContainer: {
+    paddingHorizontal: 20,
+    marginVertical: 10,
+  },
+  faqAnswerText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    lineHeight: 20,
+    textAlign: 'justify',
+  },
+  statBadge: {
+    backgroundColor: '#E6F4EA',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 100,
+    alignSelf: 'flex-start',
+    marginVertical: 4,
+  },
+  statBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: 'Inter_600SemiBold',
+  },
   boldText: {
     fontFamily: 'Inter_700Bold',
-    fontWeight: 'bold',
-    color: colors.gray900,
+    fontWeight: '700',
   },
 });

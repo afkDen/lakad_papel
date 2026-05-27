@@ -77,6 +77,7 @@ export default function TargetScreen() {
             document={item}
             isChecked={false}
             isDisabled={state.possessedDocuments.has(item.id)}
+            possessed={state.possessedDocuments.has(item.id)}
             onToggle={() => handleSelectTarget(item.id)}
           />
         )}

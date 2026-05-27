@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useRouter } from 'expo-router';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import { useLocation } from '../src/hooks/useLocation';
 import { useTheme } from '../src/context/ThemeContext';
@@ -19,6 +20,7 @@ import { colors, spacing, radii, typography, shadows } from '../src/theme';
 const locationGraph = buildLocationGraph(AGENCY_BRANCHES, 5);
 
 export default function RoadmapScreen() {
+  const router = useRouter();
   const { state, dispatch } = useDocumentContext();
   const { latitude, longitude } = useLocation();
   const [showGraph, setShowGraph] = useState(false);
@@ -279,6 +281,21 @@ export default function RoadmapScreen() {
               ? t.noActiveJourney
               : t.emptyRoadmap}
           </Text>
+          <TouchableOpacity
+            style={[
+              styles.emptyCtaButton,
+              { 
+                borderColor: themeColors.primary,
+                backgroundColor: isDarkMode ? '#1E1E1E' : '#eff6ff',
+              }
+            ]}
+            onPress={() => router.push('/explorer')}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.emptyCtaText, { color: themeColors.primary }]}>
+              {language === 'en' ? '[ Find ID ]' : '[ Maghanap ng ID ]'}
+            </Text>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -533,6 +550,20 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: colors.gray500,
     textAlign: 'center',
+  },
+  emptyCtaButton: {
+    marginTop: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyCtaText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 14,
+    lineHeight: 20,
   },
   stepsContainer: {
     paddingTop: 8,

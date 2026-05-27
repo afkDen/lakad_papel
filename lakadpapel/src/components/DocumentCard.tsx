@@ -3,6 +3,7 @@ import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { DocumentNode } from '../context/types';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { colors } from '../theme';
 
 interface DocumentCardProps {
@@ -10,6 +11,7 @@ interface DocumentCardProps {
   isChecked: boolean;
   onToggle: () => void;
   isDisabled?: boolean;
+  possessed?: boolean;
 }
 
 const DocumentCard = React.memo(function DocumentCard({
@@ -17,8 +19,10 @@ const DocumentCard = React.memo(function DocumentCard({
   isChecked,
   onToggle,
   isDisabled = false,
+  possessed = false,
 }: DocumentCardProps) {
-  const { colors: themeColors } = useTheme();
+  const { colors: themeColors, isDarkMode } = useTheme();
+  const { language } = useLanguage();
 
   const getIconColor = () => {
     if (isChecked) return colors.green600;
@@ -40,7 +44,16 @@ const DocumentCard = React.memo(function DocumentCard({
           color={getIconColor()}
         />
         <View style={styles.textContainer}>
-          <Text style={[styles.label, { color: themeColors.text }]}>{document.label}</Text>
+          <View style={styles.labelRow}>
+            <Text style={[styles.label, { color: themeColors.text }]}>{document.label}</Text>
+            {possessed && (
+              <View style={[styles.statusBadge, isDarkMode && { backgroundColor: '#27272A' }]}>
+                <Text style={[styles.statusBadgeText, isDarkMode && { color: '#A1A1AA' }]}>
+                  {language === 'en' ? '✓ Already Have This' : '✓ Taglay Na'}
+                </Text>
+              </View>
+            )}
+          </View>
           <Text style={[styles.agency, { color: themeColors.subText }]}>{document.agency}</Text>
         </View>
       </View>
@@ -69,6 +82,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 12,
   },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
   label: {
     fontFamily: 'Inter_400Regular',
     fontSize: 16,
@@ -79,5 +97,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     marginTop: 2,
+  },
+  statusBadge: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginLeft: 8,
+  },
+  statusBadgeText: {
+    color: '#6B7280',
+    fontSize: 12,
   },
 });
