@@ -10,7 +10,7 @@ import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
 import { buildSubgraph, topologicalSort, topologicalSortWithTrace, TraceStep } from '../src/algorithms/topologicalSort';
 import { buildLocationGraph, bfsNearestBranch } from '../src/algorithms/bfsLocator';
 import { AGENCY_BRANCHES } from '../src/data/agencyLocations';
-import { colors, spacing, radii, typography, shadows } from '../theme';
+import { colors, spacing, radii, typography, shadows } from '../src/theme';
 
 // Module level cached branch location graph
 const locationGraph = buildLocationGraph(AGENCY_BRANCHES, 5);

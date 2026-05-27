@@ -6,7 +6,7 @@ import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import DAGExplorer from '../src/components/DAGExplorer';
 import NodeDetailSheet from '../src/components/NodeDetailSheet';
 import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
-import { colors, spacing, radii, typography, shadows } from '../theme';
+import { colors, spacing, radii, typography, shadows } from '../src/theme';
 import { DocumentId } from '../src/context/types';
 
 export default function ExplorerScreen() {
