@@ -78,19 +78,19 @@
 
 | Task | Status | Completed | Notes |
 |---|---|---|---|
-| `src/context/DocumentContext.tsx` — Context and Provider created | [ ] | | |
-| `useReducer` set up with all action types defined | [ ] | | |
-| `TOGGLE_DOCUMENT` action implemented | [ ] | | |
-| `SET_TARGET` action implemented — triggers Topological Sort pipeline | [ ] | | |
-| `MARK_DONE` action implemented — updates possessedDocuments + re-runs pipeline | [ ] | | |
-| `ADD_TO_HISTORY` action implemented | [ ] | | |
-| AsyncStorage read on mount (possessed-document set hydration) implemented | [ ] | | |
-| AsyncStorage write on every `TOGGLE_DOCUMENT` and `MARK_DONE` implemented | [ ] | | |
-| `src/hooks/useDocumentContext.ts` — typed hook implemented | [ ] | | |
-| `src/hooks/useLocation.ts` — expo-location wrapper with permission flow implemented | [ ] | | |
-| Offline persistence test: checklist survives app restart | [ ] | | |
+| `src/context/DocumentContext.tsx` — Context and Provider created | [x] | 2026-05-27 | |
+| `useReducer` set up with all action types defined | [x] | 2026-05-27 | |
+| `TOGGLE_DOCUMENT` action implemented | [x] | 2026-05-27 | |
+| `SET_TARGET` action implemented — triggers Topological Sort pipeline | [x] | 2026-05-27 | |
+| `MARK_DONE` action implemented — updates possessedDocuments + re-runs pipeline | [x] | 2026-05-27 | |
+| `ADD_TO_HISTORY` action implemented | [x] | 2026-05-27 | |
+| AsyncStorage read on mount (possessed-document set hydration) implemented | [x] | 2026-05-27 | |
+| AsyncStorage write on every `TOGGLE_DOCUMENT` and `MARK_DONE` implemented | [x] | 2026-05-27 | Syncs in react hooks |
+| `src/hooks/useDocumentContext.ts` — typed hook implemented | [x] | 2026-05-27 | |
+| `src/hooks/useLocation.ts` — expo-location wrapper with permission flow implemented | [x] | 2026-05-27 | |
+| Offline persistence test: checklist survives app restart | [x] | 2026-05-27 | Persists to local storage |
 
-**Part 3 Complete:** [ ] — Date: ___________
+**Part 3 Complete:** [x] — Date: 2026-05-27
 
 ---
 
