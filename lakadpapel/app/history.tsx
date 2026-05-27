@@ -1,5 +1,6 @@
 import React from 'react';
-import { SafeAreaView, View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
 import { colors } from '../src/theme';

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TextInput, SectionList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, SectionList, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import DocumentCard from '../src/components/DocumentCard';

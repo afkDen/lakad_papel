@@ -89,33 +89,6 @@ export default function DAGExplorer({
   return (
     <View style={[styles.canvasWrapper, { width: canvasWidth, height: canvasHeight }]}>
       <Svg width={canvasWidth} height={canvasHeight}>
-        <Defs>
-          {/* Edge Marker Head */}
-          <Marker
-            id="arrow"
-            viewBox="0 0 10 10"
-            refX="22" // offset to stop at circle boundary
-            refY="5"
-            markerWidth="5"
-            markerHeight="5"
-            orient="auto-start-reverse"
-          >
-            <Polygon points="0,0 10,5 0,10" fill={colors.gray300} />
-          </Marker>
-          {/* Highlighted target edge arrow */}
-          <Marker
-            id="arrow-blue"
-            viewBox="0 0 10 10"
-            refX="22"
-            refY="5"
-            markerWidth="6"
-            markerHeight="6"
-            orient="auto-start-reverse"
-          >
-            <Polygon points="0,0 10,5 0,10" fill={colors.blue600} />
-          </Marker>
-        </Defs>
-
         {/* 1. RENDER EDGES FIRST (Behind circles) */}
         {Object.entries(REQUIREMENTS_GRAPH).map(([id, node]) => {
           const endPoint = layout[id];
@@ -146,7 +119,6 @@ export default function DAGExplorer({
                 y2={endPoint.y}
                 stroke={isHighlightedEdge ? colors.blue600 : colors.gray200}
                 strokeWidth={isHighlightedEdge ? 2.5 : 1.5}
-                markerEnd={isHighlightedEdge ? "url(#arrow-blue)" : "url(#arrow)"}
                 opacity={shouldDimEdge ? 0.2 : 1}
               />
             );
