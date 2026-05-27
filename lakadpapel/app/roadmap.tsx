@@ -289,7 +289,7 @@ export default function RoadmapScreen() {
                 backgroundColor: isDarkMode ? '#1E1E1E' : '#eff6ff',
               }
             ]}
-            onPress={() => router.push('/explorer')}
+            onPress={() => router.push('/target')}
             activeOpacity={0.7}
           >
             <Text style={[styles.emptyCtaText, { color: themeColors.primary }]}>
