@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, SectionList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -13,17 +13,19 @@ export default function TargetScreen() {
   const router = useRouter();
   const { state, dispatch } = useDocumentContext();
 
-  const sections = Object.keys(DOCUMENT_CATEGORIES).map((categoryName) => {
-    const docIds = DOCUMENT_CATEGORIES[categoryName];
-    const categoryDocs = docIds
-      .map((id) => REQUIREMENTS_GRAPH[id])
-      .filter((doc) => doc !== undefined);
+  const sections = useMemo(() => {
+    return Object.keys(DOCUMENT_CATEGORIES).map((categoryName) => {
+      const docIds = DOCUMENT_CATEGORIES[categoryName];
+      const categoryDocs = docIds
+        .map((id) => REQUIREMENTS_GRAPH[id])
+        .filter((doc) => doc !== undefined);
 
-    return {
-      title: categoryName,
-      data: categoryDocs,
-    };
-  });
+      return {
+        title: categoryName,
+        data: categoryDocs,
+      };
+    });
+  }, []);
 
   const handleSelectTarget = (documentId: DocumentId) => {
     if (state.possessedDocuments.has(documentId)) {
@@ -54,6 +56,15 @@ export default function TargetScreen() {
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.id}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        initialNumToRender={12}
+        getItemLayout={(_, index) => ({
+          length: 64,
+          offset: 64 * index,
+          index
+        })}
         renderSectionHeader={({ section: { title } }) => (
           <CategoryHeader title={title} />
         )}

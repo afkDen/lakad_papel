@@ -11,7 +11,7 @@ interface DocumentCardProps {
   isDisabled?: boolean;
 }
 
-export default function DocumentCard({
+const DocumentCard = React.memo(function DocumentCard({
   document,
   isChecked,
   onToggle,
@@ -43,7 +43,9 @@ export default function DocumentCard({
       </View>
     </TouchableOpacity>
   );
-}
+});
+
+export default DocumentCard;
 
 const styles = StyleSheet.create({
   touchable: {

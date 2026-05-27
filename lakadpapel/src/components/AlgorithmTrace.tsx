@@ -13,7 +13,7 @@ interface AlgorithmTraceProps {
 export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const playTimer = useRef<NodeJS.Timeout | null>(null);
+  const playTimer = useRef<any>(null);
 
   // Reset indices when trace changes (e.g. target document changes)
   useEffect(() => {
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     padding: spacing.md,
     marginHorizontal: spacing.xl,
-    marginBottom: spacing.base,
+    marginBottom: spacing.lg,
     ...shadows.sm,
   },
   emptyContainer: {
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     padding: spacing.xl,
     marginHorizontal: spacing.xl,
-    marginBottom: spacing.base,
+    marginBottom: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -314,10 +314,10 @@ const styles = StyleSheet.create({
   dequeuedBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.blueLight,
+    backgroundColor: '#eff6ff',
     padding: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.blueBorder,
+    borderBottomColor: '#bfdbfe',
   },
   circleNumber: {
     width: 28,
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   bannerLabel: {
     fontSize: 9,
     fontFamily: 'Inter_700Bold',
-    color: colors.blueText,
+    color: '#1e40af',
     letterSpacing: 0.5,
     marginBottom: 2,
   },

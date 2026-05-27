@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.md,
-    paddingBottom: spacing.xxl,
+    paddingBottom: spacing['2xl'],
   },
   title: {
     ...typography.screenTitle,
@@ -358,9 +358,9 @@ const styles = StyleSheet.create({
   notesContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: colors.blueLight,
+    backgroundColor: '#eff6ff',
     borderWidth: 1,
-    borderColor: colors.blueBorder,
+    borderColor: '#bfdbfe',
     borderRadius: radii.md,
     padding: spacing.md,
     marginBottom: spacing.lg,
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   },
   notesText: {
     ...typography.secondary,
-    color: colors.blueText,
+    color: '#1e40af',
     flex: 1,
     lineHeight: 18,
   },

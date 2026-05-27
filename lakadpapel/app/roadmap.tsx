@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { SafeAreaView, View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import { useLocation } from '../src/hooks/useLocation';
@@ -33,30 +33,33 @@ export default function RoadmapScreen() {
   }, [latitude, longitude]);
 
   // Compute values for DependencyGraph and trace
-  let subgraph = {};
-  const nextAttainable = new Set<string>();
-  let trace: TraceStep[] = [];
+  const { subgraph, nextAttainable, trace } = useMemo(() => {
+    let subgraph = {};
+    const nextAttainable = new Set<string>();
+    let trace: TraceStep[] = [];
 
-  if (state.targetDocument) {
-    try {
-      const activeSubgraph = buildSubgraph(REQUIREMENTS_GRAPH, state.possessedDocuments, state.targetDocument);
-      subgraph = activeSubgraph;
+    if (state.targetDocument) {
+      try {
+        const activeSubgraph = buildSubgraph(REQUIREMENTS_GRAPH, state.possessedDocuments, state.targetDocument);
+        subgraph = activeSubgraph;
 
-      // Identify available (in-degree 0 in active subgraph)
-      for (const [id, node] of Object.entries(activeSubgraph)) {
-        const prereqList = node.prerequisites.filter((pId) => activeSubgraph[pId] !== undefined);
-        if (prereqList.length === 0) {
-          nextAttainable.add(id);
+        // Identify available (in-degree 0 in active subgraph)
+        for (const [id, node] of Object.entries(activeSubgraph)) {
+          const prereqList = node.prerequisites.filter((pId) => activeSubgraph[pId] !== undefined);
+          if (prereqList.length === 0) {
+            nextAttainable.add(id);
+          }
         }
-      }
 
-      // Generate Kahn's algorithm trace steps
-      const traceResult = topologicalSortWithTrace(activeSubgraph);
-      trace = traceResult.trace;
-    } catch (err) {
-      console.error('Error tracing algorithm:', err);
+        // Generate Kahn's algorithm trace steps
+        const traceResult = topologicalSortWithTrace(activeSubgraph);
+        trace = traceResult.trace;
+      } catch (err) {
+        console.error('Error tracing algorithm:', err);
+      }
     }
-  }
+    return { subgraph, nextAttainable, trace };
+  }, [state.targetDocument, state.possessedDocuments]);
 
   // Generate steps list based on current viewMode
   const getRoadmapSteps = () => {
@@ -258,82 +261,86 @@ export default function RoadmapScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
-        {renderHeader()}
-        {renderStatsBar()}
-        {renderEmptyState()}
-
-        {/* 1. RENDER LINEAR TIMELINE (Simple Mode Only) */}
-        {isSimple && state.targetDocument && stepsToRender.length > 0 && (
-          <LinearTimeline roadmap={stepsToRender} />
+      <FlatList
+        data={stepsToRender}
+        keyExtractor={(item) => item.document.id}
+        renderItem={({ item, index }) => (
+          <StepCard
+            step={item}
+            stepNumber={index + 1}
+            onMarkDone={() =>
+              dispatch({ type: 'MARK_DONE', payload: item.document.id })
+            }
+          />
         )}
-
-        {/* Roadmap Steps */}
-        {stepsToRender.length > 0 && (
-          <View style={styles.stepsContainer}>
-            {stepsToRender.map((step, idx) => (
-              <StepCard
-                key={step.document.id}
-                step={step}
-                stepNumber={idx + 1}
-                onMarkDone={() =>
-                  dispatch({ type: 'MARK_DONE', payload: step.document.id })
-                }
-              />
-            ))}
-          </View>
-        )}
-
-        {/* Dependency Map Section (Advanced Mode Only) */}
-        {!isSimple && state.targetDocument && (
-          <View>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => setShowGraph(!showGraph)}
-              style={styles.toggleButton}
-            >
-              <Ionicons
-                name={showGraph ? "chevron-up-outline" : "chevron-down-outline"}
-                size={16}
-                color={colors.blue600}
-                style={styles.toggleIcon}
-              />
-              <Text style={styles.toggleButtonText}>
-                {showGraph ? 'Hide Dependency Map' : 'View Dependency Map'}
-              </Text>
-            </TouchableOpacity>
-
-            {showGraph && (
-              <DependencyGraph
-                subgraph={subgraph}
-                possessed={state.possessedDocuments}
-                nextAttainable={nextAttainable}
-              />
+        ListHeaderComponent={
+          <>
+            {renderHeader()}
+            {renderStatsBar()}
+            {renderEmptyState()}
+            {isSimple && state.targetDocument && stepsToRender.length > 0 && (
+              <LinearTimeline roadmap={stepsToRender} />
             )}
+            {stepsToRender.length > 0 && <View style={{ height: 8 }} />}
+          </>
+        }
+        ListFooterComponent={
+          !isSimple && state.targetDocument ? (
+            <View>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => setShowGraph(!showGraph)}
+                style={styles.toggleButton}
+              >
+                <Ionicons
+                  name={showGraph ? "chevron-up-outline" : "chevron-down-outline"}
+                  size={16}
+                  color={colors.blue600}
+                  style={styles.toggleIcon}
+                />
+                <Text style={styles.toggleButtonText}>
+                  {showGraph ? 'Hide Dependency Map' : 'View Dependency Map'}
+                </Text>
+              </TouchableOpacity>
 
-            {/* Kahn's Algorithm Trace panel */}
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => setShowTrace(!showTrace)}
-              style={[styles.toggleButton, { marginTop: 0 }]}
-            >
-              <Ionicons
-                name={showTrace ? "chevron-up-outline" : "chevron-down-outline"}
-                size={16}
-                color={colors.blue600}
-                style={styles.toggleIcon}
-              />
-              <Text style={styles.toggleButtonText}>
-                {showTrace ? "Hide Algorithm Trace" : "View Algorithm Trace"}
-              </Text>
-            </TouchableOpacity>
+              {showGraph && (
+                <DependencyGraph
+                  subgraph={subgraph}
+                  possessed={state.possessedDocuments}
+                  nextAttainable={nextAttainable}
+                />
+              )}
 
-            {showTrace && (
-              <AlgorithmTrace trace={trace} subgraphEmpty={!state.targetDocument} />
-            )}
-          </View>
-        )}
-      </ScrollView>
+              {/* Kahn's Algorithm Trace panel */}
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => setShowTrace(!showTrace)}
+                style={[styles.toggleButton, { marginTop: 0 }]}
+              >
+                <Ionicons
+                  name={showTrace ? "chevron-up-outline" : "chevron-down-outline"}
+                  size={16}
+                  color={colors.blue600}
+                  style={styles.toggleIcon}
+                />
+                <Text style={styles.toggleButtonText}>
+                  {showTrace ? "Hide Algorithm Trace" : "View Algorithm Trace"}
+                </Text>
+              </TouchableOpacity>
+
+              {showTrace && (
+                <AlgorithmTrace trace={trace} subgraphEmpty={!state.targetDocument} />
+              )}
+            </View>
+          ) : null
+        }
+        contentContainerStyle={{ paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        initialNumToRender={12}
+      />
     </SafeAreaView>
   );
 }
@@ -392,7 +399,7 @@ const styles = StyleSheet.create({
   },
   segmentedControl: {
     flexDirection: 'row',
-    backgroundColor: colors.gray100,
+    backgroundColor: colors.gray200,
     borderRadius: radii.md,
     padding: 3,
     marginTop: 16,
@@ -419,8 +426,8 @@ const styles = StyleSheet.create({
   simpleStatsCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.blueLight,
-    borderColor: colors.blueBorder,
+    backgroundColor: '#eff6ff',
+    borderColor: '#bfdbfe',
     borderWidth: 1,
     borderRadius: radii.md,
     padding: 12,
@@ -432,7 +439,7 @@ const styles = StyleSheet.create({
     ...typography.body,
     fontSize: 13,
     lineHeight: 18,
-    color: colors.blueText,
+    color: '#1e40af',
     flex: 1,
   },
   statsBarContainer: {

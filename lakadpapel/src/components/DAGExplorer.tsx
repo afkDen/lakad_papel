@@ -150,7 +150,7 @@ export default function DAGExplorer({
           const attainable = isNodeAttainable(id, node);
 
           // Node Color Mapping
-          let nodeColor = colors.gray300;
+          let nodeColor: string = colors.gray300;
           if (isPossessed) nodeColor = colors.green600;
           else if (isTarget) nodeColor = colors.blue600;
           else if (attainable) nodeColor = colors.teal600;
@@ -203,7 +203,7 @@ export default function DAGExplorer({
                 x={pt.x}
                 y={pt.y + 4}
                 textAnchor="middle"
-                fill={isPath && !isTarget && !isPossessed ? colors.blueText : colors.white}
+                fill={isPath && !isTarget && !isPossessed ? '#1e40af' : colors.white}
                 fontSize={9}
                 fontWeight="bold"
                 onPress={() => onNodeSelect(id)}

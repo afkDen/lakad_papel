@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, SectionList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { View, Text, TextInput, SectionList, TouchableOpacity, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -17,91 +17,107 @@ export default function ChecklistScreen() {
   const isSimple = state.userMode === 'simple';
 
   // 1. Transform and filter sections based on search query
-  const sections = Object.keys(DOCUMENT_CATEGORIES)
-    .map((categoryName) => {
-      const docIds = DOCUMENT_CATEGORIES[categoryName];
-      const categoryDocs = docIds
-        .map((id) => REQUIREMENTS_GRAPH[id])
-        .filter((doc) => doc !== undefined)
-        .filter((doc) => doc.label.toLowerCase().includes(searchQuery.toLowerCase()));
+  const sections = useMemo(() => {
+    return Object.keys(DOCUMENT_CATEGORIES)
+      .map((categoryName) => {
+        const docIds = DOCUMENT_CATEGORIES[categoryName];
+        const categoryDocs = docIds
+          .map((id) => REQUIREMENTS_GRAPH[id])
+          .filter((doc) => doc !== undefined)
+          .filter((doc) => doc.label.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      return {
-        title: categoryName,
-        data: categoryDocs,
-      };
-    })
-    .filter((section) => section.data.length > 0);
+        return {
+          title: categoryName,
+          data: categoryDocs,
+        };
+      })
+      .filter((section) => section.data.length > 0);
+  }, [searchQuery]);
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header & Search Bar */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerRow}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.screenTitle}>My Documents</Text>
-            <Text style={styles.subtitle}>
-              {isSimple
-                ? 'Check the documents you already have:'
-                : 'Check off the documents you already possess to personalize your roadmaps.'}
-            </Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        {/* Header & Search Bar */}
+        <View style={styles.headerContainer}>
+          <View style={styles.headerRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.screenTitle}>My Documents</Text>
+              <Text style={styles.subtitle}>
+                {isSimple
+                  ? 'Check the documents you already have:'
+                  : 'Check off the documents you already possess to personalize your roadmaps.'}
+              </Text>
+            </View>
+            
+            {/* Senior Accessibility Mode Switcher */}
+            <TouchableOpacity
+              style={[styles.modeToggleBtn, !isSimple && styles.modeToggleBtnActive]}
+              onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
+                size={12}
+                color={isSimple ? colors.teal600 : colors.white}
+                style={{ marginRight: 4 }}
+              />
+              <Text style={[styles.modeToggleText, !isSimple && styles.modeToggleTextActive]}>
+                {isSimple ? 'Simple' : 'Advanced'}
+              </Text>
+            </TouchableOpacity>
           </View>
-          
-          {/* Senior Accessibility Mode Switcher */}
-          <TouchableOpacity
-            style={[styles.modeToggleBtn, !isSimple && styles.modeToggleBtnActive]}
-            onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
-            activeOpacity={0.8}
-          >
-            <Ionicons
-              name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
-              size={12}
-              color={isSimple ? colors.teal600 : colors.white}
-              style={{ marginRight: 4 }}
+
+          <TextInput
+            style={[styles.searchInput, isSimple && styles.searchInputLarge]}
+            placeholder="Search documents..."
+            placeholderTextColor={colors.gray400}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+
+        {/* Grouped Checklist */}
+        <SectionList
+          sections={sections}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingBottom: 110 }}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          initialNumToRender={12}
+          getItemLayout={(_, index) => ({
+            length: 64,
+            offset: 64 * index,
+            index
+          })}
+          renderItem={({ item }) => (
+            <DocumentCard
+              document={item}
+              isChecked={state.possessedDocuments.has(item.id)}
+              onToggle={() => dispatch({ type: 'TOGGLE_DOCUMENT', payload: item.id })}
             />
-            <Text style={[styles.modeToggleText, !isSimple && styles.modeToggleTextActive]}>
-              {isSimple ? 'Simple' : 'Advanced'}
+          )}
+          renderSectionHeader={({ section: { title } }) => (
+            <CategoryHeader title={title} />
+          )}
+        />
+
+        {/* Sticky Bottom Call-to-Action */}
+        <View style={styles.bottomBar}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => router.push('/target')}
+            style={[styles.ctaButton, isSimple && styles.ctaButtonLarge]}
+          >
+            <Text style={styles.ctaButtonText}>
+              {isSimple ? 'Find a Document' : 'What do I need?'}
             </Text>
           </TouchableOpacity>
         </View>
-
-        <TextInput
-          style={[styles.searchInput, isSimple && styles.searchInputLarge]}
-          placeholder="Search documents..."
-          placeholderTextColor={colors.gray400}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
-
-      {/* Grouped Checklist */}
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 110 }}
-        renderItem={({ item }) => (
-          <DocumentCard
-            document={item}
-            isPossessed={state.possessedDocuments.has(item.id)}
-            onToggle={() => dispatch({ type: 'TOGGLE_DOCUMENT', payload: item.id })}
-          />
-        )}
-        renderSectionHeader={({ section: { title } }) => (
-          <CategoryHeader title={title} />
-        )}
-      />
-
-      {/* Sticky Bottom Call-to-Action */}
-      <View style={styles.bottomBar}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => router.push('/target')}
-          style={[styles.ctaButton, isSimple && styles.ctaButtonLarge]}
-        >
-          <Text style={styles.ctaButtonText}>
-            {isSimple ? 'Find a Document' : 'What do I need?'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

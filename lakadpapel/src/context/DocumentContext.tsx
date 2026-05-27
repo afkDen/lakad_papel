@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useEffect, useState } from 'react';
+import React, { createContext, useReducer, useEffect, useState, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState, AppAction, CompletedFlow, DocumentId, RoadmapStep } from './types';
 import { REQUIREMENTS_GRAPH } from '../algorithms/requirementsGraph';
@@ -150,6 +150,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     }
 
     default:
+      if (__DEV__) throw new Error(
+        `Unhandled action: ${(action as any).type}`
+      );
       return state;
   }
 }
@@ -167,27 +170,51 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
 
   // AsyncStorage Hydration
   useEffect(() => {
+    let isMounted = true;
     async function hydrate() {
       try {
-        const possessedJson = await AsyncStorage.getItem('@lakadpapel/possessed_documents');
-        const historyJson = await AsyncStorage.getItem('@lakadpapel/history');
-        const userModeVal = await AsyncStorage.getItem('@lakadpapel/user_mode');
+        let possessedDocuments: DocumentId[] = [];
+        try {
+          const possessedJson = await AsyncStorage.getItem('@lakadpapel/possessed_documents');
+          possessedDocuments = possessedJson ? JSON.parse(possessedJson) : [];
+        } catch {
+          possessedDocuments = [];
+        }
 
-        const possessedDocuments = possessedJson ? JSON.parse(possessedJson) : [];
-        const history = historyJson ? JSON.parse(historyJson) : [];
-        const userMode = (userModeVal === 'advanced') ? 'advanced' : 'simple';
+        let history: CompletedFlow[] = [];
+        try {
+          const historyJson = await AsyncStorage.getItem('@lakadpapel/history');
+          history = historyJson ? JSON.parse(historyJson) : [];
+        } catch {
+          history = [];
+        }
 
-        dispatch({
-          type: 'HYDRATE',
-          payload: { possessedDocuments, history, userMode },
-        });
+        let userMode: 'simple' | 'advanced' = 'simple';
+        try {
+          const userModeVal = await AsyncStorage.getItem('@lakadpapel/user_mode');
+          userMode = (userModeVal === 'advanced') ? 'advanced' : 'simple';
+        } catch {
+          userMode = 'simple';
+        }
+
+        if (isMounted) {
+          dispatch({
+            type: 'HYDRATE',
+            payload: { possessedDocuments, history, userMode },
+          });
+        }
       } catch (err) {
         console.error('Failed to load state from AsyncStorage:', err);
       } finally {
-        setIsHydrated(true);
+        if (isMounted) {
+          setIsHydrated(true);
+        }
       }
     }
     hydrate();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // AsyncStorage Syncing
@@ -199,17 +226,29 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
           '@lakadpapel/possessed_documents',
           JSON.stringify(Array.from(state.possessedDocuments))
         );
+      } catch (err) {
+        console.warn('Failed to save possessed_documents to AsyncStorage:', err);
+      }
+
+      try {
         await AsyncStorage.setItem('@lakadpapel/history', JSON.stringify(state.history));
+      } catch (err) {
+        console.warn('Failed to save history to AsyncStorage:', err);
+      }
+
+      try {
         await AsyncStorage.setItem('@lakadpapel/user_mode', state.userMode);
       } catch (err) {
-        console.error('Failed to save state to AsyncStorage:', err);
+        console.warn('Failed to save user_mode to AsyncStorage:', err);
       }
     }
     sync();
   }, [state.possessedDocuments, state.history, state.userMode, isHydrated]);
 
+  const value = useMemo(() => ({ state, dispatch }), [state, dispatch]);
+
   return (
-    <DocumentContext.Provider value={{ state, dispatch }}>
+    <DocumentContext.Provider value={value}>
       {children}
     </DocumentContext.Provider>
   );

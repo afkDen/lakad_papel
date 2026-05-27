@@ -10,7 +10,7 @@ interface StepCardProps {
   onMarkDone: () => void;
 }
 
-export default function StepCard({ step, stepNumber, onMarkDone }: StepCardProps) {
+const StepCard = React.memo(function StepCard({ step, stepNumber, onMarkDone }: StepCardProps) {
   return (
     <View style={styles.card}>
       {/* Top Row */}
@@ -47,7 +47,9 @@ export default function StepCard({ step, stepNumber, onMarkDone }: StepCardProps
       </TouchableOpacity>
     </View>
   );
-}
+});
+
+export default StepCard;
 
 const styles = StyleSheet.create({
   card: {

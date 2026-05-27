@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.md,
     gap: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray100,
+    borderBottomColor: colors.gray200,
   },
   legendItem: {
     flexDirection: 'row',
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray100,
+    borderBottomColor: colors.gray200,
     backgroundColor: colors.white,
   },
   highlightBtn: {
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
   },
   simpleScrollContent: {
     padding: spacing.xl,
-    paddingBottom: spacing.xxl,
+    paddingBottom: spacing['2xl'],
   },
   helpBanner: {
     backgroundColor: colors.white,
@@ -517,6 +517,6 @@ const styles = StyleSheet.create({
     ...typography.secondary,
     fontSize: 13,
     lineHeight: 19,
-    color: colors.gray600,
+    color: colors.gray500,
   },
 });

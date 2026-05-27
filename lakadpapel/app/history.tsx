@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
+import { CompletedFlow } from '../src/context/types';
 import { colors } from '../src/theme';
 
 export default function HistoryScreen() {
   const { state } = useDocumentContext();
 
-  const reversedHistory = [...state.history].reverse();
+  const reversedHistory = useMemo(() => [...state.history].reverse(), [state.history]);
 
   const formatDate = (isoString: string) => {
     try {
@@ -23,7 +24,7 @@ export default function HistoryScreen() {
     }
   };
 
-  const renderItem = ({ item }: { item: any }) => {
+  const renderItem = ({ item }: { item: CompletedFlow }) => {
     const docLabel = REQUIREMENTS_GRAPH[item.targetDocumentId]?.label ?? item.targetDocumentId;
     return (
       <View style={styles.historyCard}>
@@ -65,6 +66,10 @@ export default function HistoryScreen() {
         ListEmptyComponent={renderEmptyState}
         contentContainerStyle={{ paddingBottom: 40, paddingTop: 16 }}
         showsVerticalScrollIndicator={false}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        initialNumToRender={12}
       />
     </SafeAreaView>
   );

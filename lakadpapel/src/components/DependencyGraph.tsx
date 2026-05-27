@@ -10,7 +10,7 @@ interface DependencyGraphProps {
   nextAttainable: Set<DocumentId>;
 }
 
-export default function DependencyGraph({
+const DependencyGraph = React.memo(function DependencyGraph({
   subgraph,
   possessed,
   nextAttainable,
@@ -72,7 +72,14 @@ export default function DependencyGraph({
 
   // 3. Compute coordinates for each node
   const screenWidth = Dimensions.get('window').width;
-  const graphHeight = 200;
+  
+  // Dynamically calculate graph height based on maximum nodes in a level to prevent overlap
+  let maxNodesInLevel = 1;
+  levelKeys.forEach((lvl) => {
+    maxNodesInLevel = Math.max(maxNodesInLevel, nodesByLevel[lvl].length);
+  });
+  const graphHeight = Math.max(200, maxNodesInLevel * 80);
+
   const levelWidth = 110;
   const paddingX = 40;
   const svgWidth = Math.max(screenWidth - 12, levelCount * levelWidth + paddingX * 2);
@@ -162,7 +169,11 @@ export default function DependencyGraph({
       <Text style={styles.title}>Prerequisite Dependency Map</Text>
 
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        <Svg width={svgWidth} height={graphHeight}>
+        <Svg
+          width={svgWidth}
+          height={graphHeight}
+          viewBox={`0 0 ${svgWidth} ${graphHeight}`}
+        >
           {lines}
           {circles}
         </Svg>
@@ -173,7 +184,9 @@ export default function DependencyGraph({
       </Text>
     </View>
   );
-}
+});
+
+export default DependencyGraph;
 
 const styles = StyleSheet.create({
   emptyContainer: {

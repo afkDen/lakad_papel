@@ -67,8 +67,8 @@ export default function LinearTimeline({ roadmap, onMilestonePress }: LinearTime
           const isActive = index === activeIndex;
           const isFuture = index > activeIndex;
 
-          let badgeColor = colors.gray300;
-          let labelColor = colors.gray500;
+          let badgeColor: string = colors.gray300;
+          let labelColor: string = colors.gray500;
           let borderStyle: 'solid' | 'dashed' = 'dashed';
 
           if (isDone) {
