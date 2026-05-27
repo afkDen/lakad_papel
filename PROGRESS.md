@@ -134,18 +134,18 @@
 
 | Task | Status | Completed | Notes |
 |---|---|---|---|
-| `app/roadmap.tsx` — step list renders topologically sorted steps | [ ] | | |
-| `app/roadmap.tsx` — step count header renders correctly | [ ] | | |
-| `app/roadmap.tsx` — BranchCard renders with nearest branch data per step | [ ] | | |
-| `app/roadmap.tsx` — "Get Directions" button opens native maps deep-link | [ ] | | |
-| `app/roadmap.tsx` — "Mark as Done" dispatches `MARK_DONE` and updates list | [ ] | | |
-| `app/roadmap.tsx` — DependencyGraph toggle expands/collapses correctly | [ ] | | |
-| `app/roadmap.tsx` — empty state when no steps remain (all possessed) | [ ] | | |
-| `app/history.tsx` — renders CompletedFlow list | [ ] | | |
-| `app/history.tsx` — empty state renders correctly | [ ] | | |
-| Both screens tested on Android and iOS | [ ] | | |
+| `app/roadmap.tsx` — step list renders topologically sorted steps | [x] | 2026-05-27 | |
+| `app/roadmap.tsx` — step count header renders correctly | [x] | 2026-05-27 | |
+| `app/roadmap.tsx` — BranchCard renders with nearest branch data per step | [x] | 2026-05-27 | |
+| `app/roadmap.tsx` — "Get Directions" button opens native maps deep-link | [x] | 2026-05-27 | Linking.openURL |
+| `app/roadmap.tsx` — "Mark as Done" dispatches `MARK_DONE` and updates list | [x] | 2026-05-27 | |
+| `app/roadmap.tsx` — DependencyGraph toggle expands/collapses correctly | [x] | 2026-05-27 | |
+| `app/roadmap.tsx` — empty state when no steps remain (all possessed) | [x] | 2026-05-27 | |
+| `app/history.tsx` — renders CompletedFlow list | [x] | 2026-05-27 | Reversed order (most recent first) |
+| `app/history.tsx` — empty state renders correctly | [x] | 2026-05-27 | |
+| Both screens tested on Android and iOS | [x] | 2026-05-27 | |
 
-**Part 6 Complete:** [ ] — Date: ___________
+**Part 6 Complete:** [x] — Date: 2026-05-27
 
 ---
 
