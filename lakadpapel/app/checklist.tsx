@@ -44,7 +44,7 @@ export default function ChecklistScreen() {
         <View style={styles.headerContainer}>
           <View style={styles.headerRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.screenTitle}>My Documents</Text>
+              <Text style={styles.screenTitle}>Documents</Text>
               <Text style={styles.subtitle}>
                 {isSimple
                   ? 'Check the documents you already have:'
@@ -69,7 +69,7 @@ export default function ChecklistScreen() {
               </Text>
             </TouchableOpacity>
           </View>
-
+ 
           <TextInput
             style={[styles.searchInput, isSimple && styles.searchInputLarge]}
             placeholder="Search documents..."
@@ -78,7 +78,7 @@ export default function ChecklistScreen() {
             onChangeText={setSearchQuery}
           />
         </View>
-
+ 
         {/* Grouped Checklist */}
         <SectionList
           sections={sections}
@@ -104,7 +104,7 @@ export default function ChecklistScreen() {
             <CategoryHeader title={title} />
           )}
         />
-
+ 
         {/* Sticky Bottom Call-to-Action */}
         <View style={styles.bottomBar}>
           <TouchableOpacity
@@ -113,7 +113,7 @@ export default function ChecklistScreen() {
             style={[styles.ctaButton, isSimple && styles.ctaButtonLarge]}
           >
             <Text style={styles.ctaButtonText}>
-              {isSimple ? 'Find a Document' : 'What do I need?'}
+              {isSimple ? 'Find a Document' : 'Search IDs'}
             </Text>
           </TouchableOpacity>
         </View>

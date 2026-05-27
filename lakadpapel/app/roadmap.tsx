@@ -240,8 +240,8 @@ export default function RoadmapScreen() {
           <Ionicons name="map-outline" size={48} color={colors.gray400} style={styles.emptyIcon} />
           <Text style={styles.emptyText}>
             {isSimple
-              ? "Select a document you want to get in the 'Find' tab to start."
-              : "Select a document from 'What do I need?' to generate your roadmap."}
+              ? "Select a document you want to get in the 'Find ID' tab to start."
+              : "Select a document from 'Find ID' to generate your roadmap."}
           </Text>
         </View>
       );

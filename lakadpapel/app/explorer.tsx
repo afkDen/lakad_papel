@@ -114,7 +114,7 @@ export default function ExplorerScreen() {
             <Ionicons name="compass-outline" size={32} color={colors.blue600} style={{ marginBottom: 8 }} />
             <Text style={styles.bannerTitle}>No Active Journey Yet</Text>
             <Text style={styles.bannerText}>
-              Go to the **Find** tab and choose a document you want to get. We will lay out a simple timeline here to guide you!
+              Go to the <Text style={styles.boldText}>Find ID</Text> tab and choose a document you want to get. We will lay out a simple timeline here to guide you!
             </Text>
             <TouchableOpacity
               style={styles.bannerBtn}
@@ -132,16 +132,16 @@ export default function ExplorerScreen() {
         <View style={styles.faqItem}>
           <Text style={styles.faqQuestion}>1. What documents should I get first?</Text>
           <Text style={styles.faqAnswer}>
-            Foundational documents like your **PSA Birth Certificate** and **Barangay Cedula** have no prerequisites. They are required to get almost all other primary government IDs, so we recommend acquiring them first!
+            Foundational documents like your <Text style={styles.boldText}>PSA Birth Certificate</Text> and <Text style={styles.boldText}>Barangay Cedula</Text> have no prerequisites. They are required to get almost all other primary government IDs, so we recommend acquiring them first!
           </Text>
         </View>
 
         <View style={styles.faqItem}>
           <Text style={styles.faqQuestion}>2. How do I use this app?</Text>
           <Text style={styles.faqAnswer}>
-            * Go to the **Documents** tab first. Check the boxes for any IDs you already possess.{"\n"}
-            * Go to the **Find** tab and choose the ID you need (e.g. Philippine Passport).{"\n"}
-            * We will generate a step-by-step roadmap showing you exactly what to do!
+            • Go to the <Text style={styles.boldText}>Documents</Text> tab first. Check the boxes for any IDs you already possess.{"\n"}
+            • Go to the <Text style={styles.boldText}>Find ID</Text> tab and choose the ID you need (e.g. Philippine Passport).{"\n"}
+            • We will generate a step-by-step roadmap showing you exactly what to do!
           </Text>
         </View>
 
@@ -155,7 +155,7 @@ export default function ExplorerScreen() {
         <View style={styles.faqItem}>
           <Text style={styles.faqQuestion}>4. How is my nearest branch computed?</Text>
           <Text style={styles.faqAnswer}>
-            The app securely checks your device's GPS and looks through our preloaded list of Metro Manila branch coordinates to find the branch closest to you instantly.
+            The app securely checks your device's GPS and looks through our preloaded list of Philippine branch coordinates to find the branch closest to you instantly.
           </Text>
         </View>
       </ScrollView>
@@ -518,5 +518,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 19,
     color: colors.gray500,
+    textAlign: 'justify',
+  },
+  boldText: {
+    fontFamily: 'Inter_700Bold',
+    fontWeight: 'bold',
+    color: colors.gray900,
   },
 });

@@ -42,7 +42,7 @@ export default function Layout() {
           <StatusBar style="dark" />
           <Tabs
             screenOptions={{
-              headerShown: true,
+              headerShown: false,
               headerStyle: {
                 backgroundColor: colors.white,
                 borderBottomWidth: 1,
@@ -74,7 +74,7 @@ export default function Layout() {
             <Tabs.Screen
               name="checklist"
               options={{
-                title: 'My Documents',
+                title: 'Documents',
                 tabBarLabel: 'Documents',
                 tabBarIcon: ({ color, size }) => (
                   <Ionicons name="document-text-outline" size={size} color={color} />
@@ -84,8 +84,8 @@ export default function Layout() {
             <Tabs.Screen
               name="target"
               options={{
-                title: 'What do I need?',
-                tabBarLabel: 'What do I need?',
+                title: 'Find ID',
+                tabBarLabel: 'Find ID',
                 tabBarIcon: ({ color, size }) => (
                   <Ionicons name="search-outline" size={size} color={color} />
                 ),
