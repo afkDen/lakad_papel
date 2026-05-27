@@ -3,13 +3,15 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated } from '
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { RoadmapStep } from '../context/types';
 import { colors, spacing, radii, typography, shadows } from '../theme';
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 interface LinearTimelineProps {
   roadmap: RoadmapStep[];
   onMilestonePress?: (step: RoadmapStep) => void;
 }
 
-function PulsingOuterRing() {
+function PulsingOuterRing({ color }: { color: string }) {
   const pulseAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -41,6 +43,7 @@ function PulsingOuterRing() {
         {
           transform: [{ scale }],
           opacity,
+          borderColor: color,
         },
       ]}
     />
@@ -48,14 +51,17 @@ function PulsingOuterRing() {
 }
 
 export default function LinearTimeline({ roadmap, onMilestonePress }: LinearTimelineProps) {
+  const { colors: themeColors, isDarkMode } = useTheme();
+  const { t } = useLanguage();
+
   if (roadmap.length === 0) return null;
 
   // Identify index of first active step (first step that is not completed)
   const activeIndex = roadmap.findIndex((step) => !step.isDone);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Document Journey Map</Text>
+    <View style={[styles.container, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+      <Text style={[styles.sectionTitle, { color: themeColors.subText }]}>{t.documentJourneyMap}</Text>
       
       <ScrollView
         horizontal
@@ -65,10 +71,9 @@ export default function LinearTimeline({ roadmap, onMilestonePress }: LinearTime
         {roadmap.map((step, index) => {
           const isDone = step.isDone;
           const isActive = index === activeIndex;
-          const isFuture = index > activeIndex;
 
-          let badgeColor: string = colors.gray300;
-          let labelColor: string = colors.gray500;
+          let badgeColor: string = isDarkMode ? '#404040' : colors.gray300;
+          let labelColor: string = themeColors.subText;
           let borderStyle: 'solid' | 'dashed' = 'dashed';
 
           if (isDone) {
@@ -76,8 +81,8 @@ export default function LinearTimeline({ roadmap, onMilestonePress }: LinearTime
             labelColor = colors.green600;
             borderStyle = 'solid';
           } else if (isActive) {
-            badgeColor = colors.teal600;
-            labelColor = colors.teal600;
+            badgeColor = themeColors.primary;
+            labelColor = themeColors.primary;
           }
 
           // Truncate label for clean visual presentation
@@ -96,7 +101,7 @@ export default function LinearTimeline({ roadmap, onMilestonePress }: LinearTime
                       styles.connectorLine,
                       {
                         borderStyle,
-                        borderColor: isDone ? colors.green600 : colors.gray200,
+                        borderColor: isDone ? colors.green600 : themeColors.border,
                       },
                     ]}
                   />
@@ -109,7 +114,7 @@ export default function LinearTimeline({ roadmap, onMilestonePress }: LinearTime
                   onPress={() => onMilestonePress && onMilestonePress(step)}
                 >
                   {/* Pulsing ring for the next available/active step */}
-                  {isActive && <PulsingOuterRing />}
+                  {isActive && <PulsingOuterRing color={themeColors.primary} />}
 
                   {isDone ? (
                     <Ionicons name="checkmark-sharp" size={16} color={colors.white} />
@@ -128,12 +133,16 @@ export default function LinearTimeline({ roadmap, onMilestonePress }: LinearTime
                 <Text style={[styles.agencyAbbr, { color: labelColor }]}>
                   {step.document.agency}
                 </Text>
-                <Text style={[styles.milestoneLabel, isActive && styles.milestoneLabelActive]}>
+                <Text style={[
+                  styles.milestoneLabel, 
+                  { color: themeColors.subText },
+                  isActive && [styles.milestoneLabelActive, { color: themeColors.text }]
+                ]}>
                   {shortLabel}
                 </Text>
                 {isActive && (
-                  <View style={styles.activeTextBadge}>
-                    <Text style={styles.activeText}>NEXT STEP</Text>
+                  <View style={[styles.activeTextBadge, { backgroundColor: themeColors.primary }]}>
+                    <Text style={styles.activeText}>{t.nextStep}</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -147,9 +156,7 @@ export default function LinearTimeline({ roadmap, onMilestonePress }: LinearTime
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.gray200,
     borderRadius: radii.md,
     marginHorizontal: 24,
     marginVertical: 12,
@@ -161,6 +168,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     paddingHorizontal: spacing.xl,
     marginBottom: spacing.md,
+    color: colors.gray500, // Fallback
   },
   scrollContent: {
     paddingHorizontal: spacing.xl,
@@ -205,7 +213,6 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: radii.full,
     borderWidth: 2.5,
-    borderColor: colors.teal600,
   },
   labelCol: {
     position: 'absolute',
@@ -224,15 +231,12 @@ const styles = StyleSheet.create({
     ...typography.caption,
     fontSize: 10,
     lineHeight: 13,
-    color: colors.gray500,
     textAlign: 'center',
   },
   milestoneLabelActive: {
-    color: colors.gray900,
     fontFamily: 'Inter_600SemiBold',
   },
   activeTextBadge: {
-    backgroundColor: colors.teal600,
     borderRadius: radii.sm,
     paddingHorizontal: 4,
     paddingVertical: 1,

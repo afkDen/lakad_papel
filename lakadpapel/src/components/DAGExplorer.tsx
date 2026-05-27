@@ -6,6 +6,7 @@ import { DocumentId, DocumentNode } from '../context/types';
 import { REQUIREMENTS_GRAPH } from '../algorithms/requirementsGraph';
 import { buildSubgraph } from '../algorithms/topologicalSort';
 import { useDAGLayout } from '../hooks/useDAGLayout';
+import { useTheme } from '../context/ThemeContext';
 import { colors, spacing, radii, typography, shadows } from '../theme';
 
 interface DAGExplorerProps {
@@ -65,6 +66,7 @@ export default function DAGExplorer({
   onNodeSelect,
 }: DAGExplorerProps) {
   const layout = useDAGLayout(REQUIREMENTS_GRAPH, 150, 95, 40, 50);
+  const { colors: themeColors, isDarkMode } = useTheme();
 
   // Determine width and height of canvas based on layouts
   const coords = Object.values(layout);
@@ -87,7 +89,7 @@ export default function DAGExplorer({
   };
 
   return (
-    <View style={[styles.canvasWrapper, { width: canvasWidth, height: canvasHeight }]}>
+    <View style={[styles.canvasWrapper, { width: canvasWidth, height: canvasHeight, backgroundColor: themeColors.background }]}>
       <Svg width={canvasWidth} height={canvasHeight}>
         {/* 1. RENDER EDGES FIRST (Behind circles) */}
         {Object.entries(REQUIREMENTS_GRAPH).map(([id, node]) => {
@@ -117,7 +119,7 @@ export default function DAGExplorer({
                 y1={startPoint.y}
                 x2={endPoint.x}
                 y2={endPoint.y}
-                stroke={isHighlightedEdge ? colors.blue600 : colors.gray200}
+                stroke={isHighlightedEdge ? colors.blue600 : (isDarkMode ? '#333333' : colors.gray200)}
                 strokeWidth={isHighlightedEdge ? 2.5 : 1.5}
                 opacity={shouldDimEdge ? 0.2 : 1}
               />
@@ -150,11 +152,11 @@ export default function DAGExplorer({
           const attainable = isNodeAttainable(id, node);
 
           // Node Color Mapping
-          let nodeColor: string = colors.gray300;
+          let nodeColor: string = isDarkMode ? '#404040' : colors.gray300;
           if (isPossessed) nodeColor = colors.green600;
           else if (isTarget) nodeColor = colors.blue600;
           else if (attainable) nodeColor = colors.teal600;
-          else if (isPath) nodeColor = '#bfdbfe'; // Light blue highlight for path ancestors
+          else if (isPath) nodeColor = isDarkMode ? '#1e3a8a' : '#bfdbfe'; // Light blue highlight for path ancestors
 
           // Highlight / Dim Mode
           let nodeOpacity = 1;
@@ -182,7 +184,7 @@ export default function DAGExplorer({
                   cy={pt.y}
                   r={32}
                   fill="none"
-                  stroke={colors.gray900}
+                  stroke={themeColors.text}
                   strokeWidth={2}
                   strokeDasharray="4 2"
                 />
@@ -203,7 +205,7 @@ export default function DAGExplorer({
                 x={pt.x}
                 y={pt.y + 4}
                 textAnchor="middle"
-                fill={isPath && !isTarget && !isPossessed ? '#1e40af' : colors.white}
+                fill={isPath && !isTarget && !isPossessed ? (isDarkMode ? '#93c5fd' : '#1e40af') : colors.white}
                 fontSize={9}
                 fontWeight="bold"
                 onPress={() => onNodeSelect(id)}
@@ -217,7 +219,7 @@ export default function DAGExplorer({
                 x={pt.x}
                 y={pt.y + 42}
                 textAnchor="middle"
-                fill={isSelected ? colors.gray900 : colors.gray500}
+                fill={isSelected ? themeColors.text : themeColors.subText}
                 fontSize={8}
                 fontWeight={isSelected ? 'bold' : 'normal'}
                 opacity={nodeOpacity}
@@ -234,6 +236,6 @@ export default function DAGExplorer({
 
 const styles = StyleSheet.create({
   canvasWrapper: {
-    backgroundColor: '#ffffff',
+    // Background handled dynamically
   },
 });

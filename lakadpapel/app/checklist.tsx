@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
+import { useTheme } from '../src/context/ThemeContext';
+import { useLanguage } from '../src/context/LanguageContext';
 import DocumentCard from '../src/components/DocumentCard';
 import CategoryHeader from '../src/components/CategoryHeader';
 import { REQUIREMENTS_GRAPH, DOCUMENT_CATEGORIES } from '../src/algorithms/requirementsGraph';
@@ -13,6 +15,8 @@ export default function ChecklistScreen() {
   const router = useRouter();
   const { state, dispatch } = useDocumentContext();
   const [searchQuery, setSearchQuery] = useState('');
+  const { colors: themeColors, isDarkMode } = useTheme();
+  const { t } = useLanguage();
 
   const isSimple = state.userMode === 'simple';
 
@@ -35,7 +39,7 @@ export default function ChecklistScreen() {
   }, [searchQuery]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -44,36 +48,54 @@ export default function ChecklistScreen() {
         <View style={styles.headerContainer}>
           <View style={styles.headerRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.screenTitle}>Documents</Text>
-              <Text style={styles.subtitle}>
+              <Text style={[styles.screenTitle, { color: themeColors.text }]}>{t.documents}</Text>
+              <Text style={[styles.subtitle, { color: themeColors.subText }]}>
                 {isSimple
-                  ? 'Check the documents you already have:'
-                  : 'Check off the documents you already possess to personalize your roadmaps.'}
+                  ? t.checklistSubtitleSimple
+                  : t.checklistSubtitleAdvanced}
               </Text>
             </View>
             
             {/* Senior Accessibility Mode Switcher */}
             <TouchableOpacity
-              style={[styles.modeToggleBtn, !isSimple && styles.modeToggleBtnActive]}
+              style={[
+                styles.modeToggleBtn,
+                isSimple && { backgroundColor: isDarkMode ? '#262626' : '#eff6ff', borderColor: isDarkMode ? '#404040' : '#bfdbfe' },
+                !isSimple && { backgroundColor: themeColors.primary, borderColor: themeColors.primary }
+              ]}
               onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
               activeOpacity={0.7}
             >
               <Ionicons
                 name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
                 size={12}
-                color={isSimple ? colors.teal600 : colors.white}
+                color={isSimple ? (isDarkMode ? themeColors.subText : colors.teal600) : colors.white}
                 style={{ marginRight: 4 }}
               />
-              <Text style={[styles.modeToggleText, !isSimple && styles.modeToggleTextActive]}>
+              <Text
+                style={[
+                  styles.modeToggleText,
+                  isSimple && { color: isDarkMode ? themeColors.subText : colors.teal600 },
+                  !isSimple && { color: colors.white }
+                ]}
+              >
                 {isSimple ? 'Simple' : 'Advanced'}
               </Text>
             </TouchableOpacity>
           </View>
  
           <TextInput
-            style={[styles.searchInput, isSimple && styles.searchInputLarge]}
-            placeholder="Search documents..."
-            placeholderTextColor={colors.gray400}
+            style={[
+              styles.searchInput,
+              isSimple && styles.searchInputLarge,
+              {
+                backgroundColor: isDarkMode ? '#1E1E1E' : colors.gray50,
+                color: themeColors.text,
+                borderColor: themeColors.border,
+              }
+            ]}
+            placeholder={t.searchPlaceholder}
+            placeholderTextColor={isDarkMode ? '#737373' : colors.gray400}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -106,14 +128,14 @@ export default function ChecklistScreen() {
         />
  
         {/* Sticky Bottom Call-to-Action */}
-        <View style={styles.bottomBar}>
+        <View style={[styles.bottomBar, { backgroundColor: themeColors.cardBackground, borderTopColor: themeColors.border }]}>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => router.push('/target')}
-            style={[styles.ctaButton, isSimple && styles.ctaButtonLarge]}
+            style={[styles.ctaButton, isSimple && styles.ctaButtonLarge, { backgroundColor: themeColors.primary }]}
           >
             <Text style={styles.ctaButtonText}>
-              {isSimple ? 'Find a Document' : 'Search IDs'}
+              {isSimple ? t.findDocumentSimple : t.searchIds}
             </Text>
           </TouchableOpacity>
         </View>
@@ -125,7 +147,6 @@ export default function ChecklistScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   headerContainer: {
     paddingHorizontal: 24,
@@ -143,49 +164,34 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_700Bold',
     fontSize: 22,
     lineHeight: 28,
-    color: colors.gray900,
   },
   subtitle: {
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
     lineHeight: 18,
-    color: colors.gray500,
     marginTop: 4,
   },
   modeToggleBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#eff6ff',
     borderWidth: 1,
-    borderColor: '#bfdbfe',
     borderRadius: radii.full,
     paddingHorizontal: 10,
     paddingVertical: 5,
     marginTop: 2,
   },
-  modeToggleBtnActive: {
-    backgroundColor: colors.blue600,
-    borderColor: colors.blue600,
-  },
   modeToggleText: {
     fontSize: 10,
     fontFamily: 'Inter_600SemiBold',
-    color: colors.teal600,
-  },
-  modeToggleTextActive: {
-    color: colors.white,
   },
   searchInput: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: colors.gray50,
     borderWidth: 1,
-    borderColor: colors.gray200,
     borderRadius: radii.md,
     fontFamily: 'Inter_400Regular',
     fontSize: 16,
     lineHeight: 24,
-    color: colors.gray900,
   },
   searchInputLarge: {
     fontSize: 17,
@@ -197,13 +203,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     borderTopWidth: 1,
-    borderTopColor: colors.gray200,
-    backgroundColor: colors.white,
     paddingHorizontal: 24,
     paddingVertical: 16,
   },
   ctaButton: {
-    backgroundColor: colors.blue600,
     borderRadius: radii.md,
     paddingVertical: 16,
     alignItems: 'center',

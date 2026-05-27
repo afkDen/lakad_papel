@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, Dimensions
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { DocumentId, DocumentNode, AgencyType } from '../context/types';
 import { REQUIREMENTS_GRAPH } from '../algorithms/requirementsGraph';
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { colors, spacing, radii, typography, shadows } from '../theme';
 
 interface NodeDetailSheetProps {
@@ -22,6 +24,9 @@ export default function NodeDetailSheet({
   isPossessed,
   isTarget,
 }: NodeDetailSheetProps) {
+  const { colors: themeColors, isDarkMode } = useTheme();
+  const { t } = useLanguage();
+
   if (!documentId) return null;
 
   const node: DocumentNode | undefined = REQUIREMENTS_GRAPH[documentId];
@@ -69,18 +74,18 @@ export default function NodeDetailSheet({
       </TouchableOpacity>
 
       {/* Bottom Sheet Container */}
-      <View style={styles.sheetContainer}>
+      <View style={[styles.sheetContainer, { backgroundColor: themeColors.cardBackground }]}>
         {/* Handle bar */}
-        <View style={styles.handleBar} />
+        <View style={[styles.handleBar, { backgroundColor: isDarkMode ? '#404040' : colors.gray200 }]} />
 
         {/* Close Button */}
         <TouchableOpacity style={styles.closeBtn} onPress={onClose} activeOpacity={0.7}>
-          <Ionicons name="close" size={24} color={colors.gray500} />
+          <Ionicons name="close" size={24} color={themeColors.subText} />
         </TouchableOpacity>
 
         <ScrollView style={styles.scrollArea} contentContainerStyle={styles.scrollContent}>
           {/* Header Title */}
-          <Text style={styles.title}>{node.label}</Text>
+          <Text style={[styles.title, { color: themeColors.text }]}>{node.label}</Text>
 
           {/* Agency Badge */}
           <View style={styles.badgeRow}>
@@ -88,49 +93,68 @@ export default function NodeDetailSheet({
               <Text style={styles.agencyBadgeText}>{node.agency}</Text>
             </View>
             {isPossessed && (
-              <View style={[styles.statusBadge, styles.possessedBadge]}>
+              <View
+                style={[
+                  styles.statusBadge,
+                  styles.possessedBadge,
+                  isDarkMode && { backgroundColor: '#022c22', borderColor: '#064e3b' }
+                ]}
+              >
                 <Ionicons name="checkmark-circle" size={14} color={colors.green600} style={styles.badgeIcon} />
-                <Text style={styles.possessedBadgeText}>Possessed</Text>
+                <Text style={styles.possessedBadgeText}>{t.possessed}</Text>
               </View>
             )}
             {isTarget && (
-              <View style={[styles.statusBadge, styles.targetBadge]}>
+              <View
+                style={[
+                  styles.statusBadge,
+                  styles.targetBadge,
+                  isDarkMode && { backgroundColor: '#1e3a8a', borderColor: '#172554' }
+                ]}
+              >
                 <Ionicons name="map-outline" size={14} color={colors.blue600} style={styles.badgeIcon} />
-                <Text style={styles.targetBadgeText}>Active Target</Text>
+                <Text style={styles.targetBadgeText}>{t.activeTarget}</Text>
               </View>
             )}
           </View>
 
           {/* Detail Grid */}
-          <View style={styles.detailGrid}>
-            <View style={styles.detailItem}>
-              <Text style={styles.detailLabel}>Est. Fees</Text>
-              <Text style={styles.detailValue}>{node.fees}</Text>
+          <View style={[styles.detailGrid, { backgroundColor: isDarkMode ? '#18181B' : colors.gray50, borderColor: themeColors.border }]}>
+            <View style={[styles.detailItem, { borderRightColor: themeColors.border }]}>
+              <Text style={[styles.detailLabel, { color: themeColors.subText }]}>{t.estFees}</Text>
+              <Text style={[styles.detailValue, { color: themeColors.text }]}>{node.fees}</Text>
             </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.detailLabel}>Processing Time</Text>
-              <Text style={styles.detailValue}>{node.typicalDays}</Text>
+            <View style={[styles.detailItem, { borderRightColor: themeColors.border }]}>
+              <Text style={[styles.detailLabel, { color: themeColors.subText }]}>{t.processTime}</Text>
+              <Text style={[styles.detailValue, { color: themeColors.text }]}>{node.typicalDays}</Text>
             </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.detailLabel}>Issuing Office</Text>
-              <Text style={styles.detailValue}>{node.officeType}</Text>
+            <View style={[styles.detailItem, { borderRightWidth: 0 }]}>
+              <Text style={[styles.detailLabel, { color: themeColors.subText }]}>{t.issuingOffice}</Text>
+              <Text style={[styles.detailValue, { color: themeColors.text }]}>{node.officeType}</Text>
             </View>
           </View>
 
           {/* Notes Section */}
           {node.notes && (
-            <View style={styles.notesContainer}>
-              <Ionicons name="information-circle-outline" size={18} color={colors.blue600} style={styles.noteIcon} />
-              <Text style={styles.notesText}>{node.notes}</Text>
+            <View
+              style={[
+                styles.notesContainer,
+                isDarkMode && { backgroundColor: '#172554', borderColor: '#1e3a8a' }
+              ]}
+            >
+              <Ionicons name="information-circle-outline" size={18} color={isDarkMode ? '#60a5fa' : colors.blue600} style={styles.noteIcon} />
+              <Text style={[styles.notesText, isDarkMode && { color: '#bfdbfe' }]}>{node.notes}</Text>
             </View>
           )}
 
           {/* Prerequisites Section */}
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Prerequisites ({node.prerequisites.length})</Text>
+          <View style={[styles.sectionHeaderRow, { borderBottomColor: themeColors.border }]}>
+            <Text style={[styles.sectionTitle, { color: themeColors.subText }]}>
+              {t.prereqsHeader} ({node.prerequisites.length})
+            </Text>
           </View>
           {node.prerequisites.length === 0 ? (
-            <Text style={styles.emptyText}>None — This is a foundational document.</Text>
+            <Text style={[styles.emptyText, { color: themeColors.subText }]}>{t.noPrereqs}</Text>
           ) : (
             <View style={styles.prereqList}>
               {node.prerequisites.map((prereqId) => {
@@ -138,8 +162,8 @@ export default function NodeDetailSheet({
                 if (!prereq) return null;
                 return (
                   <View key={prereqId} style={styles.prereqItem}>
-                    <Ionicons name="document-text-outline" size={16} color={colors.gray500} style={styles.prereqIcon} />
-                    <Text style={styles.prereqLabel}>{prereq.label}</Text>
+                    <Ionicons name="document-text-outline" size={16} color={themeColors.subText} style={styles.prereqIcon} />
+                    <Text style={[styles.prereqLabel, { color: themeColors.text }]}>{prereq.label}</Text>
                     <View style={[styles.agencyTag, { borderColor: getAgencyColor(prereq.agency) }]}>
                       <Text style={[styles.agencyTagText, { color: getAgencyColor(prereq.agency) }]}>
                         {prereq.agency}
@@ -152,17 +176,19 @@ export default function NodeDetailSheet({
           )}
 
           {/* Unlocks Section */}
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Unlocks ({unlocks.length})</Text>
+          <View style={[styles.sectionHeaderRow, { borderBottomColor: themeColors.border }]}>
+            <Text style={[styles.sectionTitle, { color: themeColors.subText }]}>
+              {t.unlocksHeader} ({unlocks.length})
+            </Text>
           </View>
           {unlocks.length === 0 ? (
-            <Text style={styles.emptyText}>None — This document does not lead to further requirements.</Text>
+            <Text style={[styles.emptyText, { color: themeColors.subText }]}>{t.noUnlocks}</Text>
           ) : (
             <View style={styles.prereqList}>
               {unlocks.map((unlock) => (
                 <View key={unlock.id} style={styles.prereqItem}>
-                  <Ionicons name="git-network-outline" size={16} color={colors.gray500} style={styles.prereqIcon} />
-                  <Text style={styles.prereqLabel}>{unlock.label}</Text>
+                  <Ionicons name="git-network-outline" size={16} color={themeColors.subText} style={styles.prereqIcon} />
+                  <Text style={[styles.prereqLabel, { color: themeColors.text }]}>{unlock.label}</Text>
                   <View style={[styles.agencyTag, { borderColor: getAgencyColor(unlock.agency) }]}>
                     <Text style={[styles.agencyTagText, { color: getAgencyColor(unlock.agency) }]}>
                       {unlock.agency}
@@ -175,10 +201,14 @@ export default function NodeDetailSheet({
         </ScrollView>
 
         {/* Sticky Actions Footer */}
-        <View style={styles.actionContainer}>
+        <View style={[styles.actionContainer, { backgroundColor: themeColors.cardBackground, borderTopColor: themeColors.border }]}>
           {!isPossessed && (
             <TouchableOpacity
-              style={[styles.btnPrimary, isTarget && styles.btnDisabled]}
+              style={[
+                styles.btnPrimary,
+                { backgroundColor: themeColors.primary },
+                isTarget && styles.btnDisabled
+              ]}
               onPress={() => {
                 onSetTarget(documentId);
                 onClose();
@@ -188,7 +218,7 @@ export default function NodeDetailSheet({
             >
               <Ionicons name="map-outline" size={18} color={colors.white} style={styles.btnIcon} />
               <Text style={styles.btnPrimaryText}>
-                {isTarget ? 'Active Target' : 'Set as Target'}
+                {isTarget ? t.activeTarget : t.setAsTarget}
               </Text>
             </TouchableOpacity>
           )}
@@ -196,7 +226,10 @@ export default function NodeDetailSheet({
           <TouchableOpacity
             style={[
               styles.btnSecondary,
-              isPossessed ? styles.btnSecondaryDanger : styles.btnSecondarySuccess
+              { borderColor: themeColors.border },
+              isPossessed 
+                ? [styles.btnSecondaryDanger, isDarkMode && { backgroundColor: '#450a0a', borderColor: '#7f1d1d' }] 
+                : [styles.btnSecondarySuccess, isDarkMode && { backgroundColor: '#022c22', borderColor: '#064e3b' }]
             ]}
             onPress={() => onTogglePossession(documentId)}
             activeOpacity={0.8}
@@ -211,7 +244,7 @@ export default function NodeDetailSheet({
               styles.btnSecondaryText,
               isPossessed ? styles.btnSecondaryTextDanger : styles.btnSecondaryTextSuccess
             ]}>
-              {isPossessed ? 'Mark as Missing' : 'Mark as Possessed'}
+              {isPossessed ? t.markAsMissing : t.markAsPossessed}
             </Text>
           </TouchableOpacity>
         </View>

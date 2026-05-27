@@ -4,6 +4,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { TraceStep } from '../algorithms/topologicalSort';
 import { REQUIREMENTS_GRAPH } from '../algorithms/requirementsGraph';
 import { colors, spacing, radii, typography, shadows } from '../theme';
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 interface AlgorithmTraceProps {
   trace: TraceStep[];
@@ -11,6 +13,9 @@ interface AlgorithmTraceProps {
 }
 
 export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceProps) {
+  const { colors: themeColors, isDarkMode } = useTheme();
+  const { t } = useLanguage();
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const playTimer = useRef<any>(null);
@@ -77,10 +82,10 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
 
   if (subgraphEmpty || trace.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Ionicons name="git-network-outline" size={24} color={colors.gray400} style={styles.emptyIcon} />
-        <Text style={styles.emptyText}>
-          Select an active target document to see Kahn's Algorithm trace.
+      <View style={[styles.emptyContainer, { backgroundColor: isDarkMode ? '#1e1e1e' : colors.gray50, borderColor: themeColors.border }]}>
+        <Ionicons name="git-network-outline" size={24} color={themeColors.subText} style={styles.emptyIcon} />
+        <Text style={[styles.emptyText, { color: themeColors.subText }]}>
+          {t.traceSelectActive}
         </Text>
       </View>
     );
@@ -89,44 +94,56 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
   const currentStep = trace[currentIndex];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
       {/* Header Info */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: themeColors.border }]}>
         <View style={styles.headerTitleCol}>
-          <Text style={styles.title}>Kahn's Algorithm Trace</Text>
-          <Text style={styles.subtitle}>Educational DAA Walkthrough</Text>
+          <Text style={[styles.title, { color: themeColors.text }]}>{t.algorithmTraceTitle}</Text>
+          <Text style={[styles.subtitle, { color: themeColors.subText }]}>{t.algorithmTraceSub}</Text>
         </View>
-        <View style={styles.stepBadge}>
+        <View style={[styles.stepBadge, { backgroundColor: isDarkMode ? '#262626' : colors.gray900 }]}>
           <Text style={styles.stepBadgeText}>
-            Step {currentIndex + 1} of {trace.length}
+            {t.stepWord} {currentIndex + 1} {t.ofWord} {trace.length}
           </Text>
         </View>
       </View>
 
       {/* Main step details card */}
-      <View style={styles.detailsCard}>
+      <View style={[styles.detailsCard, { borderColor: themeColors.border }]}>
         {/* Step Dequeued Node Banner */}
-        <View style={styles.dequeuedBanner}>
+        <View style={[
+          styles.dequeuedBanner, 
+          { 
+            backgroundColor: isDarkMode ? '#1e293b' : '#eff6ff', 
+            borderBottomColor: isDarkMode ? '#334155' : '#bfdbfe' 
+          }
+        ]}>
           <View style={styles.circleNumber}>
             <Text style={styles.circleNumberText}>{currentIndex + 1}</Text>
           </View>
           <View style={styles.dequeuedInfo}>
-            <Text style={styles.bannerLabel}>DEQUEUED NODE (IN-DEGREE 0)</Text>
-            <Text style={styles.dequeuedNodeName}>{getDocLabel(currentStep.dequeued)}</Text>
+            <Text style={[styles.bannerLabel, { color: isDarkMode ? '#93c5fd' : '#1e40af' }]}>
+              {t.dequeuedNode}
+            </Text>
+            <Text style={[styles.dequeuedNodeName, { color: themeColors.text }]}>
+              {getDocLabel(currentStep.dequeued)}
+            </Text>
           </View>
         </View>
 
         {/* Queue States */}
-        <View style={styles.stateRow}>
-          <View style={styles.stateCol}>
-            <Text style={styles.stateLabel}>QUEUE BEFORE DEQUEUE</Text>
+        <View style={[styles.stateRow, { borderBottomColor: themeColors.border }]}>
+          <View style={[styles.stateCol, { borderRightColor: themeColors.border }]}>
+            <Text style={[styles.stateLabel, { color: themeColors.subText }]}>{t.queueBefore}</Text>
             {currentStep.queueBefore.length === 0 ? (
-              <Text style={styles.emptyQueueText}>[ Empty ]</Text>
+              <Text style={[styles.emptyQueueText, { color: themeColors.subText }]}>{t.emptyBrackets}</Text>
             ) : (
               <View style={styles.queueContainer}>
                 {currentStep.queueBefore.map((id, index) => (
-                  <View key={`before-${id}-${index}`} style={styles.queueItem}>
-                    <Text style={styles.queueItemText}>{REQUIREMENTS_GRAPH[id]?.agency || id}</Text>
+                  <View key={`before-${id}-${index}`} style={[styles.queueItem, { backgroundColor: isDarkMode ? '#404040' : colors.gray200 }]}>
+                    <Text style={[styles.queueItemText, { color: themeColors.text }]}>
+                      {REQUIREMENTS_GRAPH[id]?.agency || id}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -134,14 +151,26 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
           </View>
 
           <View style={styles.stateCol}>
-            <Text style={styles.stateLabel}>QUEUE AFTER DEQUEUE & DEC</Text>
+            <Text style={[styles.stateLabel, { color: themeColors.subText }]}>{t.queueAfter}</Text>
             {currentStep.queueAfter.length === 0 ? (
-              <Text style={styles.emptyQueueText}>[ Empty ]</Text>
+              <Text style={[styles.emptyQueueText, { color: themeColors.subText }]}>{t.emptyBrackets}</Text>
             ) : (
               <View style={styles.queueContainer}>
                 {currentStep.queueAfter.map((id, index) => (
-                  <View key={`after-${id}-${index}`} style={[styles.queueItem, styles.queueItemNew]}>
-                    <Text style={styles.queueItemText}>{REQUIREMENTS_GRAPH[id]?.agency || id}</Text>
+                  <View 
+                    key={`after-${id}-${index}`} 
+                    style={[
+                      styles.queueItem, 
+                      styles.queueItemNew,
+                      { 
+                        backgroundColor: isDarkMode ? '#0d3c3c' : '#ccfbf1',
+                        borderColor: isDarkMode ? '#115e59' : '#99f6e4'
+                      }
+                    ]}
+                  >
+                    <Text style={[styles.queueItemText, { color: isDarkMode ? '#5eead4' : colors.gray900 }]}>
+                      {REQUIREMENTS_GRAPH[id]?.agency || id}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -150,11 +179,11 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
         </View>
 
         {/* In-Degree Decrements list */}
-        <View style={styles.decSection}>
-          <Text style={styles.decTitle}>NEIGHBOR IN-DEGREE DECREMENTS</Text>
+        <View style={[styles.decSection, { backgroundColor: isDarkMode ? '#171717' : colors.gray50 }]}>
+          <Text style={[styles.decTitle, { color: themeColors.subText }]}>{t.neighborDecrements}</Text>
           {currentStep.inDegreeChanges.length === 0 ? (
-            <Text style={styles.decEmptyText}>
-              No outward dependency neighbors. No in-degree decrements.
+            <Text style={[styles.decEmptyText, { color: themeColors.subText }]}>
+              {t.noOutwardDeps}
             </Text>
           ) : (
             <View style={styles.decList}>
@@ -165,19 +194,23 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
                     <Ionicons
                       name="arrow-down-circle-outline"
                       size={16}
-                      color={isZero ? colors.teal600 : colors.gray500}
+                      color={isZero ? colors.teal600 : themeColors.subText}
                       style={styles.decIcon}
                     />
-                    <Text style={[styles.decNodeLabel, isZero && styles.decNodeZero]}>
+                    <Text style={[
+                      styles.decNodeLabel, 
+                      { color: themeColors.text },
+                      isZero && styles.decNodeZero
+                    ]}>
                       {getDocLabel(change.node)}
                     </Text>
                     <View style={styles.decFormula}>
-                      <Text style={styles.decFormulaText}>
-                        in-deg: {change.from} → <Text style={isZero ? styles.zeroBold : styles.numBold}>{change.to}</Text>
+                      <Text style={[styles.decFormulaText, { color: themeColors.subText }]}>
+                        in-deg: {change.from} → <Text style={isZero ? styles.zeroBold : [styles.numBold, { color: themeColors.text }]}>{change.to}</Text>
                       </Text>
                       {isZero && (
                         <View style={styles.enqueuedBadge}>
-                          <Text style={styles.enqueuedText}>ENQUEUED</Text>
+                          <Text style={styles.enqueuedText}>{t.enqueued}</Text>
                         </View>
                       )}
                     </View>
@@ -192,18 +225,22 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
       {/* Control Bar Stepper */}
       <View style={styles.controls}>
         <TouchableOpacity style={styles.controlBtn} onPress={handleReset} activeOpacity={0.7}>
-          <Ionicons name="refresh-outline" size={20} color={colors.gray500} />
-          <Text style={styles.controlBtnText}>Reset</Text>
+          <Ionicons name="refresh-outline" size={20} color={themeColors.subText} />
+          <Text style={[styles.controlBtnText, { color: themeColors.subText }]}>{t.reset}</Text>
         </TouchableOpacity>
 
         <View style={styles.centerStepper}>
           <TouchableOpacity
-            style={[styles.stepperBtn, currentIndex === 0 && styles.stepperDisabled]}
+            style={[
+              styles.stepperBtn, 
+              { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border },
+              currentIndex === 0 && [styles.stepperDisabled, { backgroundColor: isDarkMode ? '#262626' : colors.gray50 }]
+            ]}
             onPress={handleStepBack}
             disabled={currentIndex === 0}
             activeOpacity={0.7}
           >
-            <Ionicons name="chevron-back" size={20} color={currentIndex === 0 ? colors.gray400 : colors.gray900} />
+            <Ionicons name="chevron-back" size={20} color={currentIndex === 0 ? colors.gray400 : (isDarkMode ? '#d4d4d4' : colors.gray900)} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.playBtn} onPress={handlePlayPause} activeOpacity={0.8}>
@@ -215,7 +252,11 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.stepperBtn, currentIndex === trace.length - 1 && styles.stepperDisabled]}
+            style={[
+              styles.stepperBtn, 
+              { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border },
+              currentIndex === trace.length - 1 && [styles.stepperDisabled, { backgroundColor: isDarkMode ? '#262626' : colors.gray50 }]
+            ]}
             onPress={handleStepForward}
             disabled={currentIndex === trace.length - 1}
             activeOpacity={0.7}
@@ -223,16 +264,22 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
             <Ionicons
               name="chevron-forward"
               size={20}
-              color={currentIndex === trace.length - 1 ? colors.gray400 : colors.gray900}
+              color={currentIndex === trace.length - 1 ? colors.gray400 : (isDarkMode ? '#d4d4d4' : colors.gray900)}
             />
           </TouchableOpacity>
         </View>
 
         <View style={styles.rightSpacer}>
           {isPlaying && (
-            <View style={styles.playingIndicator}>
+            <View style={[
+              styles.playingIndicator,
+              {
+                backgroundColor: isDarkMode ? '#064e3b' : '#ecfdf5',
+                borderColor: isDarkMode ? '#065f46' : '#a7f3d0'
+              }
+            ]}>
               <View style={styles.greenPulseDot} />
-              <Text style={styles.playingText}>RUNNING</Text>
+              <Text style={styles.playingText}>{t.running}</Text>
             </View>
           )}
         </View>
@@ -243,9 +290,7 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.gray200,
     borderRadius: radii.md,
     padding: spacing.md,
     marginHorizontal: spacing.xl,
@@ -253,9 +298,7 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   emptyContainer: {
-    backgroundColor: colors.gray50,
     borderWidth: 1,
-    borderColor: colors.gray200,
     borderStyle: 'dashed',
     borderRadius: radii.md,
     padding: spacing.xl,
@@ -270,14 +313,12 @@ const styles = StyleSheet.create({
   emptyText: {
     ...typography.secondary,
     textAlign: 'center',
-    color: colors.gray500,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
     paddingBottom: spacing.md,
     marginBottom: spacing.md,
   },
@@ -286,15 +327,12 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.smallSemibold,
-    color: colors.gray900,
   },
   subtitle: {
     ...typography.caption,
     fontSize: 10,
-    color: colors.gray500,
   },
   stepBadge: {
-    backgroundColor: colors.gray900,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: radii.sm,
@@ -306,7 +344,6 @@ const styles = StyleSheet.create({
   },
   detailsCard: {
     borderWidth: 1,
-    borderColor: colors.gray200,
     borderRadius: radii.md,
     overflow: 'hidden',
     marginBottom: spacing.md,
@@ -314,10 +351,8 @@ const styles = StyleSheet.create({
   dequeuedBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#eff6ff',
     padding: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#bfdbfe',
   },
   circleNumber: {
     width: 28,
@@ -339,7 +374,6 @@ const styles = StyleSheet.create({
   bannerLabel: {
     fontSize: 9,
     fontFamily: 'Inter_700Bold',
-    color: '#1e40af',
     letterSpacing: 0.5,
     marginBottom: 2,
   },
@@ -348,30 +382,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18,
     fontFamily: 'Inter_600SemiBold',
-    color: colors.gray900,
   },
   stateRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
   },
   stateCol: {
     flex: 1,
     padding: spacing.md,
     borderRightWidth: 1,
-    borderRightColor: colors.gray200,
   },
   stateLabel: {
     fontSize: 8,
     fontFamily: 'Inter_700Bold',
-    color: colors.gray500,
     marginBottom: spacing.sm,
     letterSpacing: 0.25,
   },
   emptyQueueText: {
     fontSize: 11,
     fontStyle: 'italic',
-    color: colors.gray400,
   },
   queueContainer: {
     flexDirection: 'row',
@@ -379,36 +408,29 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   queueItem: {
-    backgroundColor: colors.gray200,
     borderRadius: radii.sm,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
   queueItemNew: {
-    backgroundColor: '#ccfbf1',
     borderWidth: 1,
-    borderColor: '#99f6e4',
   },
   queueItemText: {
     fontSize: 9,
     fontFamily: 'Inter_700Bold',
-    color: colors.gray900,
   },
   decSection: {
     padding: spacing.md,
-    backgroundColor: colors.gray50,
   },
   decTitle: {
     fontSize: 8,
     fontFamily: 'Inter_700Bold',
-    color: colors.gray500,
     marginBottom: spacing.sm,
     letterSpacing: 0.25,
   },
   decEmptyText: {
     fontSize: 11,
     fontStyle: 'italic',
-    color: colors.gray500,
     lineHeight: 15,
   },
   decList: {
@@ -424,7 +446,6 @@ const styles = StyleSheet.create({
   },
   decNodeLabel: {
     fontSize: 12,
-    color: colors.gray900,
     flex: 1,
   },
   decNodeZero: {
@@ -437,11 +458,9 @@ const styles = StyleSheet.create({
   },
   decFormulaText: {
     fontSize: 10,
-    color: colors.gray500,
   },
   numBold: {
     fontWeight: 'bold',
-    color: colors.gray900,
   },
   zeroBold: {
     fontFamily: 'Inter_700Bold',
@@ -475,7 +494,6 @@ const styles = StyleSheet.create({
   },
   controlBtnText: {
     ...typography.caption,
-    color: colors.gray500,
   },
   centerStepper: {
     flexDirection: 'row',
@@ -487,15 +505,10 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: radii.md,
     borderWidth: 1,
-    borderColor: colors.gray200,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.white,
   },
-  stepperDisabled: {
-    backgroundColor: colors.gray50,
-    borderColor: colors.gray200,
-  },
+  stepperDisabled: {},
   playBtn: {
     width: 36,
     height: 36,
@@ -512,9 +525,7 @@ const styles = StyleSheet.create({
   playingIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ecfdf5',
     borderWidth: 1,
-    borderColor: '#a7f3d0',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: radii.sm,

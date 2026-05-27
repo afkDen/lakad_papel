@@ -3,6 +3,8 @@ import { SafeAreaView, View, Text, TouchableOpacity, FlatList, ScrollView, Style
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
 import { useLocation } from '../src/hooks/useLocation';
+import { useTheme } from '../src/context/ThemeContext';
+import { useLanguage } from '../src/context/LanguageContext';
 import StepCard from '../src/components/StepCard';
 import DependencyGraph from '../src/components/DependencyGraph';
 import AlgorithmTrace from '../src/components/AlgorithmTrace';
@@ -22,6 +24,8 @@ export default function RoadmapScreen() {
   const [showGraph, setShowGraph] = useState(false);
   const [showTrace, setShowTrace] = useState(false);
   const [viewMode, setViewMode] = useState<'remaining' | 'full'>('remaining');
+  const { colors: themeColors, isDarkMode } = useTheme();
+  const { t, language } = useLanguage();
 
   const isSimple = state.userMode === 'simple';
 
@@ -129,25 +133,35 @@ export default function RoadmapScreen() {
       <View style={styles.headerContainer}>
         <View style={styles.headerRow}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.headerSubtitle}>
-              {isSimple ? 'YOUR JOURNEY TO GET' : 'ACTIVE ROADMAP'}
+            <Text style={[styles.headerSubtitle, { color: themeColors.subText }]}>
+              {isSimple ? t.journeyToGetSimple : t.activeRoadmapAdvanced}
             </Text>
-            <Text style={styles.targetLabel}>{targetLabel}</Text>
+            <Text style={[styles.targetLabel, { color: themeColors.text }]}>{targetLabel}</Text>
           </View>
 
           {/* Mode Switcher Toggle */}
           <TouchableOpacity
-            style={[styles.modeToggleBtn, !isSimple && styles.modeToggleBtnActive]}
+            style={[
+              styles.modeToggleBtn,
+              isSimple && { backgroundColor: isDarkMode ? '#262626' : '#eff6ff', borderColor: isDarkMode ? '#404040' : '#bfdbfe' },
+              !isSimple && { backgroundColor: themeColors.primary, borderColor: themeColors.primary }
+            ]}
             onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
             activeOpacity={0.8}
           >
             <Ionicons
               name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
               size={12}
-              color={isSimple ? colors.teal600 : colors.white}
+              color={isSimple ? (isDarkMode ? themeColors.subText : colors.teal600) : colors.white}
               style={{ marginRight: 4 }}
             />
-            <Text style={[styles.modeToggleText, !isSimple && styles.modeToggleTextActive]}>
+            <Text
+              style={[
+                styles.modeToggleText,
+                isSimple && { color: isDarkMode ? themeColors.subText : colors.teal600 },
+                !isSimple && { color: colors.white }
+              ]}
+            >
               {isSimple ? 'Simple' : 'Advanced'}
             </Text>
           </TouchableOpacity>
@@ -155,23 +169,41 @@ export default function RoadmapScreen() {
 
         {/* Minimum vs Full Path Toggle (Advanced Mode Only) */}
         {!isSimple && (
-          <View style={styles.segmentedControl}>
+          <View style={[styles.segmentedControl, { backgroundColor: isDarkMode ? '#1E1E1E' : colors.gray200 }]}>
             <TouchableOpacity
-              style={[styles.segmentBtn, viewMode === 'remaining' && styles.segmentBtnActive]}
+              style={[
+                styles.segmentBtn,
+                viewMode === 'remaining' && [styles.segmentBtnActive, { backgroundColor: isDarkMode ? '#262626' : colors.white }]
+              ]}
               onPress={() => setViewMode('remaining')}
               activeOpacity={0.8}
             >
-              <Text style={[styles.segmentText, viewMode === 'remaining' && styles.segmentTextActive]}>
-                Remaining ({remainingCount})
+              <Text
+                style={[
+                  styles.segmentText,
+                  { color: themeColors.subText },
+                  viewMode === 'remaining' && { color: themeColors.text }
+                ]}
+              >
+                {t.remainingSteps} ({remainingCount})
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.segmentBtn, viewMode === 'full' && styles.segmentBtnActive]}
+              style={[
+                styles.segmentBtn,
+                viewMode === 'full' && [styles.segmentBtnActive, { backgroundColor: isDarkMode ? '#262626' : colors.white }]
+              ]}
               onPress={() => setViewMode('full')}
               activeOpacity={0.8}
             >
-              <Text style={[styles.segmentText, viewMode === 'full' && styles.segmentTextActive]}>
-                Full Path
+              <Text
+                style={[
+                  styles.segmentText,
+                  { color: themeColors.subText },
+                  viewMode === 'full' && { color: themeColors.text }
+                ]}
+              >
+                {t.fullPath}
               </Text>
             </TouchableOpacity>
           </View>
@@ -186,11 +218,15 @@ export default function RoadmapScreen() {
     if (isSimple) {
       // Clean, senior-friendly simple stats card
       return (
-        <View style={styles.simpleStatsCard}>
-          <Ionicons name="information-circle" size={18} color={colors.blue600} style={{ marginRight: 8 }} />
-          <Text style={styles.simpleStatsText}>
-            You have <Text style={{ fontFamily: 'Inter_700Bold' }}>{remainingCount}</Text> steps left • approx.{' '}
-            <Text style={{ fontFamily: 'Inter_700Bold' }}>{estDays}</Text> days • est. cost ₱{estCost}
+        <View style={[styles.simpleStatsCard, { backgroundColor: isDarkMode ? '#1E293B' : '#eff6ff', borderColor: isDarkMode ? '#334155' : '#bfdbfe' }]}>
+          <Ionicons name="information-circle" size={18} color={isDarkMode ? '#93C5FD' : colors.blue600} style={{ marginRight: 8 }} />
+          <Text style={[styles.simpleStatsText, { color: isDarkMode ? '#93C5FD' : '#1e40af' }]}>
+            {language === 'en' ? 'You have ' : 'Mayroon kang '}
+            <Text style={{ fontFamily: 'Inter_700Bold' }}>{remainingCount}</Text>
+            {language === 'en' ? ` ${remainingCount === 1 ? t.step : t.steps} left • approx. ` : ` na ${remainingCount === 1 ? t.step : t.steps} na natitira • tinatayang `}
+            <Text style={{ fontFamily: 'Inter_700Bold' }}>{estDays}</Text>
+            {language === 'en' ? ' days • est. cost ₱' : ' araw • tinatayang gastos ₱'}
+            <Text style={{ fontFamily: 'Inter_700Bold' }}>{estCost}</Text>
           </Text>
         </View>
       );
@@ -198,35 +234,35 @@ export default function RoadmapScreen() {
 
     // Advanced Stats Bar
     return (
-      <View style={styles.statsBarContainer}>
+      <View style={[styles.statsBarContainer, { borderBottomColor: themeColors.border, backgroundColor: isDarkMode ? '#121212' : colors.gray50 }]}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.statsScroll}
         >
-          <View style={styles.statCard}>
-            <Text style={styles.statNum}>{totalNodes}</Text>
-            <Text style={styles.statLabel}>Total Nodes</Text>
+          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <Text style={[styles.statNum, { color: themeColors.text }]}>{totalNodes}</Text>
+            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.totalNodes}</Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNum}>{totalEdges}</Text>
-            <Text style={styles.statLabel}>Edges</Text>
+          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <Text style={[styles.statNum, { color: themeColors.text }]}>{totalEdges}</Text>
+            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.edges}</Text>
           </View>
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
             <Text style={[styles.statNum, { color: colors.green600 }]}>{ownedCount}</Text>
-            <Text style={styles.statLabel}>Owned</Text>
+            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.owned}</Text>
           </View>
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
             <Text style={[styles.statNum, { color: colors.blue600 }]}>{remainingCount}</Text>
-            <Text style={styles.statLabel}>Remaining</Text>
+            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.remaining}</Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNum}>{estDays}d</Text>
-            <Text style={styles.statLabel}>Est. Days</Text>
+          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <Text style={[styles.statNum, { color: themeColors.text }]}>{estDays}d</Text>
+            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.estDays}</Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNum}>₱{estCost}</Text>
-            <Text style={styles.statLabel}>Est. Cost</Text>
+          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <Text style={[styles.statNum, { color: themeColors.text }]}>₱{estCost}</Text>
+            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.estCost}</Text>
           </View>
         </ScrollView>
       </View>
@@ -237,11 +273,11 @@ export default function RoadmapScreen() {
     if (!state.targetDocument) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name="map-outline" size={48} color={colors.gray400} style={styles.emptyIcon} />
-          <Text style={styles.emptyText}>
+          <Ionicons name="map-outline" size={48} color={isDarkMode ? '#404040' : colors.gray400} style={styles.emptyIcon} />
+          <Text style={[styles.emptyText, { color: themeColors.subText }]}>
             {isSimple
-              ? "Select a document you want to get in the 'Find ID' tab to start."
-              : "Select a document from 'Find ID' to generate your roadmap."}
+              ? t.noActiveJourney
+              : t.emptyRoadmap}
           </Text>
         </View>
       );
@@ -250,8 +286,8 @@ export default function RoadmapScreen() {
       return (
         <View style={styles.emptyContainer}>
           <Ionicons name="checkmark-circle-outline" size={48} color={colors.green600} style={styles.emptyIcon} />
-          <Text style={styles.emptyText}>
-            All steps complete! Check your History tab.
+          <Text style={[styles.emptyText, { color: themeColors.subText }]}>
+            {t.allStepsDone}
           </Text>
         </View>
       );
@@ -260,7 +296,7 @@ export default function RoadmapScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
       <FlatList
         data={stepsToRender}
         keyExtractor={(item) => item.document.id}
@@ -290,16 +326,18 @@ export default function RoadmapScreen() {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => setShowGraph(!showGraph)}
-                style={styles.toggleButton}
+                style={[styles.toggleButton, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
               >
                 <Ionicons
                   name={showGraph ? "chevron-up-outline" : "chevron-down-outline"}
                   size={16}
-                  color={colors.blue600}
+                  color={themeColors.primary}
                   style={styles.toggleIcon}
                 />
-                <Text style={styles.toggleButtonText}>
-                  {showGraph ? 'Hide Dependency Map' : 'View Dependency Map'}
+                <Text style={[styles.toggleButtonText, { color: themeColors.primary }]}>
+                  {showGraph
+                    ? (language === 'en' ? 'Hide Dependency Map' : 'Itago ang Mapa ng Dependency')
+                    : (language === 'en' ? 'View Dependency Map' : 'Tingnan ang Mapa ng Dependency')}
                 </Text>
               </TouchableOpacity>
 
@@ -315,16 +353,18 @@ export default function RoadmapScreen() {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => setShowTrace(!showTrace)}
-                style={[styles.toggleButton, { marginTop: 0 }]}
+                style={[styles.toggleButton, { marginTop: 0, backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
               >
                 <Ionicons
                   name={showTrace ? "chevron-up-outline" : "chevron-down-outline"}
                   size={16}
-                  color={colors.blue600}
+                  color={themeColors.primary}
                   style={styles.toggleIcon}
                 />
-                <Text style={styles.toggleButtonText}>
-                  {showTrace ? "Hide Algorithm Trace" : "View Algorithm Trace"}
+                <Text style={[styles.toggleButtonText, { color: themeColors.primary }]}>
+                  {showTrace
+                    ? (language === 'en' ? "Hide Algorithm Trace" : "Itago ang Algorithm Trace")
+                    : (language === 'en' ? "View Algorithm Trace" : "Tingnan ang Algorithm Trace")}
                 </Text>
               </TouchableOpacity>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { DocumentNode } from '../context/types';
+import { useTheme } from '../context/ThemeContext';
 import { colors } from '../theme';
 
 interface DocumentCardProps {
@@ -17,6 +18,8 @@ const DocumentCard = React.memo(function DocumentCard({
   onToggle,
   isDisabled = false,
 }: DocumentCardProps) {
+  const { colors: themeColors } = useTheme();
+
   const getIconColor = () => {
     if (isChecked) return colors.green600;
     if (isDisabled) return colors.gray400;
@@ -30,15 +33,15 @@ const DocumentCard = React.memo(function DocumentCard({
       disabled={isDisabled}
       style={[styles.touchable, isDisabled && styles.disabled]}
     >
-      <View style={styles.row}>
+      <View style={[styles.row, { backgroundColor: themeColors.cardBackground, borderBottomColor: themeColors.border }]}>
         <Ionicons
           name="checkmark-circle"
           size={24}
           color={getIconColor()}
         />
         <View style={styles.textContainer}>
-          <Text style={styles.label}>{document.label}</Text>
-          <Text style={styles.agency}>{document.agency}</Text>
+          <Text style={[styles.label, { color: themeColors.text }]}>{document.label}</Text>
+          <Text style={[styles.agency, { color: themeColors.subText }]}>{document.agency}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -61,8 +64,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
-    backgroundColor: colors.white,
   },
   textContainer: {
     flex: 1,
@@ -72,13 +73,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     fontSize: 16,
     lineHeight: 24,
-    color: colors.gray900,
   },
   agency: {
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
     lineHeight: 16,
-    color: colors.gray500,
     marginTop: 2,
   },
 });

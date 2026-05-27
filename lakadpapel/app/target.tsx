@@ -3,6 +3,8 @@ import { View, Text, SectionList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
+import { useTheme } from '../src/context/ThemeContext';
+import { useLanguage } from '../src/context/LanguageContext';
 import DocumentCard from '../src/components/DocumentCard';
 import CategoryHeader from '../src/components/CategoryHeader';
 import { REQUIREMENTS_GRAPH, DOCUMENT_CATEGORIES } from '../src/algorithms/requirementsGraph';
@@ -12,6 +14,8 @@ import { colors } from '../src/theme';
 export default function TargetScreen() {
   const router = useRouter();
   const { state, dispatch } = useDocumentContext();
+  const { colors: themeColors, isDarkMode } = useTheme();
+  const { t } = useLanguage();
 
   const sections = useMemo(() => {
     return Object.keys(DOCUMENT_CATEGORIES).map((categoryName) => {
@@ -36,18 +40,18 @@ export default function TargetScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
       {/* Header and Subheader */}
       <View>
-        <Text style={styles.screenTitle}>What do you need?</Text>
-        <Text style={styles.subtitle}>
-          Select the document you want to obtain.
+        <Text style={[styles.screenTitle, { color: themeColors.text }]}>{t.targetTitle}</Text>
+        <Text style={[styles.subtitle, { color: themeColors.subText }]}>
+          {t.targetSubtitle}
         </Text>
 
         {/* Notice Info Box */}
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>
-            Documents you already have are greyed out and cannot be selected as a target.
+        <View style={[styles.infoBox, { backgroundColor: isDarkMode ? '#1E1E1E' : colors.gray50, borderColor: themeColors.border }]}>
+          <Text style={[styles.infoText, { color: themeColors.subText }]}>
+            {t.targetInfo}
           </Text>
         </View>
       </View>
@@ -86,13 +90,11 @@ export default function TargetScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   screenTitle: {
     fontFamily: 'Inter_700Bold',
     fontSize: 22,
     lineHeight: 28,
-    color: colors.gray900,
     paddingHorizontal: 24,
     paddingTop: 24,
     paddingBottom: 8,
@@ -101,7 +103,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     fontSize: 14,
     lineHeight: 20,
-    color: colors.gray500,
     paddingHorizontal: 24,
     paddingBottom: 16,
   },
@@ -110,15 +111,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: colors.gray50,
     borderWidth: 1,
-    borderColor: colors.gray200,
     borderRadius: 8,
   },
   infoText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
     lineHeight: 18,
-    color: colors.gray500,
   },
 });

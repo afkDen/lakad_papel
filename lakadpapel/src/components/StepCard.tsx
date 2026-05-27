@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { RoadmapStep } from '../context/types';
 import BranchCard from './BranchCard';
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { colors } from '../theme';
 
 interface StepCardProps {
@@ -11,21 +13,24 @@ interface StepCardProps {
 }
 
 const StepCard = React.memo(function StepCard({ step, stepNumber, onMarkDone }: StepCardProps) {
+  const { colors: themeColors, isDarkMode } = useTheme();
+  const { t } = useLanguage();
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
       {/* Top Row */}
       <View style={styles.topRow}>
-        <View style={styles.stepBadge}>
+        <View style={[styles.stepBadge, { backgroundColor: isDarkMode ? '#404040' : colors.gray900 }]}>
           <Text style={styles.stepNumber}>{stepNumber}</Text>
         </View>
-        <Text style={styles.docLabel}>{step.document.label}</Text>
+        <Text style={[styles.docLabel, { color: themeColors.text }]}>{step.document.label}</Text>
       </View>
 
       {/* Fees & Typical Days Info */}
       <View style={styles.infoSection}>
-        <Text style={styles.infoText}>Fee: {step.document.fees}</Text>
-        <Text style={[styles.infoText, { marginTop: 2 }]}>
-          Process Time: {step.document.typicalDays}
+        <Text style={[styles.infoText, { color: themeColors.subText }]}>{t.fee}: {step.document.fees}</Text>
+        <Text style={[styles.infoText, { marginTop: 2, color: themeColors.subText }]}>
+          {t.processTime}: {step.document.typicalDays}
         </Text>
       </View>
 
@@ -42,7 +47,7 @@ const StepCard = React.memo(function StepCard({ step, stepNumber, onMarkDone }: 
         style={[styles.button, step.isDone ? styles.buttonDone : styles.buttonActive]}
       >
         <Text style={styles.buttonText}>
-          {step.isDone ? 'Done' : 'Mark as Done'}
+          {step.isDone ? t.alreadyHave : t.markAsDone}
         </Text>
       </TouchableOpacity>
     </View>
@@ -53,9 +58,7 @@ export default StepCard;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.gray200,
     borderRadius: 8,
     marginHorizontal: 24,
     marginBottom: 12,
@@ -68,7 +71,6 @@ const styles = StyleSheet.create({
   stepBadge: {
     width: 28,
     height: 28,
-    backgroundColor: colors.gray900,
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
@@ -82,7 +84,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_600SemiBold',
     fontSize: 16,
     lineHeight: 24,
-    color: colors.gray900,
     marginLeft: 12,
     flex: 1,
   },
@@ -94,7 +95,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
     lineHeight: 16,
-    color: colors.gray500,
   },
   branchSection: {
     marginLeft: 40,

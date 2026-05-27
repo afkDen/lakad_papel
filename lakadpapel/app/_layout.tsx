@@ -7,11 +7,110 @@ import * as SplashScreen from 'expo-splash-screen';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DocumentProvider } from '../src/context/DocumentContext';
+import { LanguageProvider, useLanguage } from '../src/context/LanguageContext';
+import { ThemeProvider, useTheme } from '../src/context/ThemeContext';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { colors } from '../src/theme';
 
 // Prevent splash screen from auto-hiding before fonts load
 SplashScreen.preventAutoHideAsync();
+
+function AppTabsContent({ onLayoutRootView, insets }: { onLayoutRootView: () => void; insets: any }) {
+  const { colors: themeColors, isDarkMode } = useTheme();
+  const { t } = useLanguage();
+
+  return (
+    <View style={[layoutStyles.root, { backgroundColor: themeColors.background }]} onLayout={onLayoutRootView}>
+      <StatusBar style={isDarkMode ? "light" : "dark"} />
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: themeColors.primary,
+          tabBarInactiveTintColor: isDarkMode ? '#737373' : colors.gray400,
+          tabBarLabelStyle: {
+            fontFamily: 'Inter_600SemiBold',
+            fontSize: 11,
+          },
+          tabBarStyle: {
+            backgroundColor: themeColors.cardBackground,
+            borderTopColor: themeColors.border,
+            borderTopWidth: 1,
+            height: 60 + insets.bottom,
+            paddingBottom: 8 + insets.bottom,
+            paddingTop: 8,
+          },
+        }}
+      >
+        <Tabs.Screen
+          name="checklist"
+          options={{
+            title: t.documents,
+            tabBarLabel: t.documents,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="document-text-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="target"
+          options={{
+            title: t.findId,
+            tabBarLabel: t.findId,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="search-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="roadmap"
+          options={{
+            title: t.roadmap,
+            tabBarLabel: t.roadmap,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="map-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="explorer"
+          options={{
+            title: t.explorer,
+            tabBarLabel: t.explorer,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="git-network-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="history"
+          options={{
+            title: t.history,
+            tabBarLabel: t.history,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="time-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: t.settings,
+            tabBarLabel: t.settings,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="settings-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="index"
+          options={{
+            href: null, // Hide index from tab bar
+          }}
+        />
+      </Tabs>
+    </View>
+  );
+}
 
 export default function Layout() {
   const insets = useSafeAreaInsets();
@@ -37,99 +136,13 @@ export default function Layout() {
 
   return (
     <ErrorBoundary>
-      <DocumentProvider>
-        <View style={layoutStyles.root} onLayout={onLayoutRootView}>
-          <StatusBar style="dark" />
-          <Tabs
-            screenOptions={{
-              headerShown: false,
-              headerStyle: {
-                backgroundColor: colors.white,
-                borderBottomWidth: 1,
-                borderBottomColor: colors.gray200,
-                elevation: 0,
-                shadowOpacity: 0,
-              },
-              headerTitleStyle: {
-                fontFamily: 'Inter_700Bold',
-                fontWeight: 'bold',
-                color: colors.gray900,
-              },
-              tabBarActiveTintColor: colors.blue600,
-              tabBarInactiveTintColor: colors.gray400,
-              tabBarLabelStyle: {
-                fontFamily: 'Inter_600SemiBold',
-                fontSize: 11,
-              },
-              tabBarStyle: {
-                backgroundColor: colors.white,
-                borderTopColor: colors.gray200,
-                borderTopWidth: 1,
-                height: 60 + insets.bottom,
-                paddingBottom: 8 + insets.bottom,
-                paddingTop: 8,
-              },
-            }}
-          >
-            <Tabs.Screen
-              name="checklist"
-              options={{
-                title: 'Documents',
-                tabBarLabel: 'Documents',
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="document-text-outline" size={size} color={color} />
-                ),
-              }}
-            />
-            <Tabs.Screen
-              name="target"
-              options={{
-                title: 'Find ID',
-                tabBarLabel: 'Find ID',
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="search-outline" size={size} color={color} />
-                ),
-              }}
-            />
-            <Tabs.Screen
-              name="roadmap"
-              options={{
-                title: 'Roadmap',
-                tabBarLabel: 'Roadmap',
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="map-outline" size={size} color={color} />
-                ),
-              }}
-            />
-            <Tabs.Screen
-              name="explorer"
-              options={{
-                title: 'Explorer',
-                tabBarLabel: 'Explorer',
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="git-network-outline" size={size} color={color} />
-                ),
-              }}
-            />
-            <Tabs.Screen
-              name="history"
-              options={{
-                title: 'History',
-                tabBarLabel: 'History',
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="time-outline" size={size} color={color} />
-                ),
-              }}
-            />
-            <Tabs.Screen
-              name="index"
-              options={{
-                href: null, // Hide index from tab bar
-              }}
-            />
-          </Tabs>
-        </View>
-      </DocumentProvider>
+      <LanguageProvider>
+        <ThemeProvider>
+          <DocumentProvider>
+            <AppTabsContent onLayoutRootView={onLayoutRootView} insets={insets} />
+          </DocumentProvider>
+        </ThemeProvider>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 }

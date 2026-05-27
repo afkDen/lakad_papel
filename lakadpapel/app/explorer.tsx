@@ -9,12 +9,16 @@ import LinearTimeline from '../src/components/LinearTimeline';
 import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
 import { colors, spacing, radii, typography, shadows } from '../src/theme';
 import { DocumentId } from '../src/context/types';
+import { useTheme } from '../src/context/ThemeContext';
+import { useLanguage } from '../src/context/LanguageContext';
 
 export default function ExplorerScreen() {
   const { state, dispatch } = useDocumentContext();
   const router = useRouter();
   const [highlightAttainable, setHighlightAttainable] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState<DocumentId | null>(null);
+  const { colors: themeColors, isDarkMode } = useTheme();
+  const { t, language } = useLanguage();
 
   const isSimple = state.userMode === 'simple';
 
@@ -68,29 +72,39 @@ export default function ExplorerScreen() {
 
   const renderHeader = () => {
     return (
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: themeColors.border }]}>
         <View style={styles.headerTitleCol}>
-          <Text style={styles.headerTitle}>
-            {isSimple ? 'Guide & Journey' : 'Graph Explorer'}
+          <Text style={[styles.headerTitle, { color: themeColors.text }]}>
+            {isSimple ? t.explorerTitleSimple : (language === 'en' ? 'Graph Explorer' : 'Explorer sa Graph')}
           </Text>
-          <Text style={styles.headerSubtitle}>
-            {isSimple ? 'Step-by-step help for getting your documents' : 'Explore Philippine Document Dependencies'}
+          <Text style={[styles.headerSubtitle, { color: themeColors.subText }]}>
+            {isSimple ? t.explorerSubtitleSimple : t.explorerSubtitleAdvanced}
           </Text>
         </View>
         
         {/* Simple / Advanced Mode Toggler */}
         <TouchableOpacity
-          style={[styles.modeToggleBtn, !isSimple && styles.modeToggleBtnActive]}
+          style={[
+            styles.modeToggleBtn,
+            isSimple && { backgroundColor: isDarkMode ? '#262626' : '#eff6ff', borderColor: isDarkMode ? '#404040' : '#bfdbfe' },
+            !isSimple && { backgroundColor: themeColors.primary, borderColor: themeColors.primary }
+          ]}
           onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
           activeOpacity={0.8}
         >
           <Ionicons
             name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
             size={12}
-            color={isSimple ? colors.teal600 : colors.white}
+            color={isSimple ? (isDarkMode ? themeColors.subText : colors.teal600) : colors.white}
             style={{ marginRight: 4 }}
           />
-          <Text style={[styles.modeToggleText, !isSimple && styles.modeToggleTextActive]}>
+          <Text
+            style={[
+              styles.modeToggleText,
+              isSimple && { color: isDarkMode ? themeColors.subText : colors.teal600 },
+              !isSimple && { color: colors.white }
+            ]}
+          >
             {isSimple ? 'Simple' : 'Advanced'}
           </Text>
         </TouchableOpacity>
@@ -103,59 +117,91 @@ export default function ExplorerScreen() {
     const activeRoadmapSteps = state.roadmap.filter((step) => !step.isDone);
 
     return (
-      <ScrollView style={styles.simpleScroll} contentContainerStyle={styles.simpleScrollContent}>
+      <ScrollView style={[styles.simpleScroll, { backgroundColor: themeColors.background }]} contentContainerStyle={styles.simpleScrollContent}>
         {/* Display Milestone Timeline inside Guide page if target selected */}
         {state.targetDocument && activeRoadmapSteps.length > 0 ? (
           <View style={{ marginBottom: 20 }}>
             <LinearTimeline roadmap={activeRoadmapSteps} />
           </View>
         ) : (
-          <View style={styles.helpBanner}>
-            <Ionicons name="compass-outline" size={32} color={colors.blue600} style={{ marginBottom: 8 }} />
-            <Text style={styles.bannerTitle}>No Active Journey Yet</Text>
-            <Text style={styles.bannerText}>
-              Go to the <Text style={styles.boldText}>Find ID</Text> tab and choose a document you want to get. We will lay out a simple timeline here to guide you!
+          <View style={[styles.helpBanner, { backgroundColor: isDarkMode ? '#1E1E1E' : colors.gray50, borderColor: themeColors.border }]}>
+            <Ionicons name="compass-outline" size={32} color={themeColors.primary} style={{ marginBottom: 8 }} />
+            <Text style={[styles.bannerTitle, { color: themeColors.text }]}>{t.noActiveJourneyGuideTitle}</Text>
+            <Text style={[styles.bannerText, { color: themeColors.subText }]}>
+              {language === 'en'
+                ? "Go to the Find ID tab and choose a document you want to get. We will lay out a simple timeline here to guide you!"
+                : "Pumunta sa Maghanap ng ID tab at pumili ng dokumentong nais mong makuha. Maglalagay kami ng simpleng timeline dito para gabayan ka!"}
             </Text>
             <TouchableOpacity
-              style={styles.bannerBtn}
+              style={[styles.bannerBtn, { backgroundColor: themeColors.primary }]}
               onPress={() => router.push('/target')}
               activeOpacity={0.8}
             >
-              <Text style={styles.bannerBtnText}>Choose a Target ID</Text>
+              <Text style={styles.bannerBtnText}>{t.chooseTargetIdBtn}</Text>
             </TouchableOpacity>
           </View>
         )}
 
         {/* Senior Frequently Asked Questions */}
-        <Text style={styles.faqSectionTitle}>Frequently Asked Questions</Text>
+        <Text style={[styles.faqSectionTitle, { color: themeColors.text }]}>{t.faqSectionTitle}</Text>
 
-        <View style={styles.faqItem}>
-          <Text style={styles.faqQuestion}>1. What documents should I get first?</Text>
-          <Text style={styles.faqAnswer}>
-            Foundational documents like your <Text style={styles.boldText}>PSA Birth Certificate</Text> and <Text style={styles.boldText}>Barangay Cedula</Text> have no prerequisites. They are required to get almost all other primary government IDs, so we recommend acquiring them first!
+        <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
+            {language === 'en' ? '1. What documents should I get first?' : '1. Anong mga dokumento ang dapat kong makuha muna?'}
+          </Text>
+          <Text style={[styles.faqAnswer, { color: themeColors.subText }]}>
+            {language === 'en' ? (
+              <>Foundational documents like your <Text style={styles.boldText}>PSA Birth Certificate</Text> and <Text style={styles.boldText}>Barangay Cedula</Text> have no prerequisites. They are required to get almost all other primary government IDs, so we recommend acquiring them first!</>
+            ) : (
+              <>Ang mga foundational na dokumento tulad ng iyong <Text style={styles.boldText}>PSA Birth Certificate</Text> at <Text style={styles.boldText}>Barangay Cedula</Text> ay walang prerequisite. Kinakailangan ang mga ito upang makuha ang halos lahat ng iba pang pangunahing government ID, kaya inirerekomenda naming kunin muna ang mga ito!</>
+            )}
           </Text>
         </View>
 
-        <View style={styles.faqItem}>
-          <Text style={styles.faqQuestion}>2. How do I use this app?</Text>
-          <Text style={styles.faqAnswer}>
-            • Go to the <Text style={styles.boldText}>Documents</Text> tab first. Check the boxes for any IDs you already possess.{"\n"}
-            • Go to the <Text style={styles.boldText}>Find ID</Text> tab and choose the ID you need (e.g. Philippine Passport).{"\n"}
-            • We will generate a step-by-step roadmap showing you exactly what to do!
+        <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
+            {language === 'en' ? '2. How do I use this app?' : '2. Paano ko gagamitin ang app na ito?'}
+          </Text>
+          <Text style={[styles.faqAnswer, { color: themeColors.subText }]}>
+            {language === 'en' ? (
+              <>
+                • Go to the <Text style={styles.boldText}>Documents</Text> tab first. Check the boxes for any IDs you already possess.{"\n"}
+                • Go to the <Text style={styles.boldText}>Find ID</Text> tab and choose the ID you need (e.g. Philippine Passport).{"\n"}
+                • We will generate a step-by-step roadmap showing you exactly what to do!
+              </>
+            ) : (
+              <>
+                • Pumunta muna sa <Text style={styles.boldText}>Dokumento</Text> tab. Markahan ang mga ID na mayroon ka na.{"\n"}
+                • Pumunta sa <Text style={styles.boldText}>Maghanap ng ID</Text> tab at piliin ang ID na kailangan mo (hal. Philippine Passport).{"\n"}
+                • Gagawa kami ng sunod-sunod na gabay na nagpapakita kung ano mismo ang dapat mong gawin!
+              </>
+            )}
           </Text>
         </View>
 
-        <View style={styles.faqItem}>
-          <Text style={styles.faqQuestion}>3. Do I need an internet connection?</Text>
-          <Text style={styles.faqAnswer}>
-            No! LakadPapel runs completely offline on your device, making it perfect to use in physical government waiting rooms where cellular signal is often weak.
+        <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
+            {language === 'en' ? '3. Do I need an internet connection?' : '3. Kailangan ko ba ng internet connection?'}
+          </Text>
+          <Text style={[styles.faqAnswer, { color: themeColors.subText }]}>
+            {language === 'en' ? (
+              <>No! LakadPapel runs completely offline on your device, making it perfect to use in physical government waiting rooms where cellular signal is often weak.</>
+            ) : (
+              <>Hindi! Ang LakadPapel ay ganap na gumagana offline sa iyong device, kaya perpekto itong gamitin sa mga waiting room ng gobyerno kung saan madalas na mahina ang signal ng cellular.</>
+            )}
           </Text>
         </View>
 
-        <View style={styles.faqItem}>
-          <Text style={styles.faqQuestion}>4. How is my nearest branch computed?</Text>
-          <Text style={styles.faqAnswer}>
-            The app securely checks your device's GPS and looks through our preloaded list of Philippine branch coordinates to find the branch closest to you instantly.
+        <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
+            {language === 'en' ? '4. How is my nearest branch computed?' : '4. Paano kinakalkula ang aking pinakamalapit na sangay?'}
+          </Text>
+          <Text style={[styles.faqAnswer, { color: themeColors.subText }]}>
+            {language === 'en' ? (
+              <>The app securely checks your device's GPS and looks through our preloaded list of Philippine branch coordinates to find the branch closest to you instantly.</>
+            ) : (
+              <>Ligtas na sinusuri ng app ang GPS ng iyong device at hinahanap sa aming preloaded na listahan ng mga coordinate ng sangay sa Pilipinas upang mahanap agad ang sangay na pinakamalapit sa iyo.</>
+            )}
           </Text>
         </View>
       </ScrollView>
@@ -167,7 +213,7 @@ export default function ExplorerScreen() {
   // ----------------------------------------------------
   if (isSimple) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
         {renderHeader()}
         {renderSimpleHelp()}
       </SafeAreaView>
@@ -176,67 +222,67 @@ export default function ExplorerScreen() {
 
   // Advanced Mode DAG rendering
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
       {renderHeader()}
 
       {/* 2. Color Legend */}
-      <View style={styles.legendRow}>
+      <View style={[styles.legendRow, { borderBottomColor: themeColors.border }]}>
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: colors.green600 }]} />
-          <Text style={styles.legendText}>Owned</Text>
+          <Text style={[styles.legendText, { color: themeColors.text }]}>{t.colorLegendOwned}</Text>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: colors.teal600 }]} />
-          <Text style={styles.legendText}>Available</Text>
+          <Text style={[styles.legendText, { color: themeColors.text }]}>{t.colorLegendAvailable}</Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: colors.gray300 }]} />
-          <Text style={styles.legendText}>Locked</Text>
+          <View style={[styles.legendDot, { backgroundColor: isDarkMode ? '#404040' : colors.gray300 }]} />
+          <Text style={[styles.legendText, { color: themeColors.text }]}>{t.colorLegendLocked}</Text>
         </View>
         {state.targetDocument && (
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: colors.blue600 }]} />
-            <Text style={styles.legendText}>Target</Text>
+            <Text style={[styles.legendText, { color: themeColors.text }]}>{t.colorLegendTarget}</Text>
           </View>
         )}
       </View>
 
       {/* 3. Live Graph Stats Bar */}
-      <View style={styles.statsBarContainer}>
+      <View style={[styles.statsBarContainer, { borderBottomColor: themeColors.border, backgroundColor: isDarkMode ? '#121212' : colors.gray50 }]}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.statsScroll}
         >
-          <View style={styles.statCard}>
-            <Text style={styles.statNum}>{totalNodes}</Text>
-            <Text style={styles.statLabel}>Total Nodes</Text>
+          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <Text style={[styles.statNum, { color: themeColors.text }]}>{totalNodes}</Text>
+            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.totalNodes}</Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNum}>{totalEdges}</Text>
-            <Text style={styles.statLabel}>Edges</Text>
+          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <Text style={[styles.statNum, { color: themeColors.text }]}>{totalEdges}</Text>
+            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.edges}</Text>
           </View>
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
             <Text style={[styles.statNum, { color: colors.green600 }]}>{ownedCount}</Text>
-            <Text style={styles.statLabel}>Owned</Text>
+            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.owned}</Text>
           </View>
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
             <Text style={[styles.statNum, { color: colors.teal600 }]}>{attainableCount}</Text>
-            <Text style={styles.statLabel}>Available</Text>
+            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.colorLegendAvailable}</Text>
           </View>
           {state.targetDocument && (
             <>
-              <View style={styles.statCard}>
+              <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
                 <Text style={[styles.statNum, { color: colors.blue600 }]}>{remainingCount}</Text>
-                <Text style={styles.statLabel}>Remaining</Text>
+                <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.remaining}</Text>
               </View>
-              <View style={styles.statCard}>
-                <Text style={styles.statNum}>{estDays}d</Text>
-                <Text style={styles.statLabel}>Est. Days</Text>
+              <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                <Text style={[styles.statNum, { color: themeColors.text }]}>{estDays}d</Text>
+                <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.estDays}</Text>
               </View>
-              <View style={styles.statCard}>
-                <Text style={styles.statNum}>₱{estCost}</Text>
-                <Text style={styles.statLabel}>Est. Cost</Text>
+              <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                <Text style={[styles.statNum, { color: themeColors.text }]}>₱{estCost}</Text>
+                <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.estCost}</Text>
               </View>
             </>
           )}
@@ -244,9 +290,13 @@ export default function ExplorerScreen() {
       </View>
 
       {/* 4. Top control tools */}
-      <View style={styles.topControlBar}>
+      <View style={[styles.topControlBar, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity
-          style={[styles.highlightBtn, highlightAttainable && styles.highlightBtnActive]}
+          style={[
+            styles.highlightBtn,
+            highlightAttainable && styles.highlightBtnActive,
+            { borderColor: themeColors.border }
+          ]}
           onPress={() => setHighlightAttainable(!highlightAttainable)}
           activeOpacity={0.8}
         >
@@ -256,14 +306,20 @@ export default function ExplorerScreen() {
             color={highlightAttainable ? colors.white : colors.teal600}
             style={styles.highlightBtnIcon}
           />
-          <Text style={[styles.highlightBtnText, highlightAttainable && styles.highlightBtnTextActive]}>
-            Highlight Next Steps
+          <Text
+            style={[
+              styles.highlightBtnText,
+              highlightAttainable && styles.highlightBtnTextActive,
+              !highlightAttainable && { color: isDarkMode ? themeColors.subText : colors.teal600 }
+            ]}
+          >
+            {language === 'en' ? 'Highlight Next Steps' : 'I-highlight ang mga Susunod na Hakbang'}
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* 5. Canvas View Area (Horizontal + Vertical Scrollable Grid) */}
-      <View style={styles.canvasContainer}>
+      <View style={[styles.canvasContainer, { backgroundColor: themeColors.background }]}>
         <ScrollView style={styles.vertScroll} contentContainerStyle={styles.vertScrollContent}>
           <ScrollView horizontal style={styles.horizScroll} contentContainerStyle={styles.horizScrollContent}>
             <DAGExplorer
