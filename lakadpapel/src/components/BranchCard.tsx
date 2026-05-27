@@ -25,11 +25,22 @@ export default function BranchCard({ branch, agencyType }: BranchCardProps) {
     );
   }
 
-  const handleGetDirections = () => {
-    if (branch.mapsUrl) {
-      Linking.openURL(branch.mapsUrl).catch((err) =>
-        console.error('Failed to open directions link:', err)
-      );
+  const handleGetDirections = async () => {
+    if (!branch.mapsUrl) return;
+
+    const googleMapsUrl = branch.mapsUrl;
+    const appleMapsUrl =
+      `https://maps.apple.com/?q=${encodeURIComponent(branch.name + ' ' + branch.city)}`;
+
+    try {
+      const supported = await Linking.canOpenURL(googleMapsUrl);
+      if (supported) {
+        await Linking.openURL(googleMapsUrl);
+      } else {
+        await Linking.openURL(appleMapsUrl);
+      }
+    } catch (err) {
+      console.error('Failed to open directions link:', err);
     }
   };
 
