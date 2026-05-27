@@ -98,6 +98,16 @@ export default function Layout() {
             }}
           />
           <Tabs.Screen
+            name="explorer"
+            options={{
+              title: 'Explorer',
+              tabBarLabel: 'Explorer',
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="git-network-outline" size={size} color={color} />
+              ),
+            }}
+          />
+          <Tabs.Screen
             name="history"
             options={{
               title: 'History',

@@ -23,7 +23,9 @@ The visual design is:
 | Framework | React Native via Expo SDK 51 | Single codebase for Android and iOS; fast iteration with Expo Go |
 | Language | TypeScript | Type safety on the DAG data structures prevents encoding errors |
 | Navigation | Expo Router (file-based) | Maps directly to screen names; no manual stack wiring |
-| Styling | NativeWind 4 (Tailwind CSS for RN) | Write Tailwind classes directly on RN components; no StyleSheet boilerplate |
+| Styling | React Native StyleSheet + `src/theme.ts` | Native styling with zero config; centralized design tokens in theme.ts |
+| Fonts | @expo-google-fonts/inter | Inter font family; loaded before splash screen hides |
+| Splash | expo-splash-screen | Holds splash while fonts load; prevents flash of unstyled text |
 | State | React Context + useReducer | Predictable, serializable state transitions; no third-party dependency |
 | Persistence | @react-native-async-storage/async-storage | On-device key-value store; works offline; no auth required |
 | Location | expo-location | Standard Expo module; handles Android and iOS permissions uniformly |
@@ -49,12 +51,13 @@ There is no backend. All data is bundled at build time. All algorithms run on-de
 ```
 lakadpapel/
 ├── app/                          # Expo Router screens (file = route)
-│   ├── _layout.tsx               # Root layout — wraps DocumentProvider
+│   ├── _layout.tsx               # Root layout — wraps DocumentProvider, loads fonts
 │   ├── index.tsx                 # Entry redirect to /checklist
 │   ├── checklist.tsx             # ChecklistScreen
 │   ├── target.tsx                # TargetScreen
 │   ├── roadmap.tsx               # RoadmapScreen
-│   └── history.tsx               # HistoryScreen
+│   ├── history.tsx               # HistoryScreen
+│   └── explorer.tsx              # DAG Explorer Screen (new)
 ├── src/
 │   ├── algorithms/
 │   │   ├── requirementsGraph.ts  # DAG: document nodes + prerequisite edges
@@ -69,18 +72,21 @@ lakadpapel/
 │   │   ├── DocumentCard.tsx      # Single document row in checklist
 │   │   ├── StepCard.tsx          # Single roadmap step card
 │   │   ├── BranchCard.tsx        # Agency branch info card
-│   │   ├── DependencyGraph.tsx   # SVG node-link DAG visualizer
-│   │   └── CategoryHeader.tsx    # Section header for grouped lists
-│   └── hooks/
-│       ├── useDocumentContext.ts  # Typed hook for DocumentContext
-│       └── useLocation.ts        # Wraps expo-location with permission flow
+│   │   ├── DependencyGraph.tsx   # SVG node-link DAG visualizer (roadmap toggle)
+│   │   ├── CategoryHeader.tsx    # Section header for grouped lists
+│   │   ├── DAGExplorer.tsx       # Full interactive DAG canvas (new)
+│   │   ├── AlgorithmTrace.tsx    # Step-by-step Kahn's algorithm panel (new)
+│   │   └── NodeDetailSheet.tsx   # Bottom sheet for tapped node info (new)
+│   ├── hooks/
+│   │   ├── useDocumentContext.ts  # Typed hook for DocumentContext
+│   │   ├── useLocation.ts         # Wraps expo-location with permission flow
+│   │   └── useDAGLayout.ts        # Computes node positions for DAG rendering (new)
+│   └── theme.ts                  # Centralized design tokens (colors, spacing, radii)
 ├── __tests__/
 │   ├── topologicalSort.test.ts   # Kahn's Algorithm unit tests
 │   └── bfsLocator.test.ts        # BFS unit tests
 ├── assets/
-│   └── fonts/
-│       └── Inter/                # Inter variable font files
-├── tailwind.config.js
+│   └── fonts/                    # Inter font files (via @expo-google-fonts/inter)
 ├── babel.config.js
 ├── app.json
 └── tsconfig.json
@@ -306,7 +312,7 @@ V' ≈ 500–1,000 branch nodes for Metro Manila coverage.
 
 ### 7.1 Typography
 
-**Font:** Inter (variable, loaded via `expo-font`)
+**Font:** Inter — loaded via `@expo-google-fonts/inter` in `_layout.tsx`. Splash screen is held until fonts are ready to prevent flash of unstyled text.
 
 | Usage | Weight | Size | Line Height |
 |---|---|---|---|
@@ -320,33 +326,48 @@ No other fonts. No system fonts (avoid inconsistency between Android and iOS def
 
 ### 7.2 Color Palette
 
-| Token | Hex | Use |
-|---|---|---|
-| `bg-white` | #ffffff | Screen background |
-| `bg-gray-50` | #f9fafb | Card background |
-| `border-gray-200` | #e5e7eb | Card borders, separators |
-| `text-gray-900` | #111827 | Primary text |
-| `text-gray-500` | #6b7280 | Secondary / disabled text |
-| `text-gray-400` | #9ca3af | Placeholder text |
-| `green-600` | #16a34a | Possessed document indicator |
-| `teal-600` | #0d9488 | Next attainable node |
-| `blue-600` | #2563eb | Primary action buttons |
-| `blue-700` | #1d4ed8 | Button pressed state |
-| `red-500` | #ef4444 | Error states |
+All colors are defined in `src/theme.ts` under `TOKENS.colors`. Reference by token name, never by raw hex in component files.
 
-No gradients. No shadows deeper than `shadow-sm`. No rounded corners larger than `rounded-lg` (8px).
+| Token name | Hex | Use |
+|---|---|---|
+| `white` | #ffffff | Screen and card backgrounds |
+| `bgScreen` | #f9fafb | Screen background (non-white screens) |
+| `bgCard` | #ffffff | Card background |
+| `bgMuted` | #f3f4f6 | Muted section backgrounds |
+| `border` | #e5e7eb | Card borders, separators |
+| `borderLight` | #f3f4f6 | Subtle dividers |
+| `textPrimary` | #111827 | Primary body text |
+| `textSecondary` | #6b7280 | Secondary / supporting text |
+| `textMuted` | #9ca3af | Placeholder, disabled text |
+| `green` | #16a34a | Possessed document, done state |
+| `greenLight` | #f0fdf4 | Green pill background |
+| `teal` | #0d9488 | Next attainable node (DAG) |
+| `blue` | #2563eb | Primary action buttons |
+| `blueLight` | #eff6ff | Info banner background |
+| `blueBorder` | #bfdbfe | Info banner border |
+| `blueText` | #1d4ed8 | Info banner text |
+| `gray900` | #111827 | Step badge background |
+| `gray400` | #9ca3af | Empty state, inactive icons |
+| `gray300` | #d1d5db | Unchecked checkbox border |
+| `gray200` | #e5e7eb | Borders |
+| `gray100` | #f3f4f6 | Search bar background |
+| `gray50` | #f9fafb | Category header background |
+
+No gradients. No shadows deeper than elevation 2. No border radius larger than 16px except full-circle elements.
 
 ### 7.3 Spacing
 
-Base unit: 4px. All spacing in multiples of 4px.
+All spacing values are defined in `src/theme.ts` under `TOKENS.spacing`. Base unit: 4px.
 
-| Token | Value | Use |
+| Token name | Value | Use |
 |---|---|---|
-| `p-4` | 16px | Card padding |
-| `p-6` | 24px | Screen horizontal padding |
-| `gap-3` | 12px | List item gap |
-| `gap-2` | 8px | Inline element gap |
-| `mb-8` | 32px | Section bottom margin |
+| `xs` | 4px | Tight gaps between inline elements |
+| `sm` | 8px | Icon-to-label gaps, chip padding |
+| `md` | 12px | Internal card gaps |
+| `base` | 16px | Card padding, button vertical padding |
+| `lg` | 20px | Larger internal gaps |
+| `xl` | 24px | Screen horizontal padding |
+| `xxl` | 32px | Section bottom margin, empty state padding |
 
 ### 7.4 Component Rules
 
@@ -383,12 +404,13 @@ Root Layout (_layout.tsx)
 └── DocumentProvider (wraps entire app)
     └── Tab Navigator (bottom tabs)
         ├── /checklist       (tab: "Documents")
-        ├── /target          (tab: "What do I need?")
+        ├── /target          (tab: "Find")
         ├── /roadmap         (tab: "Roadmap")
+        ├── /explorer        (tab: "Explorer")    ← new
         └── /history         (tab: "History")
 ```
 
-Tab bar: 4 tabs, text labels + single icon each. No badge counts in v1.
+Tab bar: 5 tabs, text labels + single icon each. No badge counts.
 
 The `/target` screen is accessible from the tab bar and from the sticky button on `/checklist`.
 The `/roadmap` screen populates when a target is selected.
@@ -497,3 +519,178 @@ Manual test matrix — 10 target documents x 3 possession states:
 - Authentication (there is no auth)
 - Analytics or crash reporting (out of scope for v1)
 - App store listing copy or screenshots (deferred to final submission)
+
+---
+
+## 15. New Features — DAG Explorer and Algorithm Visualization
+
+These features make the prerequisite graph a first-class, interactive part of the app rather than a hidden toggle on the roadmap screen. Each feature is self-contained and does not touch any existing algorithm logic.
+
+---
+
+### 15.1 DAG Explorer Screen (`/explorer`)
+
+**Purpose:** A dedicated full-screen, interactive canvas showing the entire prerequisite graph. The user can explore all documents and their relationships visually, see their current progress painted onto the graph, and tap any node to learn about that document.
+
+**New files:**
+- `app/explorer.tsx` — the screen
+- `src/components/DAGExplorer.tsx` — the interactive SVG canvas
+- `src/components/NodeDetailSheet.tsx` — bottom sheet shown when a node is tapped
+- `src/hooks/useDAGLayout.ts` — computes (x, y) position for every node
+
+**Layout:**
+- Full-screen SVG canvas wrapped in a `<ScrollView horizontal>` + `<ScrollView vertical>` for pan
+- Header bar (outside canvas): screen title "Graph Explorer", a legend row showing three colored dots with labels (Possessed, Next, Locked)
+- Canvas renders the full REQUIREMENTS_GRAPH, not just the current subgraph
+
+**Node layout algorithm (`useDAGLayout.ts`):**
+- Assign each node a topological level (0 = root nodes, 1 = nodes whose only prerequisites are at level 0, etc.)
+- X position = level × column width (120px)
+- Y position = index within level × row height (80px)
+- Return a `Map<DocumentId, { x: number; y: number }>` for the renderer
+
+**Node rendering:**
+- Circle radius 28px
+- Color:
+  - `TOKENS.colors.green` — in `possessedDocuments`
+  - `TOKENS.colors.teal` — in-degree 0 in current subgraph (next attainable)
+  - `TOKENS.colors.gray300` — not yet attainable
+  - `TOKENS.colors.blue` — currently selected target document
+- Label: document agency abbreviation inside the circle (white, 9px, bold)
+- Short label below the circle: truncated document name (10 chars max, 8px, gray)
+- Edges: SVG `<Line>` from prerequisite center to dependent center, color `TOKENS.colors.gray200`, strokeWidth 1.5
+- Edges leading into the currently selected target path: color `TOKENS.colors.blue`, strokeWidth 2.5
+
+**Interaction:**
+- Tap a node: opens `NodeDetailSheet` as a bottom sheet
+- No drag-to-rearrange (static layout is sufficient)
+- Canvas pans via ScrollView — no custom gesture handler needed
+
+**NodeDetailSheet content:**
+- Document label (large, bold)
+- Agency badge (colored pill matching agency)
+- Fee and typical processing time
+- Prerequisites list: each prerequisite shown as a small colored dot + label (green if possessed, grey if not)
+- Unlocks list: all documents that list this document as a prerequisite
+- Button: "Set as Target" — dispatches SET_TARGET and navigates to /roadmap
+- Button: "Mark as Possessed / Remove" — dispatches TOGGLE_DOCUMENT
+- If SCHOOL or BARANGAY agency: shows the plain-text instruction instead of branch info
+
+---
+
+### 15.2 Algorithm Trace Panel (`AlgorithmTrace.tsx`)
+
+**Purpose:** A collapsible panel on the RoadmapScreen that shows the actual step-by-step execution of Kahn's Algorithm for the current target. Each step shows the queue state, which node was dequeued, and which neighbors had their in-degree decremented. This is the educational DAA component.
+
+**New file:** `src/components/AlgorithmTrace.tsx`
+
+**Where it appears:** Below the DependencyGraph toggle on RoadmapScreen, as a second collapsible section labelled "Algorithm Trace".
+
+**Data source:** `topologicalSort.ts` needs a new exported function alongside the existing one:
+
+```typescript
+export interface TraceStep {
+  step: number;
+  dequeued: DocumentId;
+  queueBefore: DocumentId[];
+  queueAfter: DocumentId[];
+  inDegreeChanges: { node: DocumentId; from: number; to: number }[];
+}
+
+export function topologicalSortWithTrace(
+  subgraph: Record<DocumentId, DocumentNode>
+): { order: DocumentId[]; trace: TraceStep[] }
+```
+
+This function runs identical logic to `topologicalSort()` but records state at each step. The original `topologicalSort()` is not changed.
+
+**Panel layout:**
+- Header row: "Kahn's Algorithm Trace" label + step counter "Step X of Y" + a play/pause button
+- When playing: auto-advances one step every 800ms
+- Each step card shows:
+  - Step number badge
+  - "Dequeued: [document label]" in bold
+  - "Queue before: [label, label, ...]" in small grey text
+  - "Queue after: [label, label, ...]" in small grey text
+  - In-degree changes: each shown as "[label] in-degree: 3 → 2" with an arrow
+- The current step is highlighted in blue; past steps are grey; future steps are not shown
+- A horizontal stepper at the bottom: back one step, play/pause, forward one step
+
+**Behavior:**
+- Resets to step 1 when target document changes
+- Works with the static subgraph — no re-running the algorithm, just replaying the recorded trace
+- If subgraph is empty: panel shows "No algorithm to trace — select a target document."
+
+---
+
+### 15.3 Live Graph Stats Bar
+
+**Purpose:** A compact stats row shown at the top of both the RoadmapScreen and the Explorer screen that gives the user a live numerical summary of the current graph state.
+
+**No new files needed** — implemented as an inline component within each screen.
+
+**Stats shown (all derived from current state, recomputed on every state change):**
+
+| Stat | Label | Derivation |
+|---|---|---|
+| Total nodes in full graph | "Nodes" | `Object.keys(REQUIREMENTS_GRAPH).length` |
+| Total edges in full graph | "Edges" | Sum of all prerequisites array lengths |
+| Steps remaining | "Remaining" | `roadmap.filter(s => !s.isDone).length` |
+| Documents possessed | "Owned" | `possessedDocuments.size` |
+| Estimated total days | "Est. Days" | Sum of `typicalDays` numeric values for remaining steps |
+| Estimated total cost | "Est. Cost" | Sum of `fees` numeric values for remaining steps (PHP) |
+
+**Layout:**
+- Horizontal `ScrollView` (so it fits on narrow screens without wrapping)
+- Each stat: a small card with the number in bold (18px) and the label below (10px, grey)
+- Background: `TOKENS.colors.bgMuted`, border bottom `TOKENS.colors.border`
+- Height: 64px fixed
+
+---
+
+### 15.4 "What Unlocks Next?" Highlight Mode
+
+**Purpose:** On the DAG Explorer canvas, a toggle button that highlights only the documents the user can get right now (in-degree 0 in the current subgraph) and draws animated pulsing rings around those nodes.
+
+**Trigger:** A button in the Explorer header: "What can I get now?" — toggles highlight mode on/off.
+
+**Behavior when active:**
+- All non-attainable nodes dim to 30% opacity
+- All currently attainable nodes (in-degree 0) show a pulsing ring animation (SVG `<Circle>` with animated strokeOpacity via `react-native-reanimated` or a simple JS interval)
+- A count label in the header updates: "X documents available now"
+
+**No new files** — implemented within `DAGExplorer.tsx` and `explorer.tsx` using local state.
+
+---
+
+### 15.5 Minimum vs Full Path Toggle
+
+**Purpose:** On the RoadmapScreen, a toggle that switches between two views of the roadmap:
+- **Minimum path** (default): the current behavior — shortest attainable sequence given possessed documents
+- **Full path**: shows every document in the ancestor chain of the target, including ones the user already has, with possessed ones shown as greyed-out completed steps
+
+**Trigger:** A segmented control below the target document header on RoadmapScreen: "Remaining | Full Path"
+
+**Full path behavior:**
+- Runs `buildSubgraph()` with an empty possessed set (ignores what the user has)
+- Runs `topologicalSort()` on that full subgraph
+- Renders the full ordered list as StepCards
+- Possessed documents shown with a green "Already have this" badge instead of a "Mark as Done" button
+- Non-possessed documents shown as normal StepCards
+
+**No new files** — implemented within `roadmap.tsx` using local state `viewMode: 'remaining' | 'full'`.
+
+---
+
+### 15.6 Updated Icon List
+
+Add these icons to Section 7.5 for the new features:
+
+| Icon | Use |
+|---|---|
+| `git-network-outline` | Explorer tab bar icon |
+| `play-outline` | Algorithm trace play button |
+| `pause-outline` | Algorithm trace pause button |
+| `chevron-back-outline` | Algorithm trace step back |
+| `information-circle-outline` | Node detail sheet trigger |
+| `flash-outline` | "What can I get now?" highlight toggle |

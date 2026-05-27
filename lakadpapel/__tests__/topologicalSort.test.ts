@@ -1,4 +1,4 @@
-import { buildSubgraph, topologicalSort } from '../src/algorithms/topologicalSort';
+import { buildSubgraph, topologicalSort, topologicalSortWithTrace } from '../src/algorithms/topologicalSort';
 import { REQUIREMENTS_GRAPH, validateGraph } from '../src/algorithms/requirementsGraph';
 import { DocumentNode, DocumentId } from '../src/context/types';
 
@@ -149,6 +149,24 @@ describe('Topological Sort & Prerequisite Graph Tests', () => {
       expect(() => {
         validateGraph(REQUIREMENTS_GRAPH);
       }).not.toThrow();
+    });
+  });
+
+  describe('topologicalSortWithTrace Tests', () => {
+    it('should generate trace steps matching order for voters_id', () => {
+      const possessed = new Set<DocumentId>();
+      const subgraph = buildSubgraph(REQUIREMENTS_GRAPH, possessed, 'voters_id');
+      const { order, trace } = topologicalSortWithTrace(subgraph);
+
+      expect(order).toContain('psa_birth_cert');
+      expect(order).toContain('barangay_cert');
+      expect(order).toContain('voters_id');
+
+      expect(trace.length).toBe(3);
+      expect(trace[0].step).toBe(1);
+      expect(trace[0].queueBefore).toEqual(expect.arrayContaining(['psa_birth_cert', 'barangay_cert']));
+      expect(trace[2].dequeued).toBe('voters_id');
+      expect(trace[2].queueAfter).toEqual([]);
     });
   });
 });
