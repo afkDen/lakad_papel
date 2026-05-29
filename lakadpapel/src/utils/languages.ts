@@ -101,6 +101,15 @@ export const translations = {
     setAsTarget: "Set as Target",
     markAsMissing: "Mark as Missing",
     markAsPossessed: "Mark as Possessed",
+    
+    // Settings / Location
+    locationServices: "Location Services",
+    locationPermission: "Location Permission",
+    permissionGranted: "Granted",
+    permissionDenied: "Denied",
+    grantPermission: "Grant Permission",
+    openSettings: "Open Device Settings",
+    locationSettingsDesc: "Required to locate the nearest physical branch offices automatically.",
   },
   tl: {
     findId: "Maghanap ng ID",
@@ -204,5 +213,14 @@ export const translations = {
     setAsTarget: "Itakda bilang Target",
     markAsMissing: "Markahan bilang Nawawala",
     markAsPossessed: "Markahan bilang Taglay",
+    
+    // Settings / Location
+    locationServices: "Serbisyo sa Lokasyon",
+    locationPermission: "Permiso sa Lokasyon",
+    permissionGranted: "Pinayagan",
+    permissionDenied: "Tinanggihan",
+    grantPermission: "Ibigay ang Permiso",
+    openSettings: "Buksan ang Settings ng Device",
+    locationSettingsDesc: "Kailangan upang awtomatikong mahanap ang pinakamalapit na sangay.",
   }
 } as const;

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 import * as Location from 'expo-location';
 import { setLastKnownLocation } from '../context/DocumentContext';
 
@@ -46,22 +47,34 @@ export function useLocation() {
     }
   };
 
-  useEffect(() => {
-    async function checkPermission() {
-      try {
-        const { status } = await Location.getForegroundPermissionsAsync();
-        const granted = status === 'granted';
-        if (isMounted.current) {
-          setPermissionGranted(granted);
-        }
-        if (granted) {
-          await fetchLocation();
-        }
-      } catch (err) {
-        console.error('Error checking location permission:', err);
+  const checkPermission = async () => {
+    try {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      const granted = status === 'granted';
+      if (isMounted.current) {
+        setPermissionGranted(granted);
       }
+      if (granted) {
+        await fetchLocation();
+      }
+    } catch (err) {
+      console.error('Error checking location permission:', err);
     }
+  };
+
+  useEffect(() => {
     checkPermission();
+
+    // Listen for app focus/resume transitions to automatically update permission status
+    const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        checkPermission();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   return {
@@ -69,5 +82,7 @@ export function useLocation() {
     longitude,
     permissionGranted,
     requestPermission,
+    checkPermission,
   };
 }
+

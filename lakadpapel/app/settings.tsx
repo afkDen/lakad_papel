@@ -1,17 +1,55 @@
 import React from 'react';
-import { View, Text, Switch, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, Switch, TouchableOpacity, StyleSheet, Alert, ScrollView, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useTheme } from '../src/context/ThemeContext';
 import { useLanguage } from '../src/context/LanguageContext';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
+import { useLocation } from '../src/hooks/useLocation';
 import { colors as defaultColors } from '../src/theme';
 
 export default function SettingsScreen() {
   const { colors: themeColors, isDarkMode, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const { state, dispatch } = useDocumentContext();
+  const { permissionGranted, requestPermission } = useLocation();
+
+  const handleLocationPress = async () => {
+    if (permissionGranted) {
+      Alert.alert(
+        language === 'en' ? 'Location Access Active' : 'Aktibo ang Lokasyon',
+        language === 'en'
+          ? 'Location access is already granted and active. If you wish to disable or modify it, you can do so in your device settings.'
+          : 'Pinayagan na ang access sa lokasyon. Kung nais mo itong baguhin o i-disable, maaari mo itong gawin sa settings ng iyong device.',
+        [
+          { text: t.cancel, style: 'cancel' },
+          { text: language === 'en' ? 'Open Settings' : 'Buksan ang Settings', onPress: () => Linking.openSettings() }
+        ]
+      );
+    } else {
+      // First try to request foreground permission
+      await requestPermission();
+      
+      // Let's do a quick post-request status check
+      // If still denied, it means they might have permanently disabled it, so show instructions to open Settings
+      setTimeout(async () => {
+        const { status } = await require('expo-location').getForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(
+            language === 'en' ? 'Enable Location Access' : 'Paganahin ang Lokasyon',
+            language === 'en'
+              ? 'To locate the nearest government branches, please enable Location Services for LakadPapel in your device settings.'
+              : 'Upang mahanap ang pinakamalapit na sangay, mangyaring paganahin ang Serbisyo sa Lokasyon para sa LakadPapel sa settings ng iyong device.',
+            [
+              { text: t.cancel, style: 'cancel' },
+              { text: language === 'en' ? 'Open Settings' : 'Buksan ang Settings', onPress: () => Linking.openSettings() }
+            ]
+          );
+        }
+      }, 500);
+    }
+  };
 
   const handleClearCache = () => {
     Alert.alert(
@@ -143,6 +181,51 @@ export default function SettingsScreen() {
             </View>
           </View>
 
+          {/* Location Services Row */}
+          <View style={[styles.settingRow, { borderBottomColor: themeColors.border }]}>
+            <View style={styles.rowLabelGroup}>
+              <Ionicons
+                name="location-outline"
+                size={20}
+                color={themeColors.text}
+                style={{ marginRight: 10 }}
+              />
+              <View style={{ flex: 1, paddingRight: 8 }}>
+                <Text style={[styles.settingLabel, { color: themeColors.text }]}>
+                  {t.locationServices}
+                </Text>
+                <Text style={{ color: themeColors.subText, fontSize: 11, marginTop: 2, fontFamily: 'Inter_400Regular', lineHeight: 15 }}>
+                  {t.locationSettingsDesc}
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleLocationPress}
+              style={[
+                styles.permissionBadge,
+                {
+                  backgroundColor: permissionGranted
+                    ? (isDarkMode ? 'rgba(22, 163, 74, 0.2)' : 'rgba(22, 163, 74, 0.1)')
+                    : (isDarkMode ? '#27272A' : '#F3F4F6')
+                }
+              ]}
+            >
+              <Text
+                style={[
+                  styles.permissionBadgeText,
+                  {
+                    color: permissionGranted
+                      ? defaultColors.green600
+                      : themeColors.subText
+                  }
+                ]}
+              >
+                {permissionGranted ? t.permissionGranted : t.permissionDenied}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           {/* Engine Diagnostics Row */}
           <View style={[styles.settingRow, { borderBottomColor: themeColors.border }]}>
             <View style={styles.rowLabelGroup}>
@@ -262,5 +345,14 @@ const styles = StyleSheet.create({
     marginTop: 24,
     textAlign: 'center',
     fontFamily: 'Inter_400Regular',
+  },
+  permissionBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  permissionBadgeText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 12,
   },
 });
