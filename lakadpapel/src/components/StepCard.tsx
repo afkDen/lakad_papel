@@ -221,6 +221,18 @@ export const StepCard = React.memo(function StepCard({
   const { colors: themeColors, isDarkMode } = useTheme();
   const { language, t } = useLanguage();
   
+  const [mapUrl, setMapUrl] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    if (step.nearestBranch) {
+      const { latitude, longitude } = step.nearestBranch;
+      // Center and pin coordinate layout (Yandex static maps expects longitude,latitude)
+      setMapUrl(`https://static-maps.yandex.ru/1.x/?ll=${longitude},${latitude}&z=15&l=map&size=450,150&pt=${longitude},${latitude},pm2rdm`);
+    } else {
+      setMapUrl(null);
+    }
+  }, [step.nearestBranch]);
+
   const pulseAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -504,10 +516,13 @@ export const StepCard = React.memo(function StepCard({
                     {step.nearestBranch.address}
                   </Text>
 
-                  {/* Map image placeholder */}
+                  {/* Map image preview with local fallback */}
                   <View style={[styles.mapImageWrapper, { borderColor: themeColors.border }]}>
                     <Image
-                      source={require('../../assets/map-placeholder.png')}
+                      source={mapUrl ? { uri: mapUrl } : require('../../assets/map-placeholder.png')}
+                      onError={() => {
+                        setMapUrl(null);
+                      }}
                       style={styles.mapImage}
                       resizeMode="cover"
                     />
