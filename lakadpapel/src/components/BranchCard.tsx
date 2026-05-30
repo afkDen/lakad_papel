@@ -168,12 +168,16 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 14,
     marginTop: 2,
+    textAlign: 'justify',
+    marginRight: 12,
   },
   hoursText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 10,
     lineHeight: 14,
     marginTop: 4,
+    textAlign: 'justify',
+    marginRight: 12,
   },
   directionsButton: {
     flexDirection: 'row',

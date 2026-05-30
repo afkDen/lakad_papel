@@ -632,5 +632,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
     lineHeight: 18,
+    textAlign: 'justify',
+    marginRight: 8,
   },
 });
