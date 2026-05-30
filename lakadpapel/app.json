@@ -5,7 +5,7 @@
     "scheme": "lakadpapel",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo-splash.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/logo-splash.png",
@@ -28,8 +28,8 @@
     "android": {
       "package": "com.group4.lakadpapel",
       "adaptiveIcon": {
-        "backgroundColor": "#ffffff",
-        "foregroundImage": "./assets/android-icon-foreground.png"
+        "backgroundColor": "#FFF8F5",
+        "foregroundImage": "./assets/logo-splash.png"
       },
       "splash": {
         "image": "./assets/logo-splash.png",
@@ -38,7 +38,7 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/logo-header.png"
     },
     "experiments": {
       "typedRoutes": true
