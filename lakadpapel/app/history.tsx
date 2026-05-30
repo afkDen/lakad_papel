@@ -418,14 +418,12 @@ export default function HistoryScreen() {
   const renderPromoBanner = () => {
     return (
       <View style={[styles.promoCard, { backgroundColor: defaultColors.secondaryTeal }]}>
-        <View style={{ flex: 1, paddingRight: 8 }}>
-          <Text style={styles.promoTitle}>
-            {localT.bannerTitle}
-          </Text>
-          <Text style={styles.promoDesc}>
-            {localT.bannerDesc}
-          </Text>
-        </View>
+        <Text style={styles.promoTitle}>
+          {localT.bannerTitle}
+        </Text>
+        <Text style={styles.promoDesc}>
+          {localT.bannerDesc}
+        </Text>
         <TouchableOpacity
           style={styles.promoBtn}
           activeOpacity={0.9}
@@ -870,29 +868,31 @@ const styles = StyleSheet.create({
   },
   promoCard: {
     marginHorizontal: 24,
-    marginTop: 12,
+    marginTop: 16,
+    marginBottom: 8,
     borderRadius: radii.lg,
-    padding: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
+    padding: 24,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     ...shadows.md,
   },
   promoTitle: {
     color: '#FFF',
     fontFamily: 'Inter_700Bold',
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: 18,
+    lineHeight: 24,
+    marginBottom: 6,
   },
   promoDesc: {
     color: '#E0F2F1',
     fontFamily: 'Inter_400Regular',
-    fontSize: 11,
-    lineHeight: 16,
-    marginTop: 4,
+    fontSize: 12,
+    lineHeight: 18,
+    marginBottom: 16,
   },
   promoBtn: {
-    backgroundColor: '#F7DC6F',
-    paddingHorizontal: 16,
+    backgroundColor: '#F5C443',
+    paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: radii.md,
     justifyContent: 'center',
