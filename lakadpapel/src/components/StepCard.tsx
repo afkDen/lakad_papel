@@ -359,7 +359,7 @@ export const StepCard = React.memo(function StepCard({
                 ? (isDarkMode ? '#ffb77d' : '#8d4b00')
                 : themeColors.border,
               borderWidth: isActive ? 1.5 : 1,
-              opacity: isLocked ? 0.6 : 1,
+              opacity: isLocked ? (focused ? 0.95 : 0.7) : 1,
             },
           ]}
         >
@@ -408,7 +408,7 @@ export const StepCard = React.memo(function StepCard({
           </View>
 
           {/* Focused/Expanded Details Body */}
-          {focused && !isLocked && (
+          {focused && (
             <View style={styles.expandedBody}>
               <View style={[styles.divider, { backgroundColor: themeColors.border }]} />
 
