@@ -208,7 +208,7 @@ export const REQUIREMENTS_GRAPH: Record<DocumentId, DocumentNode> = {
     label: 'LTO Non-Professional Driver\'s License',
     agency: 'LTO',
     prerequisites: ['lto_student_permit', 'lto_medical_cert'],
-    fees: '₱685 (LTO transaction fee) + ₱1,500–₱4,000 (Practical Driving Course)',
+    fees: '₱652.50 (LTO application & computer fee) + ₱1,500–₱4,000 (Practical Driving Course)',
     typicalDays: 'Same day (usually takes 3–5 hours)',
     officeType: 'LTO Licensing Center or District Office',
     notes: 'You must have held your Student Permit for at least thirty (30) days and it must be active. You must complete a mandatory Practical Driving Course (PDC) of at least 8 hours for your desired vehicle category. You must pass both the computerized LTMS written exam and the actual practical driving test.',
@@ -225,7 +225,7 @@ export const REQUIREMENTS_GRAPH: Record<DocumentId, DocumentNode> = {
       '3. Pumunta sa LTO Licensing Center. Isumite ang Student Permit, Medical Cert, at PDC Certificate sa evaluator.',
       '4. Mag-login sa LTMS kiosk terminal at kunin ang computerized LTO Written Exam. Kailangang makakuha ng passing rate.',
       '5. Magpatuloy sa LTO test track para sa actual practical driving test gamit ang iyong sasakyan o pag-upa doon.',
-      '6. Matapos pumasa sa practical exam, magbayad ng ₱685 sa cashier.',
+      '6. Matapos pumasa sa practical exam, magbayad ng ₱652.50 sa cashier.',
       '7. Sumailalim sa biometrics check at kunin ang iyong physical Non-Professional Driver\'s License card (valid for 5 or 10 years).'
     ]
   },
