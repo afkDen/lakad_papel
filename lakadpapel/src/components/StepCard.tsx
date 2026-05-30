@@ -226,8 +226,8 @@ export const StepCard = React.memo(function StepCard({
   useEffect(() => {
     if (step.nearestBranch) {
       const { latitude, longitude } = step.nearestBranch;
-      // Center and pin coordinate layout (Yandex static maps expects longitude,latitude)
-      setMapUrl(`https://static-maps.yandex.ru/1.x/?ll=${longitude},${latitude}&z=15&l=map&size=450,150&pt=${longitude},${latitude},pm2rdm`);
+      // Center and pin coordinate layout (Yandex static maps expects longitude,latitude) with English labels forced
+      setMapUrl(`https://static-maps.yandex.ru/1.x/?ll=${longitude},${latitude}&z=15&l=map&size=450,150&pt=${longitude},${latitude},pm2rdm&lang=en_US`);
     } else {
       setMapUrl(null);
     }
