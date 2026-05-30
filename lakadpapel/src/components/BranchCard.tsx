@@ -4,7 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { AgencyBranch, AgencyType } from '../context/types';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
-import { colors } from '../theme';
+import { colors, radii, spacing } from '../theme';
 
 interface BranchCardProps {
   branch: AgencyBranch | null;
@@ -32,8 +32,14 @@ export default function BranchCard({ branch, agencyType }: BranchCardProps) {
 
     if (agencyType === 'BARANGAY' || agencyType === 'SCHOOL') {
       return (
-        <View style={[styles.warningCallout, isDarkMode && { backgroundColor: 'rgba(120, 53, 4, 0.3)' }]}>
-          <Text style={[styles.fallbackText, { color: isDarkMode ? '#FBBF24' : '#92400E', fontWeight: '500', fontStyle: 'normal' }]}>
+        <View style={[styles.warningCallout, isDarkMode && { backgroundColor: 'rgba(141, 75, 0, 0.2)', borderLeftColor: '#ffb77d' }]}>
+          <Ionicons
+            name="warning-outline"
+            size={18}
+            color={isDarkMode ? '#ffb77d' : colors.primaryTerracotta}
+            style={{ marginRight: 8 }}
+          />
+          <Text style={[styles.fallbackText, { color: isDarkMode ? '#ffb77d' : colors.primaryTerracotta, fontWeight: '600' }]}>
             {fallbackText}
           </Text>
         </View>
@@ -41,7 +47,7 @@ export default function BranchCard({ branch, agencyType }: BranchCardProps) {
     }
 
     return (
-      <View style={[styles.container, { backgroundColor: isDarkMode ? '#262626' : colors.gray50 }]}>
+      <View style={[styles.container, { backgroundColor: isDarkMode ? '#120E0A' : colors.backgroundPaperLight }]}>
         <Text style={[styles.fallbackText, { color: themeColors.subText }]}>{fallbackText}</Text>
       </View>
     );
@@ -67,27 +73,47 @@ export default function BranchCard({ branch, agencyType }: BranchCardProps) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDarkMode ? '#262626' : colors.gray50 }]}>
-      <Text style={[styles.branchName, { color: themeColors.text }]}>{branch.name}</Text>
-
-      <View style={styles.infoRow}>
-        <Ionicons name="location-outline" size={14} color={themeColors.subText} />
-        <Text style={[styles.infoTextFlex, { color: themeColors.subText }]}>{branch.address}</Text>
-      </View>
-
-      <View style={styles.infoRowTight}>
-        <Ionicons name="time-outline" size={14} color={themeColors.subText} />
-        <Text style={[styles.infoText, { color: themeColors.subText }]}>{branch.hours}</Text>
+    <View style={[styles.container, { backgroundColor: isDarkMode ? '#120E0A' : colors.backgroundPaperLight }]}>
+      <View style={styles.topRow}>
+        <View style={[styles.locIconContainer, { backgroundColor: isDarkMode ? 'rgba(0, 103, 128, 0.2)' : 'rgba(0, 103, 128, 0.1)' }]}>
+          <Ionicons
+            name="location-outline"
+            size={16}
+            color={isDarkMode ? colors.secondaryTealDark : colors.secondaryTeal}
+          />
+        </View>
+        <View style={styles.textDetails}>
+          <Text style={[styles.branchName, { color: themeColors.text }]}>{branch.name}</Text>
+          <Text style={[styles.addressText, { color: themeColors.subText }]}>{branch.address}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+            <Ionicons
+              name="time-outline"
+              size={12}
+              color={themeColors.subText}
+              style={{ marginRight: 4 }}
+            />
+            <Text style={[styles.hoursText, { color: themeColors.subText, marginTop: 0 }]}>
+              {branch.hours}
+            </Text>
+          </View>
+        </View>
       </View>
 
       {branch.mapsUrl && (
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={handleGetDirections}
-          style={styles.directionsRow}
+          style={[styles.directionsButton, { borderColor: isDarkMode ? colors.secondaryTealDark : colors.secondaryTeal }]}
         >
-          <Ionicons name="map-outline" size={14} color={themeColors.primary} />
-          <Text style={[styles.directionsText, { color: themeColors.primary }]}>{t.getDirections}</Text>
+          <Ionicons
+            name="compass-outline"
+            size={15}
+            color={isDarkMode ? colors.secondaryTealDark : colors.secondaryTeal}
+            style={{ marginRight: 6 }}
+          />
+          <Text style={[styles.directionsText, { color: isDarkMode ? colors.secondaryTealDark : colors.secondaryTeal }]}>
+            {t.getDirections}
+          </Text>
         </TouchableOpacity>
       )}
     </View>
@@ -96,61 +122,72 @@ export default function BranchCard({ branch, agencyType }: BranchCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
-    padding: 16,
-    marginTop: 12,
+    borderRadius: radii.md,
+    padding: spacing.md,
+    marginTop: spacing.md,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  locIconContainer: {
+    padding: 8,
+    borderRadius: radii.sm,
+    marginRight: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textDetails: {
+    flex: 1,
   },
   warningCallout: {
     backgroundColor: '#FEF3C7',
     borderLeftWidth: 4,
-    borderLeftColor: '#F59E0B',
+    borderLeftColor: '#8d4b00',
     padding: 12,
-    borderRadius: 4,
-    marginVertical: 8,
+    borderRadius: radii.sm,
+    marginVertical: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   fallbackText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Inter_500Medium',
     fontSize: 12,
     lineHeight: 16,
-    fontStyle: 'italic',
+    flex: 1,
   },
   branchName: {
     fontFamily: 'Inter_600SemiBold',
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 13,
+    lineHeight: 18,
   },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
+  addressText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 11,
+    lineHeight: 14,
+    marginTop: 2,
   },
-  infoRowTight: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  hoursText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 10,
+    lineHeight: 14,
     marginTop: 4,
   },
-  infoTextFlex: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 12,
-    lineHeight: 16,
-    marginLeft: 4,
-    flex: 1,
-  },
-  infoText: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 12,
-    lineHeight: 16,
-    marginLeft: 4,
-  },
-  directionsRow: {
+  directionsButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 12,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: radii.sm,
+    paddingVertical: 8,
+    marginTop: spacing.md,
+    width: '100%',
   },
   directionsText: {
     fontFamily: 'Inter_600SemiBold',
     fontSize: 12,
-    lineHeight: 16,
-    marginLeft: 4,
   },
 });
+

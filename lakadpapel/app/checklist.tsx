@@ -55,66 +55,40 @@ export default function ChecklistScreen() {
                   : t.checklistSubtitleAdvanced}
               </Text>
             </View>
-            
-            {/* Senior Accessibility Mode Switcher */}
-            <TouchableOpacity
-              style={[
-                styles.modeToggleBtn,
-                isSimple && { backgroundColor: isDarkMode ? '#262626' : '#eff6ff', borderColor: isDarkMode ? '#404040' : '#bfdbfe' },
-                !isSimple && { backgroundColor: themeColors.primary, borderColor: themeColors.primary }
-              ]}
-              onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
-                size={12}
-                color={isSimple ? (isDarkMode ? themeColors.subText : colors.teal600) : colors.white}
-                style={{ marginRight: 4 }}
-              />
-              <Text
-                style={[
-                  styles.modeToggleText,
-                  isSimple && { color: isDarkMode ? themeColors.subText : colors.teal600 },
-                  !isSimple && { color: colors.white }
-                ]}
-              >
-                {isSimple ? 'Simple' : 'Advanced'}
-              </Text>
-            </TouchableOpacity>
           </View>
- 
-          <TextInput
-            style={[
-              styles.searchInput,
-              isSimple && styles.searchInputLarge,
-              {
-                backgroundColor: isDarkMode ? '#1E1E1E' : colors.gray50,
-                color: themeColors.text,
-                borderColor: themeColors.border,
-              }
-            ]}
-            placeholder={t.searchPlaceholder}
-            placeholderTextColor={isDarkMode ? '#737373' : colors.gray400}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
+          <View style={styles.searchWrapper}>
+            <Ionicons
+              name="search-sharp"
+              size={18}
+              color={isDarkMode ? '#B6ABA1' : '#554336'}
+              style={styles.searchIcon}
+            />
+            <TextInput
+              style={[
+                styles.searchInput,
+                isSimple && styles.searchInputLarge,
+                {
+                  backgroundColor: isDarkMode ? '#1E1610' : '#F1EDE8',
+                  color: themeColors.text,
+                }
+              ]}
+              placeholder={t.searchPlaceholder}
+              placeholderTextColor={isDarkMode ? '#71645B' : 'rgba(85, 67, 54, 0.6)'}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
         </View>
  
         {/* Grouped Checklist */}
         <SectionList
           sections={sections}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingBottom: 110 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}
           removeClippedSubviews={true}
           maxToRenderPerBatch={10}
           windowSize={5}
           initialNumToRender={12}
-          getItemLayout={(_, index) => ({
-            length: 64,
-            offset: 64 * index,
-            index
-          })}
           renderItem={({ item }) => (
             <DocumentCard
               document={item}
@@ -127,14 +101,33 @@ export default function ChecklistScreen() {
           )}
         />
  
-        {/* Sticky Bottom Call-to-Action */}
-        <View style={[styles.bottomBar, { backgroundColor: themeColors.cardBackground, borderTopColor: themeColors.border }]}>
+        {/* Floating Sticky Bottom CTA Button - Match Stitch's exact mockup */}
+        <View style={styles.floatingContainer} pointerEvents="box-none">
           <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={0.8}
             onPress={() => router.push('/target')}
-            style={[styles.ctaButton, isSimple && styles.ctaButtonLarge, { backgroundColor: themeColors.primary }]}
+            style={[
+              styles.ctaButton,
+              isSimple && styles.ctaButtonLarge,
+              {
+                backgroundColor: isDarkMode ? colors.primaryTerracottaDark : colors.primaryTerracotta,
+              }
+            ]}
           >
-            <Text style={styles.ctaButtonText}>
+            <Ionicons
+              name="document-text"
+              size={16}
+              color={isDarkMode ? colors.onPrimaryFixed : colors.white}
+              style={{ marginRight: 6 }}
+            />
+            <Text
+              style={[
+                styles.ctaButtonText,
+                {
+                  color: isDarkMode ? colors.onPrimaryFixed : colors.white,
+                }
+              ]}
+            >
               {isSimple ? t.findDocumentSimple : t.searchIds}
             </Text>
           </TouchableOpacity>
@@ -184,43 +177,55 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Inter_600SemiBold',
   },
+  searchWrapper: {
+    position: 'relative',
+    width: '100%',
+    marginTop: spacing.sm,
+  },
+  searchIcon: {
+    position: 'absolute',
+    left: 16,
+    top: '50%',
+    marginTop: -9, // Offset half of the icon height (18px)
+    zIndex: 10,
+  },
   searchInput: {
-    paddingHorizontal: 16,
+    paddingLeft: 44,
+    paddingRight: 16,
     paddingVertical: 12,
-    borderWidth: 1,
+    borderWidth: 0,
     borderRadius: radii.md,
     fontFamily: 'Inter_400Regular',
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 15,
+    lineHeight: 22,
   },
   searchInputLarge: {
-    fontSize: 17,
+    fontSize: 16,
     paddingVertical: 14,
   },
-  bottomBar: {
+  floatingContainer: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 24,
     left: 0,
     right: 0,
-    borderTopWidth: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  ctaButton: {
-    borderRadius: radii.md,
-    paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 48,
-    ...shadows.sm,
+  },
+  ctaButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radii.full,
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    ...shadows.md,
   },
   ctaButtonLarge: {
-    paddingVertical: 18,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
   },
   ctaButtonText: {
     fontFamily: 'Inter_600SemiBold',
-    fontSize: 16,
-    lineHeight: 24,
-    color: colors.white,
+    fontSize: 14,
   },
 });

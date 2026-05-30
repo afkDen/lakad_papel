@@ -72,13 +72,13 @@ export default function LinearTimeline({ roadmap, onMilestonePress }: LinearTime
           const isDone = step.isDone;
           const isActive = index === activeIndex;
 
-          let badgeColor: string = isDarkMode ? '#404040' : colors.gray300;
+          let badgeColor: string = isDarkMode ? '#404040' : colors.borderSubtle;
           let labelColor: string = themeColors.subText;
           let borderStyle: 'solid' | 'dashed' = 'dashed';
 
           if (isDone) {
-            badgeColor = colors.green600;
-            labelColor = colors.green600;
+            badgeColor = colors.tertiaryGreen;
+            labelColor = colors.tertiaryGreen;
             borderStyle = 'solid';
           } else if (isActive) {
             badgeColor = themeColors.primary;
@@ -101,7 +101,7 @@ export default function LinearTimeline({ roadmap, onMilestonePress }: LinearTime
                       styles.connectorLine,
                       {
                         borderStyle,
-                        borderColor: isDone ? colors.green600 : themeColors.border,
+                        borderColor: isDone ? colors.tertiaryGreen : themeColors.border,
                       },
                     ]}
                   />

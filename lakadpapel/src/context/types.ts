@@ -26,6 +26,8 @@ export interface DocumentNode {
   typicalDays: string;
   officeType: string;
   notes?: string;
+  requirements?: string[];
+  detailedSteps?: string[];
 }
 
 export interface AgencyBranch {

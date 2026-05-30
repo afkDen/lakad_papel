@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
@@ -7,7 +7,7 @@ import DAGExplorer from '../src/components/DAGExplorer';
 import NodeDetailSheet from '../src/components/NodeDetailSheet';
 import LinearTimeline from '../src/components/LinearTimeline';
 import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
-import { colors, spacing, radii, typography, shadows } from '../src/theme';
+import { colors as defaultColors, spacing, radii, typography, shadows } from '../src/theme';
 import { DocumentId } from '../src/context/types';
 import { useTheme } from '../src/context/ThemeContext';
 import { useLanguage } from '../src/context/LanguageContext';
@@ -25,6 +25,41 @@ const BulletPoint = ({ children }: { children: React.ReactNode }) => {
     </View>
   );
 };
+
+// High-Fidelity Expandable FAQ Accordion Dropdown
+interface FAQAccordionItemProps {
+  question: string;
+  children: React.ReactNode;
+  themeColors: any;
+}
+
+function FAQAccordionItem({ question, children, themeColors }: FAQAccordionItemProps) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+      <TouchableOpacity
+        style={styles.faqHeader}
+        activeOpacity={0.8}
+        onPress={() => setExpanded(!expanded)}
+      >
+        <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
+          {question}
+        </Text>
+        <Ionicons
+          name={expanded ? "chevron-up" : "chevron-down"}
+          size={18}
+          color={themeColors.subText}
+        />
+      </TouchableOpacity>
+      {expanded && (
+        <View style={styles.faqContainer}>
+          {children}
+        </View>
+      )}
+    </View>
+  );
+}
 
 export default function ExplorerScreen() {
   const { state, dispatch } = useDocumentContext();
@@ -89,44 +124,17 @@ export default function ExplorerScreen() {
       <View style={[styles.header, { borderBottomColor: themeColors.border }]}>
         <View style={styles.headerTitleCol}>
           <Text style={[styles.headerTitle, { color: themeColors.text }]}>
-            {isSimple ? t.explorerTitleSimple : (language === 'en' ? 'Graph Explorer' : 'Explorer sa Graph')}
+            {isSimple ? (language === 'en' ? 'Explore Guides' : 'I-explore ang mga Dokumento') : (language === 'en' ? 'Graph Explorer' : 'Explorer sa Graph')}
           </Text>
           <Text style={[styles.headerSubtitle, { color: themeColors.subText }]}>
             {isSimple ? t.explorerSubtitleSimple : t.explorerSubtitleAdvanced}
           </Text>
-          <View style={[styles.statBadge, isDarkMode && { backgroundColor: 'rgba(15, 118, 110, 0.2)' }]}>
-            <Text style={[styles.statBadgeText, { color: isDarkMode ? '#34D399' : '#137333' }]}>
+          <View style={[styles.statBadge, isDarkMode && { backgroundColor: 'rgba(0, 107, 128, 0.2)' }]}>
+            <Text style={[styles.statBadgeText, { color: isDarkMode ? '#6cd3f7' : defaultColors.secondaryTeal }]}>
               {language === 'en' ? '✓ 114 verified branches nationwide' : '✓ 114 na-verify na sangay sa buong bansa'}
             </Text>
           </View>
         </View>
-        
-        {/* Simple / Advanced Mode Toggler */}
-        <TouchableOpacity
-          style={[
-            styles.modeToggleBtn,
-            isSimple && { backgroundColor: isDarkMode ? '#262626' : '#eff6ff', borderColor: isDarkMode ? '#404040' : '#bfdbfe' },
-            !isSimple && { backgroundColor: themeColors.primary, borderColor: themeColors.primary }
-          ]}
-          onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
-          activeOpacity={0.8}
-        >
-          <Ionicons
-            name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
-            size={12}
-            color={isSimple ? (isDarkMode ? themeColors.subText : colors.teal600) : colors.white}
-            style={{ marginRight: 4 }}
-          />
-          <Text
-            style={[
-              styles.modeToggleText,
-              isSimple && { color: isDarkMode ? themeColors.subText : colors.teal600 },
-              !isSimple && { color: colors.white }
-            ]}
-          >
-            {isSimple ? 'Simple' : 'Advanced'}
-          </Text>
-        </TouchableOpacity>
       </View>
     );
   };
@@ -137,13 +145,80 @@ export default function ExplorerScreen() {
 
     return (
       <ScrollView style={[styles.simpleScroll, { backgroundColor: themeColors.background }]} contentContainerStyle={styles.simpleScrollContent}>
-        {/* Display Milestone Timeline inside Guide page if target selected */}
+        
+        {/* Horizontal Active Path Timeline Progress Strip (Stitch High-Fidelity Specs) */}
         {state.targetDocument && activeRoadmapSteps.length > 0 ? (
-          <View style={{ marginBottom: 20 }}>
-            <LinearTimeline roadmap={activeRoadmapSteps} />
+          <View style={[styles.activePathContainer, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <View style={styles.activePathHeader}>
+              <Text style={[styles.activePathTitle, { color: isDarkMode ? defaultColors.primaryTerracottaDark : defaultColors.primaryTerracotta }]}>
+                {language === 'en' ? 'ACTIVE PATH' : 'AKTIBONG PROSESO'}
+              </Text>
+              <Text style={[styles.activePathStepsCount, { color: themeColors.subText }]}>
+                {activeRoadmapSteps.length} {language === 'en' ? (activeRoadmapSteps.length === 1 ? 'Step' : 'Steps') : 'Hakbang'} {language === 'en' ? 'remaining' : 'ang natitira'}
+              </Text>
+            </View>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalTimelineScroll}>
+              <View style={styles.horizontalTimelineWrapper}>
+                {state.roadmap.map((step, idx) => {
+                  const isLast = idx === state.roadmap.length - 1;
+                  const isStepDone = step.isDone;
+                  const isCurrent = !isStepDone && (idx === 0 || state.roadmap[idx - 1]?.isDone);
+                  
+                  let badgeBg = themeColors.border;
+                  let iconColor = themeColors.subText;
+                  let fontColor = themeColors.subText;
+                  
+                  if (isStepDone) {
+                    badgeBg = defaultColors.tertiaryGreen;
+                    iconColor = defaultColors.white;
+                    fontColor = defaultColors.tertiaryGreen;
+                  } else if (isCurrent) {
+                    badgeBg = isDarkMode ? defaultColors.primaryTerracottaDark : defaultColors.primaryTerracotta;
+                    iconColor = defaultColors.white;
+                    fontColor = isDarkMode ? defaultColors.primaryTerracottaDark : defaultColors.primaryTerracotta;
+                  }
+
+                  // Agency icon maps
+                  const getAgencyIcon = (agency: string) => {
+                    switch (agency) {
+                      case 'PSA': return 'child-sharp';
+                      case 'DFA': return 'airplane-sharp';
+                      case 'NBI': return 'finger-print-sharp';
+                      case 'LTO': return 'car-sharp';
+                      case 'COMELEC': return 'checkbox-sharp';
+                      case 'PHILSYS': return 'card-sharp';
+                      case 'PRC': return 'school-sharp';
+                      case 'SSS': return 'people-sharp';
+                      case 'GSIS': return 'briefcase-sharp';
+                      case 'PHILHEALTH': return 'heart-sharp';
+                      case 'PAGIBIG': return 'home-sharp';
+                      case 'PHLPOST': return 'mail-sharp';
+                      case 'BIR': return 'cash-sharp';
+                      default: return 'document-text-sharp';
+                    }
+                  };
+
+                  return (
+                    <React.Fragment key={`horiz-${step.document.id}`}>
+                      <View style={styles.horizontalStepNode}>
+                        <View style={[styles.horizontalStepBadge, { backgroundColor: badgeBg }]}>
+                          <Ionicons name={getAgencyIcon(step.document.agency) as any} size={14} color={iconColor} />
+                        </View>
+                        <Text style={[styles.horizontalStepLabel, { color: fontColor }]} numberOfLines={1}>
+                          {step.document.agency}
+                        </Text>
+                      </View>
+                      {!isLast && (
+                        <View style={[styles.horizontalConnector, { backgroundColor: isStepDone ? defaultColors.tertiaryGreen : themeColors.border }]} />
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </View>
+            </ScrollView>
           </View>
         ) : (
-          <View style={[styles.helpBanner, { backgroundColor: isDarkMode ? '#1E1E1E' : colors.gray50, borderColor: themeColors.border }]}>
+          <View style={[styles.helpBanner, { backgroundColor: isDarkMode ? '#1E1E1E' : defaultColors.backgroundPaperLight, borderColor: themeColors.border }]}>
             <Ionicons name="compass-outline" size={32} color={themeColors.primary} style={{ marginBottom: 8 }} />
             <Text style={[styles.bannerTitle, { color: themeColors.text }]}>{t.noActiveJourneyGuideTitle}</Text>
             <Text style={[styles.bannerText, { color: themeColors.subText }]}>
@@ -161,86 +236,117 @@ export default function ExplorerScreen() {
           </View>
         )}
 
-        {/* Senior Frequently Asked Questions */}
+        {/* Location Safety Alert Callout (Stitch Mockup Widget) */}
+        <View style={[styles.warningCallout, { backgroundColor: defaultColors.warningBg, borderColor: isDarkMode ? defaultColors.primaryTerracottaDark : defaultColors.primaryTerracotta }]}>
+          <Ionicons name="warning-sharp" size={20} color={defaultColors.primaryTerracotta} style={{ marginRight: 10 }} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.warningCalloutTitle}>
+              {language === 'en' ? 'LOCATION SAFETY ALERT' : 'PAALALA SA LOKASYON'}
+            </Text>
+            <Text style={styles.warningCalloutText}>
+              {language === 'en'
+                ? 'Some PSA and NBI offices require early morning appointments due to high citizen capacity. Consult verified nearest branches for daily slots.'
+                : 'May ilang sangay ng PSA at NBI na nangangailangan ng mas maagang appointment dahil sa limitadong slot. I-check ang mapa para sa pinakamalapit na Satellite Office.'}
+            </Text>
+          </View>
+        </View>
+
+        {/* Senior Frequently Asked Questions in high-fidelity collapsible accordion */}
         <Text style={[styles.faqSectionTitle, { color: themeColors.text }]}>{t.faqSectionTitle}</Text>
 
-        <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-          <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
-            {language === 'en' ? '1. What documents should I get first?' : '1. Anong mga dokumento ang dapat kong makuha muna?'}
-          </Text>
-          <View style={styles.faqContainer}>
-            <Text style={[styles.faqAnswerText, { color: themeColors.subText }]}>
-              {language === 'en' ? (
-                <>Foundational documents like your <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>PSA Birth Certificate</Text> and <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Barangay Cedula</Text> have no prerequisites. They are required to get almost all other primary government IDs, so we recommend acquiring them first!</>
-              ) : (
-                <>Ang mga foundational na dokumento tulad ng iyong <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>PSA Birth Certificate</Text> at <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Barangay Cedula</Text> ay walang prerequisite. Kinakailangan ang mga ito upang makuha ang halos lahat ng iba pang pangunahing government ID, kaya inirerekomenda naming kunin muna ang mga ito!</>
-              )}
-            </Text>
-          </View>
-        </View>
-
-        <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-          <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
-            {language === 'en' ? '2. How do I use this app?' : '2. Paano ko gagamitin ang app na ito?'}
-          </Text>
-          <View style={styles.faqContainer}>
+        <FAQAccordionItem
+          question={language === 'en' ? '1. What documents should I get first?' : '1. Anong mga dokumento ang dapat kong makuha muna?'}
+          themeColors={themeColors}
+        >
+          <Text style={[styles.faqAnswerText, { color: themeColors.subText }]}>
             {language === 'en' ? (
-              <View style={{ gap: 4 }}>
-                <BulletPoint>
-                  Go to the <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Documents</Text> tab first. Check the boxes for any IDs you already possess.
-                </BulletPoint>
-                <BulletPoint>
-                  Go to the <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Find ID</Text> tab and choose the ID you need (e.g. Philippine Passport).
-                </BulletPoint>
-                <BulletPoint>
-                  We will generate a step-by-step roadmap showing you exactly what to do!
-                </BulletPoint>
-              </View>
+              <>Foundational documents like your <Text style={styles.boldText}>PSA Birth Certificate</Text> and <Text style={styles.boldText}>Barangay Cedula</Text> have no prerequisites. They are required to get almost all other primary government IDs, so we recommend acquiring them first!</>
             ) : (
-              <View style={{ gap: 4 }}>
-                <BulletPoint>
-                  Pumunta muna sa <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Dokumento</Text> tab. Markahan ang mga ID na mayroon ka na.
-                </BulletPoint>
-                <BulletPoint>
-                  Pumunta sa <Text style={[styles.boldText, { color: isDarkMode ? '#E5E5E5' : '#262626' }]}>Maghanap ng ID</Text> tab at piliin ang ID na kailangan mo (hal. Philippine Passport).
-                </BulletPoint>
-                <BulletPoint>
-                  Gagawa kami ng sunod-sunod na gabay na nagpapakita kung ano mismo ang dapat mong gawin!
-                </BulletPoint>
-              </View>
+              <>Ang mga foundational na dokumento tulad ng iyong <Text style={styles.boldText}>PSA Birth Certificate</Text> at <Text style={styles.boldText}>Barangay Cedula</Text> ay walang prerequisite. Kinakailangan ang mga ito upang makuha ang halos lahat ng iba pang pangunahing government ID, kaya inirerekomenda naming kunin muna ang mga ito!</>
             )}
+          </Text>
+        </FAQAccordionItem>
+
+        <FAQAccordionItem
+          question={language === 'en' ? '2. How do I use this app?' : '2. Paano ko gagamitin ang app na ito?'}
+          themeColors={themeColors}
+        >
+          {language === 'en' ? (
+            <View style={{ gap: 4 }}>
+              <BulletPoint>
+                Go to the <Text style={styles.boldText}>Documents</Text> tab first. Check the boxes for any IDs you already possess.
+              </BulletPoint>
+              <BulletPoint>
+                Go to the <Text style={styles.boldText}>Find ID</Text> tab and choose the ID you need (e.g. Philippine Passport).
+              </BulletPoint>
+              <BulletPoint>
+                We will generate a step-by-step roadmap showing you exactly what to do!
+              </BulletPoint>
+            </View>
+          ) : (
+            <View style={{ gap: 4 }}>
+              <BulletPoint>
+                Pumunta muna sa <Text style={styles.boldText}>Dokumento</Text> tab. Markahan ang mga ID na mayroon ka na.
+              </BulletPoint>
+              <BulletPoint>
+                Pumunta sa <Text style={styles.boldText}>Maghanap ng ID</Text> tab at piliin ang ID na kailangan mo (hal. Philippine Passport).
+              </BulletPoint>
+              <BulletPoint>
+                Gagawa kami ng sunod-sunod na gabay na nagpapakita kung ano mismo ang dapat mong gawin!
+              </BulletPoint>
+            </View>
+          )}
+        </FAQAccordionItem>
+
+        <FAQAccordionItem
+          question={language === 'en' ? '3. Do I need an internet connection?' : '3. Kailangan ko ba ng internet connection?'}
+          themeColors={themeColors}
+        >
+          <Text style={[styles.faqAnswerText, { color: themeColors.subText }]}>
+            {language === 'en' ? (
+              <>No! LakadPapel runs completely offline on your device, making it perfect to use in physical government waiting rooms where cellular signal is often weak.</>
+            ) : (
+              <>Hindi! Ang LakadPapel ay ganap na gumagana offline sa iyong device, kaya perpekto itong gamitin sa mga waiting room ng gobyerno kung saan madalas na mahina ang signal ng cellular.</>
+            )}
+          </Text>
+        </FAQAccordionItem>
+
+        <FAQAccordionItem
+          question={language === 'en' ? '4. How is my nearest branch computed?' : '4. Paano kinakalkula ang aking pinakamalapit na sangay?'}
+          themeColors={themeColors}
+        >
+          <Text style={[styles.faqAnswerText, { color: themeColors.subText }]}>
+            {language === 'en' ? (
+              <>The app securely checks your device\'s GPS and looks through our preloaded list of Philippine branch coordinates to find the branch closest to you instantly.</>
+            ) : (
+              <>Ligtas na sinusuri ng app ang GPS ng iyong device at hinahanap sa aming preloaded na listahan ng mga coordinate ng sangay sa Pilipinas upang mahanap agad ang sangay na pinakamalapit sa iyo.</>
+            )}
+          </Text>
+        </FAQAccordionItem>
+
+        {/* Explore Branches Styled Map Preview Banner (Stitch visual anchor) */}
+        <View style={[styles.exploreBranchesCard, { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }]}>
+          <View style={styles.mapPreviewGradientContainer}>
+            <Ionicons name="map-sharp" size={32} color={isDarkMode ? defaultColors.secondaryTealDark : defaultColors.secondaryTeal} style={{ marginBottom: 6 }} />
+            <Text style={[styles.mapPreviewTitle, { color: themeColors.text }]}>
+              {language === 'en' ? 'Explore Nearest Branch Locations' : 'Galugarin ang mga Sangay'}
+            </Text>
+            <Text style={[styles.mapPreviewSubtitle, { color: themeColors.subText }]}>
+              {language === 'en' ? 'Navigate offline to nearest centers' : 'I-browse ang pinakamalapit na ahensya'}
+            </Text>
+            <TouchableOpacity
+              style={[styles.mapPreviewBtn, { backgroundColor: themeColors.primary }]}
+              activeOpacity={0.8}
+              onPress={() => router.push('/target')}
+            >
+              <Text style={styles.mapPreviewBtnText}>
+                {language === 'en' ? 'Open Map Search' : 'Buksan ang Mapa'}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
-        <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-          <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
-            {language === 'en' ? '3. Do I need an internet connection?' : '3. Kailangan ko ba ng internet connection?'}
-          </Text>
-          <View style={styles.faqContainer}>
-            <Text style={[styles.faqAnswerText, { color: themeColors.subText }]}>
-              {language === 'en' ? (
-                <>No! LakadPapel runs completely offline on your device, making it perfect to use in physical government waiting rooms where cellular signal is often weak.</>
-              ) : (
-                <>Hindi! Ang LakadPapel ay ganap na gumagana offline sa iyong device, kaya perpekto itong gamitin sa mga waiting room ng gobyerno kung saan madalas na mahina ang signal ng cellular.</>
-              )}
-            </Text>
-          </View>
-        </View>
-
-        <View style={[styles.faqItem, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-          <Text style={[styles.faqQuestion, { color: themeColors.text }]}>
-            {language === 'en' ? '4. How is my nearest branch computed?' : '4. Paano kinakalkula ang aking pinakamalapit na sangay?'}
-          </Text>
-          <View style={styles.faqContainer}>
-            <Text style={[styles.faqAnswerText, { color: themeColors.subText }]}>
-              {language === 'en' ? (
-                <>The app securely checks your device's GPS and looks through our preloaded list of Philippine branch coordinates to find the branch closest to you instantly.</>
-              ) : (
-                <>Ligtas na sinusuri ng app ang GPS ng iyong device at hinahanap sa aming preloaded na listahan ng mga coordinate ng sangay sa Pilipinas upang mahanap agad ang sangay na pinakamalapit sa iyo.</>
-              )}
-            </Text>
-          </View>
-        </View>
+        <View style={{ height: 32 }} />
       </ScrollView>
     );
   };
@@ -265,27 +371,27 @@ export default function ExplorerScreen() {
       {/* 2. Color Legend */}
       <View style={[styles.legendRow, { borderBottomColor: themeColors.border }]}>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: colors.green600 }]} />
+          <View style={[styles.legendDot, { backgroundColor: defaultColors.tertiaryGreen }]} />
           <Text style={[styles.legendText, { color: themeColors.text }]}>{t.colorLegendOwned}</Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: colors.teal600 }]} />
+          <View style={[styles.legendDot, { backgroundColor: defaultColors.secondaryTeal }]} />
           <Text style={[styles.legendText, { color: themeColors.text }]}>{t.colorLegendAvailable}</Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: isDarkMode ? '#404040' : colors.gray300 }]} />
+          <View style={[styles.legendDot, { backgroundColor: isDarkMode ? '#404040' : defaultColors.borderSubtle }]} />
           <Text style={[styles.legendText, { color: themeColors.text }]}>{t.colorLegendLocked}</Text>
         </View>
         {state.targetDocument && (
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: colors.blue600 }]} />
+            <View style={[styles.legendDot, { backgroundColor: isDarkMode ? defaultColors.primaryTerracottaDark : defaultColors.primaryTerracotta }]} />
             <Text style={[styles.legendText, { color: themeColors.text }]}>{t.colorLegendTarget}</Text>
           </View>
         )}
       </View>
 
       {/* 3. Live Graph Stats Bar */}
-      <View style={[styles.statsBarContainer, { borderBottomColor: themeColors.border, backgroundColor: isDarkMode ? '#121212' : colors.gray50 }]}>
+      <View style={[styles.statsBarContainer, { borderBottomColor: themeColors.border, backgroundColor: isDarkMode ? '#120E0A' : defaultColors.backgroundPaperLight }]}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -300,17 +406,17 @@ export default function ExplorerScreen() {
             <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.edges}</Text>
           </View>
           <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-            <Text style={[styles.statNum, { color: colors.green600 }]}>{ownedCount}</Text>
+            <Text style={[styles.statNum, { color: defaultColors.tertiaryGreen }]}>{ownedCount}</Text>
             <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.owned}</Text>
           </View>
           <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-            <Text style={[styles.statNum, { color: colors.teal600 }]}>{attainableCount}</Text>
+            <Text style={[styles.statNum, { color: defaultColors.secondaryTeal }]}>{attainableCount}</Text>
             <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.colorLegendAvailable}</Text>
           </View>
           {state.targetDocument && (
             <>
               <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-                <Text style={[styles.statNum, { color: colors.blue600 }]}>{remainingCount}</Text>
+                <Text style={[styles.statNum, { color: isDarkMode ? defaultColors.primaryTerracottaDark : defaultColors.primaryTerracotta }]}>{remainingCount}</Text>
                 <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.remaining}</Text>
               </View>
               <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
@@ -326,58 +432,42 @@ export default function ExplorerScreen() {
         </ScrollView>
       </View>
 
-      {/* 4. Top control tools */}
-      <View style={[styles.topControlBar, { borderBottomColor: themeColors.border }]}>
-        <TouchableOpacity
-          style={[
-            styles.highlightBtn,
-            highlightAttainable && styles.highlightBtnActive,
-            { borderColor: themeColors.border }
-          ]}
-          onPress={() => setHighlightAttainable(!highlightAttainable)}
-          activeOpacity={0.8}
-        >
-          <Ionicons
-            name={highlightAttainable ? "flash" : "flash-outline"}
-            size={16}
-            color={highlightAttainable ? colors.white : colors.teal600}
-            style={styles.highlightBtnIcon}
-          />
-          <Text
-            style={[
-              styles.highlightBtnText,
-              highlightAttainable && styles.highlightBtnTextActive,
-              !highlightAttainable && { color: isDarkMode ? themeColors.subText : colors.teal600 }
-            ]}
-          >
-            {language === 'en' ? 'Highlight Next Steps' : 'I-highlight ang mga Susunod na Hakbang'}
-          </Text>
-        </TouchableOpacity>
+      {/* 4. Interactive Vector Canvas */}
+      <ScrollView
+        style={styles.canvasScroll}
+        contentContainerStyle={styles.canvasScrollContent}
+      >
+        <DAGExplorer
+          possessedDocuments={state.possessedDocuments}
+          targetDocumentId={state.targetDocument}
+          highlightAttainable={highlightAttainable}
+          selectedNodeId={selectedNodeId}
+          onNodeSelect={handleNodeSelect}
+        />
+      </ScrollView>
+
+      {/* 5. Highlight Mode Switch */}
+      <View style={[styles.floatingActionRow, { backgroundColor: themeColors.cardBackground, borderTopColor: themeColors.border }]}>
+        <View style={styles.floatingActionLabelCol}>
+          <Text style={[styles.actionRowTitle, { color: themeColors.text }]}>{language === 'en' ? 'Highlight Attainable' : 'I-highlight ang Makukuha na'}</Text>
+          <Text style={[styles.actionRowDesc, { color: themeColors.subText }]}>{language === 'en' ? 'Dims locked nodes dynamically' : 'Nilalamlam ang mga naka-lock na node'}</Text>
+        </View>
+        <Switch
+          value={highlightAttainable}
+          onValueChange={setHighlightAttainable}
+          trackColor={{ false: defaultColors.borderSubtle, true: themeColors.primary }}
+          thumbColor={highlightAttainable ? '#ffffff' : '#f4f3f4'}
+        />
       </View>
 
-      {/* 5. Canvas View Area (Horizontal + Vertical Scrollable Grid) */}
-      <View style={[styles.canvasContainer, { backgroundColor: themeColors.background }]}>
-        <ScrollView style={styles.vertScroll} contentContainerStyle={styles.vertScrollContent}>
-          <ScrollView horizontal style={styles.horizScroll} contentContainerStyle={styles.horizScrollContent}>
-            <DAGExplorer
-              possessedDocuments={state.possessedDocuments}
-              targetDocumentId={state.targetDocument}
-              highlightAttainable={highlightAttainable}
-              selectedNodeId={selectedNodeId}
-              onNodeSelect={handleNodeSelect}
-            />
-          </ScrollView>
-        </ScrollView>
-      </View>
-
-      {/* 6. Details Drawer Bottom Sheet */}
+      {/* 6. Dynamic Detail Bottom Sheet Modal */}
       <NodeDetailSheet
         documentId={selectedNodeId}
         onClose={() => setSelectedNodeId(null)}
         onSetTarget={handleSetTarget}
         onTogglePossession={handleTogglePossession}
-        isPossessed={selectedNodeId ? state.possessedDocuments.has(selectedNodeId) : false}
-        isTarget={selectedNodeId ? state.targetDocument === selectedNodeId : false}
+        isPossessed={selectedNodeId !== null && state.possessedDocuments.has(selectedNodeId)}
+        isTarget={selectedNodeId !== null && state.targetDocument === selectedNodeId}
       />
     </SafeAreaView>
   );
@@ -386,236 +476,119 @@ export default function ExplorerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl,
-    paddingTop: 20,
-    paddingBottom: 4,
-    backgroundColor: colors.white,
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
   },
   headerTitleCol: {
     flex: 1,
-    paddingRight: spacing.md,
+    paddingRight: 12,
   },
   headerTitle: {
-    ...typography.screenTitle,
+    fontFamily: 'Inter_700Bold',
     fontSize: 22,
+    lineHeight: 28,
   },
   headerSubtitle: {
-    ...typography.caption,
-    color: colors.gray500,
+    ...typography.secondary,
+    fontSize: 12,
     marginTop: 2,
-    lineHeight: 15,
   },
   modeToggleBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#eff6ff',
-    borderWidth: 1,
-    borderColor: '#bfdbfe',
     borderRadius: radii.full,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    marginTop: 2,
-  },
-  modeToggleBtnActive: {
-    backgroundColor: colors.blue600,
-    borderColor: colors.blue600,
+    borderWidth: 1,
   },
   modeToggleText: {
     fontSize: 10,
     fontFamily: 'Inter_600SemiBold',
-    color: colors.teal600,
   },
-  modeToggleTextActive: {
-    color: colors.white,
-  },
-  legendRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.md,
-    gap: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  legendDot: {
-    width: 8,
-    height: 8,
-    borderRadius: radii.full,
-    marginRight: 4,
-  },
-  legendText: {
-    ...typography.caption,
-    fontSize: 10,
-    color: colors.gray500,
-  },
-  statsBarContainer: {
-    height: 64,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
-    backgroundColor: colors.gray50,
-  },
-  statsScroll: {
-    paddingHorizontal: spacing.xl,
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  statCard: {
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    borderRadius: radii.sm,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
-    height: 44,
-    minWidth: 70,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statNum: {
-    fontSize: 14,
-    fontFamily: 'Inter_700Bold',
-    color: colors.gray900,
-  },
-  statLabel: {
-    fontSize: 8,
-    fontFamily: 'Inter_400Regular',
-    color: colors.gray500,
-    marginTop: 1,
-  },
-  topControlBar: {
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
-    backgroundColor: colors.white,
-  },
-  highlightBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.teal600,
-    borderRadius: radii.md,
-    paddingVertical: 8,
-    backgroundColor: colors.white,
-  },
-  highlightBtnActive: {
-    backgroundColor: colors.teal600,
-    borderColor: colors.teal600,
-  },
-  highlightBtnIcon: {
-    marginRight: 4,
-  },
-  highlightBtnText: {
-    fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
-    color: colors.teal600,
-  },
-  highlightBtnTextActive: {
-    color: colors.white,
-  },
-  canvasContainer: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-  vertScroll: {
-    flex: 1,
-  },
-  vertScrollContent: {
-    flexGrow: 1,
-  },
-  horizScroll: {
-    flex: 1,
-  },
-  horizScrollContent: {
-    flexGrow: 1,
-  },
-  // Simple Mode styles
   simpleScroll: {
     flex: 1,
-    backgroundColor: colors.gray50,
   },
   simpleScrollContent: {
-    padding: spacing.xl,
-    paddingBottom: spacing['2xl'],
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
   helpBanner: {
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    borderRadius: radii.md,
     padding: 20,
+    borderWidth: 1,
+    borderRadius: radii.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
     ...shadows.sm,
+    marginBottom: 20,
   },
   bannerTitle: {
-    ...typography.cardSemibold,
-    color: colors.gray900,
+    fontFamily: 'Inter_700Bold',
     fontSize: 16,
-    marginBottom: 4,
+    lineHeight: 22,
+    textAlign: 'center',
+    marginBottom: 6,
   },
   bannerText: {
-    ...typography.secondary,
-    textAlign: 'center',
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
     lineHeight: 18,
+    textAlign: 'center',
     marginBottom: 16,
-    color: colors.gray500,
   },
   bannerBtn: {
-    backgroundColor: colors.blue600,
+    height: 40,
+    paddingHorizontal: 16,
     borderRadius: radii.md,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
   },
   bannerBtnText: {
-    color: colors.white,
+    color: defaultColors.white,
     fontFamily: 'Inter_600SemiBold',
     fontSize: 13,
   },
   faqSectionTitle: {
     ...typography.sectionHeader,
     fontSize: 12,
-    color: colors.gray900,
+    color: defaultColors.gray900,
+    marginTop: 8,
     marginBottom: 12,
     letterSpacing: 0.5,
   },
   faqItem: {
-    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.gray200,
     borderRadius: radii.md,
-    padding: 16,
     marginBottom: 12,
     ...shadows.sm,
+    overflow: 'hidden',
+  },
+  faqHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
   },
   faqQuestion: {
     ...typography.cardSemibold,
     fontSize: 14,
-    color: colors.gray900,
-    marginBottom: 6,
-  },
-  faqAnswer: {
-    ...typography.secondary,
-    fontSize: 13,
-    lineHeight: 19,
-    color: colors.gray500,
-    textAlign: 'justify',
+    flex: 1,
+    paddingRight: 8,
   },
   faqContainer: {
-    paddingHorizontal: 20,
-    marginVertical: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    borderTopWidth: 1,
+    borderTopColor: defaultColors.borderSubtle,
+    paddingTop: 12,
   },
   faqAnswerText: {
     fontFamily: 'Inter_400Regular',
@@ -624,20 +597,232 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
   },
   statBadge: {
-    backgroundColor: '#E6F4EA',
+    backgroundColor: 'rgba(0, 103, 128, 0.12)',
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: 3,
     borderRadius: 100,
     alignSelf: 'flex-start',
-    marginVertical: 4,
+    marginTop: 6,
   },
   statBadgeText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 11,
     fontFamily: 'Inter_600SemiBold',
   },
   boldText: {
     fontFamily: 'Inter_700Bold',
     fontWeight: '700',
+  },
+
+  // Color Legend (Advanced Mode Only)
+  legendRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  legendDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 6,
+  },
+  legendText: {
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+  },
+
+  // Live Stats Bar (Advanced Mode Only)
+  statsBarContainer: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  statsScroll: {
+    paddingHorizontal: 24,
+    gap: 10,
+  },
+  statCard: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderRadius: radii.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 80,
+    ...shadows.sm,
+  },
+  statNum: {
+    fontSize: 16,
+    fontFamily: 'Inter_700Bold',
+  },
+  statLabel: {
+    fontSize: 9,
+    fontFamily: 'Inter_600SemiBold',
+    textTransform: 'uppercase',
+    marginTop: 2,
+  },
+
+  // Vector Canvas (Advanced Mode Only)
+  canvasScroll: {
+    flex: 1,
+  },
+  canvasScrollContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  floatingActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderTopWidth: 1,
+  },
+  floatingActionLabelCol: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  actionRowTitle: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 14,
+  },
+  actionRowDesc: {
+    fontSize: 11,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 2,
+  },
+
+  // 1. Horizontal Active Path Timeline Progress Strip (Stitch mockup)
+  activePathContainer: {
+    padding: spacing.md,
+    borderWidth: 1,
+    borderRadius: radii.lg,
+    ...shadows.sm,
+    marginBottom: 20,
+  },
+  activePathHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: defaultColors.borderSubtle,
+    paddingBottom: 6,
+    marginBottom: spacing.sm,
+  },
+  activePathTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 10,
+    letterSpacing: 1.5,
+  },
+  activePathStepsCount: {
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+  },
+  horizontalTimelineScroll: {
+    paddingVertical: 4,
+  },
+  horizontalTimelineWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 0,
+  },
+  horizontalStepNode: {
+    alignItems: 'center',
+    width: 60,
+  },
+  horizontalStepBadge: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+  },
+  horizontalStepLabel: {
+    fontSize: 9,
+    fontFamily: 'Inter_700Bold',
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  horizontalConnector: {
+    height: 3,
+    width: 32,
+    marginTop: -14, // align vertically with badges centers
+  },
+
+  // 2. Location Warning Alert (Stitch callout mockup)
+  warningCallout: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    borderWidth: 1.5,
+    borderLeftWidth: 5,
+    borderRadius: radii.md,
+    marginBottom: 20,
+    elevation: 1,
+  },
+  warningCalloutTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 10,
+    letterSpacing: 1,
+    color: defaultColors.primaryTerracotta,
+    marginBottom: 3,
+  },
+  warningCalloutText: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#7c2d12',
+    textAlign: 'justify',
+  },
+
+  // 3. Explore Branches map preview card (Stitch visual anchor)
+  exploreBranchesCard: {
+    borderWidth: 1,
+    borderRadius: radii.lg,
+    overflow: 'hidden',
+    marginTop: 20,
+    ...shadows.sm,
+  },
+  mapPreviewGradientContainer: {
+    padding: spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mapPreviewTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 15,
+    textAlign: 'center',
+  },
+  mapPreviewSubtitle: {
+    fontSize: 12,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 2,
+    marginBottom: 14,
+    textAlign: 'center',
+  },
+  mapPreviewBtn: {
+    height: 38,
+    paddingHorizontal: 20,
+    borderRadius: radii.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+  },
+  mapPreviewBtnText: {
+    color: defaultColors.white,
+    fontFamily: 'Inter_700Bold',
+    fontSize: 12,
+    letterSpacing: 0.5,
   },
 });

@@ -50,7 +50,7 @@ function PulsingRing({ x, y }: { x: number; y: number }) {
       cx={x}
       cy={y}
       r={radius}
-      stroke={colors.teal600}
+      stroke={colors.secondaryTeal}
       strokeWidth={1.5}
       fill="none"
       opacity={opacity}
@@ -119,7 +119,7 @@ export default function DAGExplorer({
                 y1={startPoint.y}
                 x2={endPoint.x}
                 y2={endPoint.y}
-                stroke={isHighlightedEdge ? colors.blue600 : (isDarkMode ? '#333333' : colors.gray200)}
+                stroke={isHighlightedEdge ? (isDarkMode ? colors.primaryTerracottaDark : colors.primaryTerracotta) : (isDarkMode ? '#2E231B' : colors.borderSubtle)}
                 strokeWidth={isHighlightedEdge ? 2.5 : 1.5}
                 opacity={shouldDimEdge ? 0.2 : 1}
               />
@@ -151,12 +151,12 @@ export default function DAGExplorer({
           const isPath = targetAncestors.has(id);
           const attainable = isNodeAttainable(id, node);
 
-          // Node Color Mapping
-          let nodeColor: string = isDarkMode ? '#404040' : colors.gray300;
-          if (isPossessed) nodeColor = colors.green600;
-          else if (isTarget) nodeColor = colors.blue600;
-          else if (attainable) nodeColor = colors.teal600;
-          else if (isPath) nodeColor = isDarkMode ? '#1e3a8a' : '#bfdbfe'; // Light blue highlight for path ancestors
+          // Node Color Mapping - Stitch Civic Tech Theme
+          let nodeColor: string = isDarkMode ? '#2E231B' : colors.borderSubtle;
+          if (isPossessed) nodeColor = colors.tertiaryGreen;
+          else if (isTarget) nodeColor = isDarkMode ? colors.primaryTerracottaDark : colors.primaryTerracotta;
+          else if (attainable) nodeColor = isDarkMode ? colors.secondaryTealDark : colors.secondaryTeal;
+          else if (isPath) nodeColor = isDarkMode ? '#3E2A18' : '#ffdcc3'; // Path highlights use soft peach
 
           // Highlight / Dim Mode
           let nodeOpacity = 1;

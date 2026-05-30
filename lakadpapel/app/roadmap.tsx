@@ -46,7 +46,11 @@ export default function RoadmapScreen() {
 
     if (state.targetDocument) {
       try {
-        const activeSubgraph = buildSubgraph(REQUIREMENTS_GRAPH, state.possessedDocuments, state.targetDocument);
+        const activeSubgraph = buildSubgraph(
+          REQUIREMENTS_GRAPH,
+          viewMode === 'remaining' ? state.possessedDocuments : new Set(),
+          state.targetDocument
+        );
         subgraph = activeSubgraph;
 
         // Identify available (in-degree 0 in active subgraph)
@@ -65,7 +69,7 @@ export default function RoadmapScreen() {
       }
     }
     return { subgraph, nextAttainable, trace };
-  }, [state.targetDocument, state.possessedDocuments]);
+  }, [state.targetDocument, state.possessedDocuments, viewMode]);
 
   // Generate steps list based on current viewMode
   const getRoadmapSteps = () => {
@@ -140,38 +144,11 @@ export default function RoadmapScreen() {
             </Text>
             <Text style={[styles.targetLabel, { color: themeColors.text }]}>{targetLabel}</Text>
           </View>
-
-          {/* Mode Switcher Toggle */}
-          <TouchableOpacity
-            style={[
-              styles.modeToggleBtn,
-              isSimple && { backgroundColor: isDarkMode ? '#262626' : '#eff6ff', borderColor: isDarkMode ? '#404040' : '#bfdbfe' },
-              !isSimple && { backgroundColor: themeColors.primary, borderColor: themeColors.primary }
-            ]}
-            onPress={() => dispatch({ type: 'TOGGLE_USER_MODE' })}
-            activeOpacity={0.8}
-          >
-            <Ionicons
-              name={isSimple ? "accessibility-sharp" : "git-network-sharp"}
-              size={12}
-              color={isSimple ? (isDarkMode ? themeColors.subText : colors.teal600) : colors.white}
-              style={{ marginRight: 4 }}
-            />
-            <Text
-              style={[
-                styles.modeToggleText,
-                isSimple && { color: isDarkMode ? themeColors.subText : colors.teal600 },
-                !isSimple && { color: colors.white }
-              ]}
-            >
-              {isSimple ? 'Simple' : 'Advanced'}
-            </Text>
-          </TouchableOpacity>
         </View>
 
         {/* Minimum vs Full Path Toggle (Advanced Mode Only) */}
         {!isSimple && (
-          <View style={[styles.segmentedControl, { backgroundColor: isDarkMode ? '#1E1E1E' : colors.gray200 }]}>
+          <View style={[styles.segmentedControl, { backgroundColor: isDarkMode ? '#1E1E1E' : colors.borderSubtle }]}>
             <TouchableOpacity
               style={[
                 styles.segmentBtn,
@@ -217,56 +194,29 @@ export default function RoadmapScreen() {
   const renderStatsBar = () => {
     if (!state.targetDocument) return null;
 
-    if (isSimple) {
-      // Clean, senior-friendly simple stats card
-      return (
-        <View style={[styles.simpleStatsCard, { backgroundColor: isDarkMode ? '#1E293B' : '#eff6ff', borderColor: isDarkMode ? '#334155' : '#bfdbfe' }]}>
-          <Ionicons name="information-circle" size={18} color={isDarkMode ? '#93C5FD' : colors.blue600} style={{ marginRight: 8 }} />
-          <Text style={[styles.simpleStatsText, { color: isDarkMode ? '#93C5FD' : '#1e40af' }]}>
-            {language === 'en' ? 'You have ' : 'Mayroon kang '}
-            <Text style={{ fontFamily: 'Inter_700Bold' }}>{remainingCount}</Text>
-            {language === 'en' ? ` ${remainingCount === 1 ? t.step : t.steps} left • approx. ` : ` na ${remainingCount === 1 ? t.step : t.steps} na natitira • tinatayang `}
-            <Text style={{ fontFamily: 'Inter_700Bold' }}>{estDays}</Text>
-            {language === 'en' ? ' days • est. cost ₱' : ' araw • tinatayang gastos ₱'}
-            <Text style={{ fontFamily: 'Inter_700Bold' }}>{estCost}</Text>
+    const capsuleBg = isDarkMode ? 'rgba(141, 75, 0, 0.2)' : colors.primaryFixed;
+    const capsuleText = isDarkMode ? colors.primaryTerracottaDark : colors.onPrimaryFixed;
+
+    return (
+      <View style={styles.statsBarWrapper}>
+        <View style={[styles.statCapsule, { backgroundColor: capsuleBg }]}>
+          <Ionicons name="git-branch-outline" size={16} color={capsuleText} />
+          <Text style={[styles.statCapsuleText, { color: capsuleText }]}>
+            {remainingCount} {language === 'en' ? (remainingCount === 1 ? 'Step' : 'Steps') : 'Hakbang'}
           </Text>
         </View>
-      );
-    }
-
-    // Advanced Stats Bar
-    return (
-      <View style={[styles.statsBarContainer, { borderBottomColor: themeColors.border, backgroundColor: isDarkMode ? '#121212' : colors.gray50 }]}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.statsScroll}
-        >
-          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-            <Text style={[styles.statNum, { color: themeColors.text }]}>{totalNodes}</Text>
-            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.totalNodes}</Text>
-          </View>
-          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-            <Text style={[styles.statNum, { color: themeColors.text }]}>{totalEdges}</Text>
-            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.edges}</Text>
-          </View>
-          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-            <Text style={[styles.statNum, { color: colors.green600 }]}>{ownedCount}</Text>
-            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.owned}</Text>
-          </View>
-          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-            <Text style={[styles.statNum, { color: colors.blue600 }]}>{remainingCount}</Text>
-            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.remaining}</Text>
-          </View>
-          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-            <Text style={[styles.statNum, { color: themeColors.text }]}>{estDays}d</Text>
-            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.estDays}</Text>
-          </View>
-          <View style={[styles.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-            <Text style={[styles.statNum, { color: themeColors.text }]}>₱{estCost}</Text>
-            <Text style={[styles.statLabel, { color: themeColors.subText }]}>{t.estCost}</Text>
-          </View>
-        </ScrollView>
+        <View style={[styles.statCapsule, { backgroundColor: capsuleBg }]}>
+          <Ionicons name="card-outline" size={16} color={capsuleText} />
+          <Text style={[styles.statCapsuleText, { color: capsuleText }]}>
+            ₱{estCost.toLocaleString()}
+          </Text>
+        </View>
+        <View style={[styles.statCapsule, { backgroundColor: capsuleBg }]}>
+          <Ionicons name="time-outline" size={16} color={capsuleText} />
+          <Text style={[styles.statCapsuleText, { color: capsuleText }]}>
+            ~{estDays} {language === 'en' ? (estDays === 1 ? 'Day' : 'Days') : 'Araw'}
+          </Text>
+        </View>
       </View>
     );
   };
@@ -302,7 +252,7 @@ export default function RoadmapScreen() {
     if (stepsToRender.length === 0) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name="checkmark-circle-outline" size={48} color={colors.green600} style={styles.emptyIcon} />
+          <Ionicons name="checkmark-circle-outline" size={48} color={colors.tertiaryGreen} style={styles.emptyIcon} />
           <Text style={[styles.emptyText, { color: themeColors.subText }]}>
             {t.allStepsDone}
           </Text>
@@ -443,20 +393,20 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   modeToggleBtnActive: {
-    backgroundColor: colors.blue600,
-    borderColor: colors.blue600,
+    backgroundColor: colors.primaryTerracotta,
+    borderColor: colors.primaryTerracotta,
   },
   modeToggleText: {
     fontSize: 10,
     fontFamily: 'Inter_600SemiBold',
-    color: colors.teal600,
+    color: colors.secondaryTeal,
   },
   modeToggleTextActive: {
     color: colors.white,
   },
   segmentedControl: {
     flexDirection: 'row',
-    backgroundColor: colors.gray200,
+    backgroundColor: colors.borderSubtle,
     borderRadius: radii.md,
     padding: 3,
     marginTop: 16,
@@ -499,40 +449,25 @@ const styles = StyleSheet.create({
     color: '#1e40af',
     flex: 1,
   },
-  statsBarContainer: {
-    height: 64,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
-    backgroundColor: colors.gray50,
-    marginBottom: 16,
-  },
-  statsScroll: {
-    paddingHorizontal: 24,
+  statsBarWrapper: {
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    marginTop: 4,
   },
-  statCard: {
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    borderRadius: radii.sm,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
-    height: 44,
-    minWidth: 70,
+  statCapsule: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: radii.full,
+    gap: spacing.xs,
   },
-  statNum: {
-    fontSize: 14,
+  statCapsuleText: {
     fontFamily: 'Inter_700Bold',
-    color: colors.gray900,
-  },
-  statLabel: {
-    fontSize: 8,
-    fontFamily: 'Inter_400Regular',
-    color: colors.gray500,
-    marginTop: 1,
+    fontSize: 11,
   },
   emptyContainer: {
     flex: 1,
@@ -575,7 +510,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     marginVertical: 12,
     borderWidth: 1,
-    borderColor: colors.gray200,
+    borderColor: colors.borderSubtle,
     borderRadius: 8,
     paddingVertical: 12,
     backgroundColor: colors.white,
@@ -587,6 +522,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_600SemiBold',
     fontSize: 14,
     lineHeight: 20,
-    color: colors.blue600,
+    color: colors.primaryTerracotta,
   },
 });

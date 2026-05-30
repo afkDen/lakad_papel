@@ -25,7 +25,12 @@ export default function NodeDetailSheet({
   isTarget,
 }: NodeDetailSheetProps) {
   const { colors: themeColors, isDarkMode } = useTheme();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const [guideExpanded, setGuideExpanded] = React.useState(false);
+
+  React.useEffect(() => {
+    setGuideExpanded(false);
+  }, [documentId]);
 
   if (!documentId) return null;
 
@@ -40,7 +45,7 @@ export default function NodeDetailSheet({
   // Agency color mappings for visual badges
   const getAgencyColor = (agency: AgencyType) => {
     switch (agency) {
-      case 'PSA': return colors.blue600;
+      case 'PSA': return colors.primaryTerracotta;
       case 'DFA': return '#0284c7';
       case 'NBI': return '#4f46e5';
       case 'LTO': return '#d97706';
@@ -76,7 +81,7 @@ export default function NodeDetailSheet({
       {/* Bottom Sheet Container */}
       <View style={[styles.sheetContainer, { backgroundColor: themeColors.cardBackground }]}>
         {/* Handle bar */}
-        <View style={[styles.handleBar, { backgroundColor: isDarkMode ? '#404040' : colors.gray200 }]} />
+        <View style={[styles.handleBar, { backgroundColor: isDarkMode ? '#404040' : colors.borderSubtle }]} />
 
         {/* Close Button */}
         <TouchableOpacity style={styles.closeBtn} onPress={onClose} activeOpacity={0.7}>
@@ -100,7 +105,7 @@ export default function NodeDetailSheet({
                   isDarkMode && { backgroundColor: '#022c22', borderColor: '#064e3b' }
                 ]}
               >
-                <Ionicons name="checkmark-circle" size={14} color={colors.green600} style={styles.badgeIcon} />
+                <Ionicons name="checkmark-circle" size={14} color={colors.tertiaryGreen} style={styles.badgeIcon} />
                 <Text style={styles.possessedBadgeText}>{t.possessed}</Text>
               </View>
             )}
@@ -109,17 +114,17 @@ export default function NodeDetailSheet({
                 style={[
                   styles.statusBadge,
                   styles.targetBadge,
-                  isDarkMode && { backgroundColor: '#1e3a8a', borderColor: '#172554' }
+                  isDarkMode && { backgroundColor: 'rgba(141, 75, 0, 0.2)', borderColor: 'rgba(141, 75, 0, 0.4)' }
                 ]}
               >
-                <Ionicons name="map-outline" size={14} color={colors.blue600} style={styles.badgeIcon} />
+                <Ionicons name="map-outline" size={14} color={colors.primaryTerracotta} style={styles.badgeIcon} />
                 <Text style={styles.targetBadgeText}>{t.activeTarget}</Text>
               </View>
             )}
           </View>
 
           {/* Detail Grid */}
-          <View style={[styles.detailGrid, { backgroundColor: isDarkMode ? '#18181B' : colors.gray50, borderColor: themeColors.border }]}>
+          <View style={[styles.detailGrid, { backgroundColor: isDarkMode ? '#18181B' : colors.backgroundPaperLight, borderColor: themeColors.border }]}>
             <View style={[styles.detailItem, { borderRightColor: themeColors.border }]}>
               <Text style={[styles.detailLabel, { color: themeColors.subText }]}>{t.estFees}</Text>
               <Text style={[styles.detailValue, { color: themeColors.text }]}>{node.fees}</Text>
@@ -139,11 +144,79 @@ export default function NodeDetailSheet({
             <View
               style={[
                 styles.notesContainer,
-                isDarkMode && { backgroundColor: '#172554', borderColor: '#1e3a8a' }
+                isDarkMode && { backgroundColor: 'rgba(0, 103, 128, 0.15)', borderColor: 'rgba(0, 103, 128, 0.3)' }
               ]}
             >
-              <Ionicons name="information-circle-outline" size={18} color={isDarkMode ? '#60a5fa' : colors.blue600} style={styles.noteIcon} />
+              <Ionicons name="information-circle-outline" size={18} color={isDarkMode ? colors.secondaryTealDark : colors.secondaryTeal} style={styles.noteIcon} />
               <Text style={[styles.notesText, isDarkMode && { color: '#bfdbfe' }]}>{node.notes}</Text>
+            </View>
+          )}
+
+          {/* Collapsible Requirements & Guide Accordion */}
+          {(node.requirements || node.detailedSteps) && (
+            <View style={{ marginBottom: spacing.lg }}>
+              <TouchableOpacity
+                style={[
+                  styles.guideHeader,
+                  {
+                    backgroundColor: isDarkMode ? '#1E1610' : colors.backgroundPaperLight,
+                    borderColor: isDarkMode ? colors.primaryTerracottaDark : colors.borderSubtle,
+                  }
+                ]}
+                activeOpacity={0.8}
+                onPress={() => setGuideExpanded(!guideExpanded)}
+              >
+                <View style={styles.guideHeaderLabelRow}>
+                  <Ionicons
+                    name="library-outline"
+                    size={18}
+                    color={isDarkMode ? colors.primaryTerracottaDark : colors.primaryTerracotta}
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={[styles.guideHeaderText, { color: themeColors.text }]}>
+                    {language === 'en' ? 'View Requirements & Guide' : 'Tingnan ang Requirements at Gabay'}
+                  </Text>
+                </View>
+                <Ionicons
+                  name={guideExpanded ? "chevron-up" : "chevron-down"}
+                  size={16}
+                  color={themeColors.subText}
+                />
+              </TouchableOpacity>
+
+              {guideExpanded && (
+                <View style={[styles.guideContent, { borderColor: themeColors.border }]}>
+                  {/* Requirements Sub-section */}
+                  {node.requirements && node.requirements.length > 0 && (
+                    <View style={{ marginBottom: spacing.md }}>
+                      <Text style={[styles.guideSectionTitle, { color: isDarkMode ? colors.secondaryTealDark : colors.secondaryTeal }]}>
+                        {language === 'en' ? 'Requirements' : 'Mga Kakailanganin'}
+                      </Text>
+                      {node.requirements.map((req, idx) => (
+                        <View key={`req-${idx}`} style={styles.guideBulletRow}>
+                          <Text style={[styles.guideBulletDot, { color: isDarkMode ? colors.primaryTerracottaDark : colors.primaryTerracotta }]}>•</Text>
+                          <Text style={[styles.guideBulletText, { color: themeColors.text }]}>{req}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+
+                  {/* Detailed Steps Sub-section */}
+                  {node.detailedSteps && node.detailedSteps.length > 0 && (
+                    <View>
+                      <Text style={[styles.guideSectionTitle, { color: isDarkMode ? colors.secondaryTealDark : colors.secondaryTeal }]}>
+                        {language === 'en' ? 'Step-by-Step Instructions' : 'Hakbang-hakbang na Gabay'}
+                      </Text>
+                      {node.detailedSteps.map((step, idx) => (
+                        <View key={`step-${idx}`} style={styles.guideBulletRow}>
+                          <Text style={[styles.guideBulletNumber, { color: isDarkMode ? colors.primaryTerracottaDark : colors.primaryTerracotta }]}>{idx + 1}.</Text>
+                          <Text style={[styles.guideBulletText, { color: themeColors.text }]}>{step}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              )}
             </View>
           )}
 
@@ -237,7 +310,7 @@ export default function NodeDetailSheet({
             <Ionicons
               name={isPossessed ? "close-circle-outline" : "checkmark-circle-outline"}
               size={18}
-              color={isPossessed ? '#dc2626' : colors.green600}
+              color={isPossessed ? '#dc2626' : colors.tertiaryGreen}
               style={styles.btnIcon}
             />
             <Text style={[
@@ -286,7 +359,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 4,
     borderRadius: radii.sm,
-    backgroundColor: colors.gray200,
+    backgroundColor: colors.borderSubtle,
     alignSelf: 'center',
     marginBottom: spacing.xs,
   },
@@ -350,21 +423,21 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   possessedBadgeText: {
-    color: colors.green600,
+    color: colors.tertiaryGreen,
     fontSize: 11,
     fontFamily: 'Inter_600SemiBold',
   },
   targetBadgeText: {
-    color: colors.blue600,
+    color: colors.primaryTerracotta,
     fontSize: 11,
     fontFamily: 'Inter_600SemiBold',
   },
   detailGrid: {
     flexDirection: 'row',
     borderWidth: 1,
-    borderColor: colors.gray200,
+    borderColor: colors.borderSubtle,
     borderRadius: radii.md,
-    backgroundColor: colors.gray50,
+    backgroundColor: colors.backgroundPaperLight,
     marginBottom: spacing.lg,
     overflow: 'hidden',
   },
@@ -372,7 +445,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: spacing.md,
     borderRightWidth: 1,
-    borderRightColor: colors.gray200,
+    borderRightColor: colors.borderSubtle,
     alignItems: 'flex-start',
   },
   detailLabel: {
@@ -410,7 +483,7 @@ const styles = StyleSheet.create({
   },
   sectionHeaderRow: {
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
+    borderBottomColor: colors.borderSubtle,
     paddingBottom: spacing.xs,
     marginBottom: spacing.md,
     marginTop: spacing.sm,
@@ -454,7 +527,7 @@ const styles = StyleSheet.create({
   },
   actionContainer: {
     borderTopWidth: 1,
-    borderTopColor: colors.gray200,
+    borderTopColor: colors.borderSubtle,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xl,
     gap: spacing.sm,
@@ -464,12 +537,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.blue600,
+    backgroundColor: colors.primaryTerracotta,
     height: 48,
     borderRadius: radii.md,
   },
   btnDisabled: {
-    backgroundColor: colors.gray200,
+    backgroundColor: colors.borderSubtle,
   },
   btnPrimaryText: {
     ...typography.buttonLabel,
@@ -495,12 +568,69 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_600SemiBold',
   },
   btnSecondaryTextSuccess: {
-    color: colors.green600,
+    color: colors.tertiaryGreen,
   },
   btnSecondaryTextDanger: {
     color: '#dc2626',
   },
   btnIcon: {
     marginRight: spacing.sm,
+  },
+  guideHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.md,
+    borderWidth: 1,
+    borderRadius: radii.md,
+    marginTop: spacing.xs,
+  },
+  guideHeaderLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  guideHeaderText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 13,
+  },
+  guideContent: {
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderBottomLeftRadius: radii.md,
+    borderBottomRightRadius: radii.md,
+    padding: spacing.md,
+    backgroundColor: 'transparent',
+    marginTop: -1,
+  },
+  guideSectionTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: spacing.sm,
+  },
+  guideBulletRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 6,
+    paddingLeft: 4,
+  },
+  guideBulletDot: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginRight: 8,
+    lineHeight: 18,
+  },
+  guideBulletNumber: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 12,
+    marginRight: 8,
+    lineHeight: 18,
+  },
+  guideBulletText: {
+    flex: 1,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    lineHeight: 18,
   },
 });

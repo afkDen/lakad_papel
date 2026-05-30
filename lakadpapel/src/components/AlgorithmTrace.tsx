@@ -82,7 +82,7 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
 
   if (subgraphEmpty || trace.length === 0) {
     return (
-      <View style={[styles.emptyContainer, { backgroundColor: isDarkMode ? '#1e1e1e' : colors.gray50, borderColor: themeColors.border }]}>
+      <View style={[styles.emptyContainer, { backgroundColor: isDarkMode ? '#1e1e1e' : colors.backgroundPaperLight, borderColor: themeColors.border }]}>
         <Ionicons name="git-network-outline" size={24} color={themeColors.subText} style={styles.emptyIcon} />
         <Text style={[styles.emptyText, { color: themeColors.subText }]}>
           {t.traceSelectActive}
@@ -140,7 +140,7 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
             ) : (
               <View style={styles.queueContainer}>
                 {currentStep.queueBefore.map((id, index) => (
-                  <View key={`before-${id}-${index}`} style={[styles.queueItem, { backgroundColor: isDarkMode ? '#404040' : colors.gray200 }]}>
+                  <View key={`before-${id}-${index}`} style={[styles.queueItem, { backgroundColor: isDarkMode ? '#404040' : colors.borderSubtle }]}>
                     <Text style={[styles.queueItemText, { color: themeColors.text }]}>
                       {REQUIREMENTS_GRAPH[id]?.agency || id}
                     </Text>
@@ -179,7 +179,7 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
         </View>
 
         {/* In-Degree Decrements list */}
-        <View style={[styles.decSection, { backgroundColor: isDarkMode ? '#171717' : colors.gray50 }]}>
+        <View style={[styles.decSection, { backgroundColor: isDarkMode ? '#171717' : colors.backgroundPaperLight }]}>
           <Text style={[styles.decTitle, { color: themeColors.subText }]}>{t.neighborDecrements}</Text>
           {currentStep.inDegreeChanges.length === 0 ? (
             <Text style={[styles.decEmptyText, { color: themeColors.subText }]}>
@@ -194,7 +194,7 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
                     <Ionicons
                       name="arrow-down-circle-outline"
                       size={16}
-                      color={isZero ? colors.teal600 : themeColors.subText}
+                      color={isZero ? (isDarkMode ? colors.secondaryTealDark : colors.secondaryTeal) : themeColors.subText}
                       style={styles.decIcon}
                     />
                     <Text style={[
@@ -234,7 +234,7 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
             style={[
               styles.stepperBtn, 
               { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border },
-              currentIndex === 0 && [styles.stepperDisabled, { backgroundColor: isDarkMode ? '#262626' : colors.gray50 }]
+              currentIndex === 0 && [styles.stepperDisabled, { backgroundColor: isDarkMode ? '#262626' : colors.backgroundPaperLight }]
             ]}
             onPress={handleStepBack}
             disabled={currentIndex === 0}
@@ -255,7 +255,7 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
             style={[
               styles.stepperBtn, 
               { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border },
-              currentIndex === trace.length - 1 && [styles.stepperDisabled, { backgroundColor: isDarkMode ? '#262626' : colors.gray50 }]
+              currentIndex === trace.length - 1 && [styles.stepperDisabled, { backgroundColor: isDarkMode ? '#262626' : colors.backgroundPaperLight }]
             ]}
             onPress={handleStepForward}
             disabled={currentIndex === trace.length - 1}
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: radii.full,
-    backgroundColor: colors.blue600,
+    backgroundColor: colors.primaryTerracotta,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
   },
   decNodeZero: {
     fontFamily: 'Inter_600SemiBold',
-    color: colors.teal600,
+    color: colors.secondaryTeal,
   },
   decFormula: {
     flexDirection: 'row',
@@ -464,10 +464,10 @@ const styles = StyleSheet.create({
   },
   zeroBold: {
     fontFamily: 'Inter_700Bold',
-    color: colors.teal600,
+    color: colors.secondaryTeal,
   },
   enqueuedBadge: {
-    backgroundColor: colors.teal600,
+    backgroundColor: colors.secondaryTeal,
     paddingHorizontal: 4,
     paddingVertical: 1,
     borderRadius: radii.sm,
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: radii.md,
-    backgroundColor: colors.blue600,
+    backgroundColor: colors.primaryTerracotta,
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.sm,
@@ -534,12 +534,12 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: radii.full,
-    backgroundColor: colors.green600,
+    backgroundColor: colors.tertiaryGreen,
     marginRight: 4,
   },
   playingText: {
     fontSize: 8,
     fontFamily: 'Inter_700Bold',
-    color: colors.green600,
+    color: colors.tertiaryGreen,
   },
 });

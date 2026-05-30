@@ -99,8 +99,8 @@ const DependencyGraph = React.memo(function DependencyGraph({
 
   // 4. Determine node colors
   const getNodeColor = (id: DocumentId) => {
-    if (possessed.has(id)) return colors.green600;
-    if (nextAttainable.has(id)) return colors.teal600;
+    if (possessed.has(id)) return colors.tertiaryGreen;
+    if (nextAttainable.has(id)) return colors.secondaryTeal;
     return colors.gray400;
   };
 
@@ -123,7 +123,7 @@ const DependencyGraph = React.memo(function DependencyGraph({
             y1={toCoord.y}
             x2={fromCoord.x}
             y2={fromCoord.y}
-            stroke={colors.gray300}
+            stroke={colors.borderSubtle}
             strokeWidth={2}
           />
         );
@@ -193,9 +193,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: colors.gray50,
+    backgroundColor: colors.backgroundPaperLight,
     borderWidth: 1,
-    borderColor: colors.gray200,
+    borderColor: colors.borderSubtle,
     borderRadius: 8,
     marginHorizontal: 24,
     marginVertical: 16,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.gray200,
+    borderColor: colors.borderSubtle,
     borderRadius: 8,
     marginHorizontal: 24,
     marginVertical: 16,

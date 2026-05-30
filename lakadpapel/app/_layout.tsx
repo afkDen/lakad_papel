@@ -129,7 +129,7 @@ export default function Layout() {
   if (!fontsLoaded && !fontError) {
     return (
       <View style={layoutStyles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.blue600} />
+        <ActivityIndicator size="large" color={colors.primaryTerracotta} />
       </View>
     );
   }

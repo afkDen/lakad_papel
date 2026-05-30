@@ -9,7 +9,7 @@ import DocumentCard from '../src/components/DocumentCard';
 import CategoryHeader from '../src/components/CategoryHeader';
 import { REQUIREMENTS_GRAPH, DOCUMENT_CATEGORIES } from '../src/algorithms/requirementsGraph';
 import { DocumentId } from '../src/context/types';
-import { colors } from '../src/theme';
+import { colors, radii } from '../src/theme';
 
 export default function TargetScreen() {
   const router = useRouter();
@@ -49,8 +49,22 @@ export default function TargetScreen() {
         </Text>
 
         {/* Notice Info Box */}
-        <View style={[styles.infoBox, { backgroundColor: isDarkMode ? '#1E1E1E' : colors.gray50, borderColor: themeColors.border }]}>
-          <Text style={[styles.infoText, { color: themeColors.subText }]}>
+        <View
+          style={[
+            styles.infoBox,
+            {
+              backgroundColor: isDarkMode ? 'rgba(141, 75, 0, 0.15)' : '#FEF3C7',
+              borderLeftColor: isDarkMode ? colors.primaryTerracottaDark : colors.primaryTerracotta,
+              borderColor: 'transparent',
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.infoText,
+              { color: isDarkMode ? colors.primaryTerracottaDark : colors.primaryTerracotta },
+            ]}
+          >
             {t.targetInfo}
           </Text>
         </View>
@@ -64,11 +78,6 @@ export default function TargetScreen() {
         maxToRenderPerBatch={10}
         windowSize={5}
         initialNumToRender={12}
-        getItemLayout={(_, index) => ({
-          length: 64,
-          offset: 64 * index,
-          index
-        })}
         renderSectionHeader={({ section: { title } }) => (
           <CategoryHeader title={title} />
         )}
@@ -81,7 +90,7 @@ export default function TargetScreen() {
             onToggle={() => handleSelectTarget(item.id)}
           />
         )}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>
@@ -102,22 +111,26 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontFamily: 'Inter_400Regular',
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 13,
+    lineHeight: 18,
     paddingHorizontal: 24,
     paddingBottom: 16,
   },
   infoBox: {
     marginHorizontal: 24,
-    marginBottom: 16,
+    marginBottom: 20,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: radii.md,
+    backgroundColor: '#FEF3C7',
+    borderLeftWidth: 4,
+    borderLeftColor: '#8d4b00',
   },
   infoText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Inter_500Medium',
     fontSize: 12,
-    lineHeight: 18,
+    lineHeight: 16,
+    color: '#8d4b00',
   },
 });

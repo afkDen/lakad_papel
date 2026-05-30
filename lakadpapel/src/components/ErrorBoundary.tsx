@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   button: {
-    backgroundColor: colors.blue600,
+    backgroundColor: colors.primaryTerracotta,
     borderRadius: radii.md,
     paddingHorizontal: 20,
     paddingVertical: 12,

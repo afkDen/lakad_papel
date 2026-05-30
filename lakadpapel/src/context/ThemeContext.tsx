@@ -44,12 +44,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const themeColors = {
-    background: isDarkMode ? '#121212' : '#FFFFFF',
-    cardBackground: isDarkMode ? '#1E1E1E' : '#FFFFFF',
-    text: isDarkMode ? '#F5F5F5' : '#171717',
-    subText: isDarkMode ? '#A3A3A3' : '#737373',
-    border: isDarkMode ? '#262626' : '#E5E5E5',
-    primary: '#2563eb', // primary blue
+    background: isDarkMode ? '#120E0A' : '#fff8f5',
+    cardBackground: isDarkMode ? '#1E1610' : '#FFFFFF',
+    text: isDarkMode ? '#FBF8F6' : '#1f1b17',
+    subText: isDarkMode ? '#B6ABA1' : '#554336',
+    border: isDarkMode ? '#2E231B' : '#E8E0D5',
+    primary: isDarkMode ? '#ffb77d' : '#8d4b00', // Terracotta brown
   };
 
   return (
