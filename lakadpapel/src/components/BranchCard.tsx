@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 14,
     marginTop: 2,
+    textAlign: 'justify',
     marginRight: 16,
   },
   hoursText: {
@@ -175,6 +176,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight: 14,
     marginTop: 4,
+    textAlign: 'justify',
     marginRight: 16,
   },
   directionsButton: {
