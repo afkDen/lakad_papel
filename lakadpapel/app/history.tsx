@@ -143,6 +143,7 @@ export default function HistoryScreen() {
 
   // Get custom colored circular badge based on document agency/id
   const getBadgeColors = (docId: string, agency: string) => {
+    // Exact spec mockups
     if (docId === 'passport' || agency === 'DFA') {
       return { bg: '#FDF2E9', iconColor: '#8d4b00', iconName: 'book-outline' as const };
     }
@@ -152,7 +153,33 @@ export default function HistoryScreen() {
     if (docId === 'psa_birth_cert' || agency === 'PSA') {
       return { bg: '#E8F8F5', iconColor: '#117A65', iconName: 'document-text-outline' as const };
     }
-    return { bg: '#F2F4F4', iconColor: '#7F8C8D', iconName: 'document-outline' as const };
+
+    // Additional premium agency mappings
+    switch (agency) {
+      case 'COMELEC':
+        return { bg: '#FEF9E7', iconColor: '#B7950B', iconName: 'ribbon-outline' as const }; // Soft gold
+      case 'BIR':
+        return { bg: '#EEF2FF', iconColor: '#3F51B5', iconName: 'cash-outline' as const }; // Soft indigo
+      case 'PRC':
+        return { bg: '#FDEDEC', iconColor: '#CB4335', iconName: 'medal-outline' as const }; // Soft red
+      case 'SSS':
+      case 'GSIS':
+        return { bg: '#EAF2F8', iconColor: '#1A5276', iconName: 'shield-checkmark-outline' as const }; // Soft navy blue
+      case 'PHILHEALTH':
+        return { bg: '#E8F8F5', iconColor: '#196F3D', iconName: 'pulse-outline' as const }; // Soft mint green
+      case 'PAGIBIG':
+        return { bg: '#FBEEE6', iconColor: '#BA4A00', iconName: 'home-outline' as const }; // Soft orange-pink
+      case 'PHLPOST':
+        return { bg: '#FDEDEC', iconColor: '#C0392B', iconName: 'mail-outline' as const }; // Soft crimson red
+      case 'PHILSYS':
+        return { bg: '#E0F7FA', iconColor: '#00838F', iconName: 'id-card-outline' as const }; // Soft cyan
+      case 'BARANGAY':
+        return { bg: '#F5EEF8', iconColor: '#7D3C98', iconName: 'business-outline' as const }; // Soft warm-sand/purple
+      case 'SCHOOL':
+        return { bg: '#F4ECF7', iconColor: '#6C3483', iconName: 'school-outline' as const }; // Soft violet
+      default:
+        return { bg: '#F2F4F4', iconColor: '#7F8C8D', iconName: 'document-outline' as const }; // Standard grey
+    }
   };
 
   // Hydrate completed history from mockup design spec
