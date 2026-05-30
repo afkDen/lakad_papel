@@ -395,13 +395,13 @@ export const StepCard = React.memo(function StepCard({
           <View style={styles.infoSection}>
             <View style={styles.infoRow}>
               <Ionicons name="cash-outline" size={13} color={themeColors.subText} style={styles.infoIcon} />
-              <Text style={[styles.infoText, { color: themeColors.subText }]} numberOfLines={2}>
+              <Text style={[styles.infoText, { color: themeColors.subText }]}>
                 <Text style={styles.infoTextBold}>{t.fee || 'Fee'}:</Text> {step.document.fees}
               </Text>
             </View>
             <View style={[styles.infoRow, { marginTop: 4 }]}>
               <Ionicons name="time-outline" size={13} color={themeColors.subText} style={styles.infoIcon} />
-              <Text style={[styles.infoText, { color: themeColors.subText }]} numberOfLines={2}>
+              <Text style={[styles.infoText, { color: themeColors.subText }]}>
                 <Text style={styles.infoTextBold}>{t.processTime || 'Process Time'}:</Text> {step.document.typicalDays}
               </Text>
             </View>
