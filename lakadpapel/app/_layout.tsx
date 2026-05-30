@@ -149,6 +149,7 @@ function AppTabsContent({ onLayoutRootView, insets }: { onLayoutRootView: () => 
           name="index"
           options={{
             href: null, // Hide index from tab bar
+            tabBarStyle: { display: 'none' }, // HIDE THE TAB BAR ON THIS SCREEN!
           }}
         />
       </Tabs>

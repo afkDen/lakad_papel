@@ -115,7 +115,7 @@ export default function SplashIndex() {
         ]}
       >
         <Image
-          source={require('../assets/Untitled design (7).png')}
+          source={require('../assets/Untitled design (8).png')}
           style={styles.logoImage}
           resizeMode="contain"
         />
@@ -171,21 +171,20 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
-    width: SCREEN_WIDTH * 0.7,
-    height: SCREEN_WIDTH * 0.7,
+    width: SCREEN_WIDTH * 0.65,
+    height: SCREEN_WIDTH * 0.65,
   },
   logoImage: {
-    width: SCREEN_WIDTH * 1.1,
-    height: SCREEN_WIDTH * 1.1,
+    width: '100%',
+    height: '100%',
   },
   tagline: {
-    marginTop: 16,
+    marginTop: 8,
     fontFamily: 'Inter_400Regular',
-    fontSize: 15,
+    fontSize: 14,
     color: '#8d4b00',
     letterSpacing: 0.5,
-    opacity: 0.85,
+    opacity: 0.8,
   },
   version: {
     position: 'absolute',
