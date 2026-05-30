@@ -32,12 +32,14 @@ export default function HeaderBar() {
       {/* Invisible spacer to perfectly center the logo */}
       <View style={styles.sideSpacer} />
 
-      {/* Brand Logo Image — Centered */}
-      <Image
-        source={require('../../assets/Untitled design (8).png')}
-        style={styles.logoImage}
-        resizeMode="contain"
-      />
+      {/* Brand Logo Image — Centered, overflow clips the image whitespace */}
+      <View style={styles.logoWrapper}>
+        <Image
+          source={require('../../assets/Untitled design (8).png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
+      </View>
 
       {/* Interactive Bell Icon */}
       <TouchableOpacity
@@ -47,7 +49,7 @@ export default function HeaderBar() {
       >
         <Ionicons
           name="notifications-outline"
-          size={20}
+          size={22}
           color={isDarkMode ? colors.primaryTerracottaDark : colors.primaryTerracotta}
         />
         {/* Glow indicator dot */}
@@ -59,7 +61,7 @@ export default function HeaderBar() {
 
 const styles = StyleSheet.create({
   container: {
-    height: 56,
+    height: 52,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -68,15 +70,21 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   sideSpacer: {
-    width: 24,
+    width: 28,
+  },
+  logoWrapper: {
+    height: 44,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logoImage: {
-    height: 38,
-    width: 190,
+    height: 130,
+    width: 280,
   },
   bellButton: {
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -85,9 +93,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 2,
     right: 3,
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: colors.tertiaryGreen,
   },
 });
