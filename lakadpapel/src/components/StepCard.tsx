@@ -248,7 +248,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
     lineHeight: 16,
-    textAlign: 'justify',
   },
   branchSection: {
     marginLeft: 44,
@@ -336,6 +335,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     fontSize: 11,
     lineHeight: 14,
-    textAlign: 'justify',
   },
 });
