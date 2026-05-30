@@ -365,20 +365,10 @@ export const StepCard = React.memo(function StepCard({
         >
           {/* Card Header Row */}
           <View style={styles.cardHeader}>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, paddingRight: 8 }}>
               <Text style={[styles.docLabel, { color: themeColors.text }]}>
                 {step.document.label}
               </Text>
-              
-              <View style={styles.metaBadgeRow}>
-                <Text style={[styles.metaText, { color: themeColors.subText }]}>
-                  {t.fee || 'Fee'}: {step.document.fees.split(' / ')[0]}
-                </Text>
-                <Text style={[styles.metaTextDivider, { color: themeColors.border }]}>•</Text>
-                <Text style={[styles.metaText, { color: themeColors.subText }]}>
-                  {step.document.typicalDays.split(' / ')[0]}
-                </Text>
-              </View>
             </View>
 
             {/* Status Indicator Badges */}
@@ -399,6 +389,22 @@ export const StepCard = React.memo(function StepCard({
                 <Text style={[styles.badgeText, { color: isDarkMode ? '#94a3b8' : '#64748b' }]}>UPCOMING</Text>
               </View>
             )}
+          </View>
+
+          {/* Clean, vertically stacked Info Section */}
+          <View style={styles.infoSection}>
+            <View style={styles.infoRow}>
+              <Ionicons name="cash-outline" size={13} color={themeColors.subText} style={styles.infoIcon} />
+              <Text style={[styles.infoText, { color: themeColors.subText }]} numberOfLines={2}>
+                <Text style={styles.infoTextBold}>{t.fee || 'Fee'}:</Text> {step.document.fees}
+              </Text>
+            </View>
+            <View style={[styles.infoRow, { marginTop: 4 }]}>
+              <Ionicons name="time-outline" size={13} color={themeColors.subText} style={styles.infoIcon} />
+              <Text style={[styles.infoText, { color: themeColors.subText }]} numberOfLines={2}>
+                <Text style={styles.infoTextBold}>{t.processTime || 'Process Time'}:</Text> {step.document.typicalDays}
+              </Text>
+            </View>
           </View>
 
           {/* Focused/Expanded Details Body */}
@@ -633,18 +639,27 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 20,
   },
-  metaBadgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
+  infoSection: {
+    marginTop: 8,
+    width: '100%',
   },
-  metaText: {
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    width: '100%',
+  },
+  infoIcon: {
+    marginRight: 6,
+    marginTop: 2,
+  },
+  infoText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
+    lineHeight: 16,
+    flex: 1,
   },
-  metaTextDivider: {
-    fontSize: 10,
-    marginHorizontal: 6,
+  infoTextBold: {
+    fontFamily: 'Inter_600SemiBold',
   },
   badgeContainer: {
     paddingHorizontal: 8,

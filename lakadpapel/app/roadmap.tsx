@@ -213,7 +213,7 @@ export default function RoadmapScreen() {
     return (
       <View style={styles.headerContainer}>
         <View style={styles.headerRow}>
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, paddingRight: 48 }}>
             <Text style={[styles.headerSubtitle, { color: themeColors.subText }]}>
               {isSimple ? t.journeyToGetSimple : t.activeRoadmapAdvanced}
             </Text>
