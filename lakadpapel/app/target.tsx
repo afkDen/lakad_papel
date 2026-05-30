@@ -7,6 +7,7 @@ import { useTheme } from '../src/context/ThemeContext';
 import { useLanguage } from '../src/context/LanguageContext';
 import DocumentCard from '../src/components/DocumentCard';
 import CategoryHeader from '../src/components/CategoryHeader';
+import HeaderBar from '../src/components/HeaderBar';
 import { REQUIREMENTS_GRAPH, DOCUMENT_CATEGORIES } from '../src/algorithms/requirementsGraph';
 import { DocumentId } from '../src/context/types';
 import { colors, radii } from '../src/theme';
@@ -41,6 +42,7 @@ export default function TargetScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <HeaderBar />
       {/* Header and Subheader */}
       <View>
         <Text style={[styles.screenTitle, { color: themeColors.text }]}>{t.targetTitle}</Text>

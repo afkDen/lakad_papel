@@ -10,6 +10,7 @@ import StepCard from '../src/components/StepCard';
 import DependencyGraph from '../src/components/DependencyGraph';
 import AlgorithmTrace from '../src/components/AlgorithmTrace';
 import LinearTimeline from '../src/components/LinearTimeline';
+import HeaderBar from '../src/components/HeaderBar';
 import { REQUIREMENTS_GRAPH } from '../src/algorithms/requirementsGraph';
 import { buildSubgraph, topologicalSort, topologicalSortWithTrace, TraceStep } from '../src/algorithms/topologicalSort';
 import { buildLocationGraph, bfsNearestBranch } from '../src/algorithms/bfsLocator';
@@ -264,6 +265,7 @@ export default function RoadmapScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <HeaderBar />
       <FlatList
         data={stepsToRender}
         keyExtractor={(item) => item.document.id}

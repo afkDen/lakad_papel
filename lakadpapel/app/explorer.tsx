@@ -11,6 +11,7 @@ import { colors as defaultColors, spacing, radii, typography, shadows } from '..
 import { DocumentId } from '../src/context/types';
 import { useTheme } from '../src/context/ThemeContext';
 import { useLanguage } from '../src/context/LanguageContext';
+import HeaderBar from '../src/components/HeaderBar';
 
 const BulletPoint = ({ children }: { children: React.ReactNode }) => {
   const { colors: themeColors } = useTheme();
@@ -357,6 +358,7 @@ export default function ExplorerScreen() {
   if (isSimple) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
+        <HeaderBar />
         {renderHeader()}
         {renderSimpleHelp()}
       </SafeAreaView>
@@ -366,6 +368,7 @@ export default function ExplorerScreen() {
   // Advanced Mode DAG rendering
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <HeaderBar />
       {renderHeader()}
 
       {/* 2. Color Legend */}
