@@ -1,9 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+export type FontSizePreference = 'small' | 'medium' | 'large';
+
 interface ThemeContextType {
   isDarkMode: boolean;
   toggleTheme: () => void;
+  fontSize: FontSizePreference;
+  setFontSize: (size: FontSizePreference) => void;
+  fontScale: number;
   colors: {
     background: string;
     cardBackground: string;
@@ -14,23 +19,38 @@ interface ThemeContextType {
   };
 }
 
+// Module-level scale export so that the global Text patch can read it instantly during render cycles
+export let currentFontScale = 1.0;
+
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [fontSize, setFontSizeState] = useState<FontSizePreference>('medium');
 
+  // Hydrate theme and font scale on mount
   useEffect(() => {
-    async function loadTheme() {
+    async function loadThemeAndAccessibility() {
       try {
-        const saved = await AsyncStorage.getItem('@lakadpapel/theme');
-        if (saved !== null) {
-          setIsDarkMode(saved === 'dark');
+        const savedTheme = await AsyncStorage.getItem('@lakadpapel/theme');
+        if (savedTheme !== null) {
+          setIsDarkMode(savedTheme === 'dark');
+        }
+        
+        const savedFontSize = await AsyncStorage.getItem('@lakadpapel/font_size');
+        if (savedFontSize !== null) {
+          const validSizes: FontSizePreference[] = ['small', 'medium', 'large'];
+          if (validSizes.includes(savedFontSize as FontSizePreference)) {
+            const size = savedFontSize as FontSizePreference;
+            setFontSizeState(size);
+            currentFontScale = size === 'small' ? 0.85 : size === 'large' ? 1.25 : 1.0;
+          }
         }
       } catch (err) {
-        console.warn('Failed to load theme:', err);
+        console.warn('Failed to load theme/font settings:', err);
       }
     }
-    loadTheme();
+    loadThemeAndAccessibility();
   }, []);
 
   const toggleTheme = async () => {
@@ -43,6 +63,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const setFontSize = async (size: FontSizePreference) => {
+    try {
+      setFontSizeState(size);
+      currentFontScale = size === 'small' ? 0.85 : size === 'large' ? 1.25 : 1.0;
+      await AsyncStorage.setItem('@lakadpapel/font_size', size);
+    } catch (err) {
+      console.warn('Failed to save font size setting:', err);
+    }
+  };
+
+  const fontScale = fontSize === 'small' ? 0.85 : fontSize === 'large' ? 1.25 : 1.0;
+
   const themeColors = {
     background: isDarkMode ? '#120E0A' : '#fff8f5',
     cardBackground: isDarkMode ? '#1E1610' : '#FFFFFF',
@@ -53,7 +85,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme, colors: themeColors }}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleTheme, fontSize, setFontSize, fontScale, colors: themeColors }}>
       {children}
     </ThemeContext.Provider>
   );

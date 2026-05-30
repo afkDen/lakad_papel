@@ -236,8 +236,9 @@ export const StepCard = React.memo(function StepCard({
   const pulseAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    let anim: Animated.CompositeAnimation | null = null;
     if (isActive) {
-      Animated.loop(
+      anim = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, {
             toValue: 1,
@@ -250,10 +251,17 @@ export const StepCard = React.memo(function StepCard({
             useNativeDriver: true,
           }),
         ])
-      ).start();
+      );
+      anim.start();
     } else {
       pulseAnim.setValue(0);
     }
+
+    return () => {
+      if (anim) {
+        anim.stop();
+      }
+    };
   }, [isActive]);
 
   const pulseScale = pulseAnim.interpolate({

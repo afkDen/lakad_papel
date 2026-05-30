@@ -11,7 +11,7 @@ import { useLocation } from '../src/hooks/useLocation';
 import { colors as defaultColors, radii, spacing, shadows, typography } from '../src/theme';
 
 export default function SettingsScreen() {
-  const { colors: themeColors, isDarkMode, toggleTheme } = useTheme();
+  const { colors: themeColors, isDarkMode, toggleTheme, fontSize, setFontSize } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const { state, dispatch } = useDocumentContext();
   const { permissionGranted, requestPermission } = useLocation();
@@ -22,6 +22,8 @@ export default function SettingsScreen() {
   const [profileAvatarIndex, setProfileAvatarIndex] = React.useState(0);
   const [profileImageUri, setProfileImageUri] = React.useState<string | null>(null);
   const [isEditModalVisible, setIsEditModalVisible] = React.useState(false);
+  const [isFontModalVisible, setIsFontModalVisible] = React.useState(false);
+  const [selectedFontSize, setSelectedFontSize] = React.useState<'small' | 'medium' | 'large'>('medium');
 
   // Temporary edit states
   const [editName, setEditName] = React.useState('');
@@ -132,6 +134,16 @@ export default function SettingsScreen() {
     setEditAvatarIndex(profileAvatarIndex);
     setEditImageUri(profileImageUri);
     setIsEditModalVisible(true);
+  };
+
+  const openFontModal = () => {
+    setSelectedFontSize(fontSize);
+    setIsFontModalVisible(true);
+  };
+
+  const handleSaveFontSize = async () => {
+    await setFontSize(selectedFontSize);
+    setIsFontModalVisible(false);
   };
 
   const handleSaveProfile = async () => {
@@ -306,8 +318,12 @@ export default function SettingsScreen() {
             />
           </View>
 
-          {/* Font Size Selector Row (Mocked styling from high-fidelity mockups) */}
-          <View style={[styles.settingRow, { borderBottomColor: themeColors.border }]}>
+          {/* Font Size Selector Row - Fully Functional Dynamic Control */}
+          <TouchableOpacity
+            style={[styles.settingRow, { borderBottomColor: themeColors.border }]}
+            activeOpacity={0.7}
+            onPress={openFontModal}
+          >
             <View style={styles.rowLabelGroup}>
               <Ionicons
                 name="text-outline"
@@ -319,10 +335,17 @@ export default function SettingsScreen() {
                 {language === 'en' ? 'Font Size' : 'Laki ng Font'}
               </Text>
             </View>
-            <Text style={[styles.diagnosticValue, { color: themeColors.subText, fontFamily: 'Inter_600SemiBold' }]}>
-              {language === 'en' ? 'Medium' : 'Katamtaman'}
-            </Text>
-          </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={[styles.diagnosticValue, { color: themeColors.subText, fontFamily: 'Inter_600SemiBold', marginRight: 6 }]}>
+                {fontSize === 'small'
+                  ? (language === 'en' ? 'Small' : 'Maliit')
+                  : fontSize === 'large'
+                  ? (language === 'en' ? 'Large' : 'Malaki')
+                  : (language === 'en' ? 'Medium' : 'Katamtaman')}
+              </Text>
+              <Ionicons name="chevron-forward" size={16} color={themeColors.subText} />
+            </View>
+          </TouchableOpacity>
 
           {/* Language Preference Selector Row */}
           <View style={[styles.settingRow, { borderBottomColor: themeColors.border }]}>
@@ -579,6 +602,106 @@ export default function SettingsScreen() {
               >
                 <Text style={styles.saveBtnText}>
                   {language === 'en' ? 'Save' : 'I-save'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Dynamic Font Size Selection Modal Sheet */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isFontModalVisible}
+        onRequestClose={() => setIsFontModalVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.modalSheet, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <Text style={[styles.modalTitle, { color: themeColors.text, marginBottom: 8 }]}>
+              {language === 'en' ? 'Accessibility Settings' : 'Mga Setting ng Accessibility'}
+            </Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Inter_400Regular', color: themeColors.subText, marginBottom: 20, textAlign: 'center' }}>
+              {language === 'en'
+                ? 'Adjust the application layout font scale to match your readability preferences.'
+                : 'Ibahagi ang scale ng font para umangkop sa iyong kagustuhan sa pagbabasa.'}
+            </Text>
+
+            {/* Sizes Selection Cards */}
+            <View style={{ gap: 12, marginBottom: 24 }}>
+              {[
+                {
+                  id: 'small',
+                  title: language === 'en' ? 'Small' : 'Maliit',
+                  desc: language === 'en' ? '85% scale - Dense view for compact info' : '85% scale - Maliit na disenyo para sa siksik na info',
+                  previewSize: 12,
+                },
+                {
+                  id: 'medium',
+                  title: language === 'en' ? 'Medium (Default)' : 'Katamtaman (Default)',
+                  desc: language === 'en' ? '100% scale - Standard recommended sizing' : '100% scale - Karaniwang inirerekomendang laki',
+                  previewSize: 15,
+                },
+                {
+                  id: 'large',
+                  title: language === 'en' ? 'Large' : 'Malaki',
+                  desc: language === 'en' ? '125% scale - Enhanced readability & size' : '125% scale - Malaking disenyo para sa madaling pagbasa',
+                  previewSize: 18,
+                },
+              ].map((opt) => {
+                const isSelected = selectedFontSize === opt.id;
+                return (
+                  <TouchableOpacity
+                    key={opt.id}
+                    style={[
+                      styles.fontOptionCard,
+                      {
+                        backgroundColor: isDarkMode ? '#231A12' : '#FBF9F6',
+                        borderColor: isSelected ? themeColors.primary : themeColors.border,
+                        borderWidth: isSelected ? 2 : 1,
+                      }
+                    ]}
+                    activeOpacity={0.8}
+                    onPress={() => setSelectedFontSize(opt.id as any)}
+                  >
+                    <View style={{ flex: 1, marginRight: 12 }}>
+                      <Text style={[styles.fontOptionTitle, { color: themeColors.text, fontSize: opt.previewSize }]}>
+                        {opt.title}
+                      </Text>
+                      <Text style={{ fontSize: 11, fontFamily: 'Inter_400Regular', color: themeColors.subText, marginTop: 4 }}>
+                        {opt.desc}
+                      </Text>
+                    </View>
+                    {isSelected && (
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={22}
+                        color={themeColors.primary}
+                      />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {/* Modal Buttons */}
+            <View style={styles.modalButtonsRow}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelBtn, { borderColor: themeColors.border }]}
+                activeOpacity={0.7}
+                onPress={() => setIsFontModalVisible(false)}
+              >
+                <Text style={[styles.cancelBtnText, { color: themeColors.subText }]}>
+                  {t.cancel}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.saveBtn, { backgroundColor: themeColors.primary }]}
+                activeOpacity={0.7}
+                onPress={handleSaveFontSize}
+              >
+                <Text style={styles.saveBtnText}>
+                  {language === 'en' ? 'Apply' : 'I-apply'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -881,5 +1004,16 @@ const styles = StyleSheet.create({
     color: defaultColors.white,
     fontFamily: 'Inter_700Bold',
     fontSize: 14,
+  },
+  fontOptionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: radii.md,
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  fontOptionTitle: {
+    fontFamily: 'Inter_600SemiBold',
   },
 });

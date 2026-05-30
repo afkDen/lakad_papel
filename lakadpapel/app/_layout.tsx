@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
@@ -8,9 +8,53 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DocumentProvider } from '../src/context/DocumentContext';
 import { LanguageProvider, useLanguage } from '../src/context/LanguageContext';
-import { ThemeProvider, useTheme } from '../src/context/ThemeContext';
+import { ThemeProvider, useTheme, currentFontScale } from '../src/context/ThemeContext';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { colors } from '../src/theme';
+
+// Intercept Text component globally to apply the dynamic font scale factor
+const patchText = () => {
+  const TextComponent = Text as any;
+  if (!TextComponent) return;
+
+  const scaleStyle = (style: any) => {
+    if (!style || currentFontScale === 1.0) return style;
+    const flat = StyleSheet.flatten(style);
+    if (flat && typeof flat.fontSize === 'number') {
+      const scaled = { ...flat };
+      scaled.fontSize = Math.round(flat.fontSize * currentFontScale);
+      if (typeof flat.lineHeight === 'number') {
+        scaled.lineHeight = Math.round(flat.lineHeight * currentFontScale);
+      }
+      return scaled;
+    }
+    return style;
+  };
+
+  if (TextComponent.render) {
+    const originalRender = TextComponent.render;
+    TextComponent.render = function (props: any, ref: any) {
+      let newProps = props;
+      if (props && props.style) {
+        newProps = { ...props, style: scaleStyle(props.style) };
+      }
+      return originalRender.call(this, newProps, ref);
+    };
+  } else if (TextComponent.prototype && TextComponent.prototype.render) {
+    const originalRender = TextComponent.prototype.render;
+    TextComponent.prototype.render = function () {
+      const element = originalRender.call(this);
+      if (element && element.props && element.props.style) {
+        return React.cloneElement(element, {
+          style: scaleStyle(element.props.style),
+        });
+      }
+      return element;
+    };
+  }
+};
+
+patchText();
 
 // Prevent splash screen from auto-hiding before fonts load
 SplashScreen.preventAutoHideAsync();
