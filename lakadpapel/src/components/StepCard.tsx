@@ -66,7 +66,7 @@ const StepCard = React.memo(function StepCard({ step, stepNumber, onMarkDone }: 
 
       {/* Fees & Typical Days Info */}
       <View style={styles.infoSection}>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', flexShrink: 1 }}>
           <Ionicons
             name="cash-outline"
             size={14}
@@ -77,7 +77,7 @@ const StepCard = React.memo(function StepCard({ step, stepNumber, onMarkDone }: 
             {t.fee}: {step.document.fees}
           </Text>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 6 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 6, flexShrink: 1 }}>
           <Ionicons
             name="time-outline"
             size={14}

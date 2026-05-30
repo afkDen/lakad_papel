@@ -85,7 +85,7 @@ export default function BranchCard({ branch, agencyType }: BranchCardProps) {
         <View style={styles.textDetails}>
           <Text style={[styles.branchName, { color: themeColors.text }]}>{branch.name}</Text>
           <Text style={[styles.addressText, { color: themeColors.subText }]}>{branch.address}</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 4 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 4, flexShrink: 1 }}>
             <Ionicons
               name="time-outline"
               size={12}
@@ -168,16 +168,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 14,
     marginTop: 2,
-    textAlign: 'justify',
-    marginRight: 12,
+    marginRight: 16,
   },
   hoursText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 10,
     lineHeight: 14,
     marginTop: 4,
-    textAlign: 'justify',
-    marginRight: 12,
+    marginRight: 16,
   },
   directionsButton: {
     flexDirection: 'row',
