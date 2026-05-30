@@ -7,19 +7,34 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logo-splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFF8F5"
+    },
     "plugins": [
       "expo-router",
       "expo-font"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.group4.lakadpapel"
+      "bundleIdentifier": "com.group4.lakadpapel",
+      "splash": {
+        "image": "./assets/logo-splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#FFF8F5"
+      }
     },
     "android": {
       "package": "com.group4.lakadpapel",
       "adaptiveIcon": {
         "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "splash": {
+        "image": "./assets/logo-splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#FFF8F5"
       }
     },
     "web": {

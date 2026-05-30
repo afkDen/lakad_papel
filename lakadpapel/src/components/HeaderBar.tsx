@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
+import { View, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
-import { colors, spacing } from '../theme';
+import { colors } from '../theme';
 
 export default function HeaderBar() {
   const { colors: themeColors, isDarkMode } = useTheme();
   const { language } = useLanguage();
-  const [active, setActive] = useState(false);
 
   const handleNotificationPress = () => {
     Alert.alert(
@@ -30,20 +29,15 @@ export default function HeaderBar() {
         },
       ]}
     >
-      {/* Invisible spacer to perfectly center the title */}
+      {/* Invisible spacer to perfectly center the logo */}
       <View style={styles.sideSpacer} />
 
-      {/* Brand Title Centered */}
-      <Text
-        style={[
-          styles.title,
-          {
-            color: isDarkMode ? colors.primaryTerracottaDark : colors.primaryTerracotta,
-          },
-        ]}
-      >
-        LakadPapel
-      </Text>
+      {/* Brand Logo Image — Centered */}
+      <Image
+        source={require('../../assets/logo-header.png')}
+        style={styles.logoImage}
+        resizeMode="contain"
+      />
 
       {/* Interactive Bell Icon */}
       <TouchableOpacity
@@ -76,11 +70,9 @@ const styles = StyleSheet.create({
   sideSpacer: {
     width: 24,
   },
-  title: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 18,
-    letterSpacing: 0.2,
-    textAlign: 'center',
+  logoImage: {
+    height: 28,
+    width: 140,
   },
   bellButton: {
     width: 24,
