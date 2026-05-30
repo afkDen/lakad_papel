@@ -417,19 +417,26 @@ export default function HistoryScreen() {
 
   const renderPromoBanner = () => {
     return (
-      <View style={[styles.promoCard, { backgroundColor: defaultColors.secondaryTeal }]}>
-        <Text style={styles.promoTitle}>
+      <View style={[
+        styles.promoCard,
+        {
+          backgroundColor: themeColors.cardBackground,
+          borderColor: themeColors.border,
+          borderLeftColor: themeColors.primary,
+        }
+      ]}>
+        <Text style={[styles.promoTitle, { color: themeColors.text }]}>
           {localT.bannerTitle}
         </Text>
-        <Text style={styles.promoDesc}>
+        <Text style={[styles.promoDesc, { color: themeColors.subText }]}>
           {localT.bannerDesc}
         </Text>
         <TouchableOpacity
-          style={styles.promoBtn}
+          style={[styles.promoBtn, { backgroundColor: themeColors.primary }]}
           activeOpacity={0.9}
           onPress={() => router.push('/target')}
         >
-          <Text style={styles.promoBtnText}>
+          <Text style={[styles.promoBtnText, { color: isDarkMode ? '#1F1B17' : defaultColors.white }]}>
             {localT.bannerBtn}
           </Text>
         </TouchableOpacity>
@@ -874,24 +881,23 @@ const styles = StyleSheet.create({
     padding: 24,
     flexDirection: 'column',
     alignItems: 'flex-start',
-    ...shadows.md,
+    borderWidth: 1.2,
+    borderLeftWidth: 6,
+    ...shadows.sm,
   },
   promoTitle: {
-    color: '#FFF',
     fontFamily: 'Inter_700Bold',
-    fontSize: 18,
-    lineHeight: 24,
-    marginBottom: 6,
+    fontSize: 16,
+    lineHeight: 22,
+    marginBottom: 4,
   },
   promoDesc: {
-    color: '#E0F2F1',
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
     lineHeight: 18,
     marginBottom: 16,
   },
   promoBtn: {
-    backgroundColor: '#F5C443',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: radii.md,
@@ -899,7 +905,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   promoBtnText: {
-    color: '#3E2723',
     fontFamily: 'Inter_700Bold',
     fontSize: 12,
   },
