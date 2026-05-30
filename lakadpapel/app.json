@@ -7,34 +7,27 @@
     "orientation": "portrait",
     "icon": "./assets/Untitled design (7).png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/Untitled design (7).png",
-      "resizeMode": "contain",
-      "backgroundColor": "#FFF8F5"
-    },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/Untitled design (7).png",
+          "resizeMode": "contain",
+          "backgroundColor": "#FFF8F5"
+        }
+      ]
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.group4.lakadpapel",
-      "splash": {
-        "image": "./assets/Untitled design (7).png",
-        "resizeMode": "contain",
-        "backgroundColor": "#FFF8F5"
-      }
+      "bundleIdentifier": "com.group4.lakadpapel"
     },
     "android": {
       "package": "com.group4.lakadpapel",
       "adaptiveIcon": {
         "backgroundColor": "#FFF8F5",
         "foregroundImage": "./assets/Untitled design (7).png"
-      },
-      "splash": {
-        "image": "./assets/Untitled design (7).png",
-        "resizeMode": "contain",
-        "backgroundColor": "#FFF8F5"
       }
     },
     "web": {
@@ -52,3 +45,4 @@
     "owner": "afkden"
   }
 }
+
