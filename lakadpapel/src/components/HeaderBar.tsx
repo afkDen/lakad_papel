@@ -59,7 +59,7 @@ export default function HeaderBar() {
 
 const styles = StyleSheet.create({
   container: {
-    height: 48,
+    height: 56,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -71,8 +71,8 @@ const styles = StyleSheet.create({
     width: 24,
   },
   logoImage: {
-    height: 28,
-    width: 140,
+    height: 38,
+    width: 190,
   },
   bellButton: {
     width: 24,
