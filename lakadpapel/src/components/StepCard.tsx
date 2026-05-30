@@ -657,6 +657,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     flex: 1,
+    textAlign: 'justify',
   },
   infoTextBold: {
     fontFamily: 'Inter_600SemiBold',
