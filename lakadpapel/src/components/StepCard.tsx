@@ -243,6 +243,7 @@ const styles = StyleSheet.create({
   infoSection: {
     marginTop: 6,
     marginLeft: 44,
+    marginRight: 12,
   },
   infoText: {
     fontFamily: 'Inter_400Regular',
@@ -251,6 +252,7 @@ const styles = StyleSheet.create({
   },
   branchSection: {
     marginLeft: 44,
+    marginRight: 12,
   },
   button: {
     marginTop: 16,
@@ -275,6 +277,7 @@ const styles = StyleSheet.create({
   // Collapsible Guide Section styles
   guideWrapper: {
     marginLeft: 44,
+    marginRight: 12,
     marginTop: spacing.sm,
     marginBottom: spacing.xs,
   },
