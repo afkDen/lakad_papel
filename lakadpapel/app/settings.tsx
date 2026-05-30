@@ -99,6 +99,8 @@ export default function SettingsScreen() {
           onPress: async () => {
             try {
               await AsyncStorage.removeItem('@lakadpapel/possessed_documents');
+              await AsyncStorage.removeItem('@lakadpapel/user_inputs');
+              await AsyncStorage.removeItem('@lakadpapel/checklist_states');
               dispatch({
                 type: 'HYDRATE',
                 payload: {
