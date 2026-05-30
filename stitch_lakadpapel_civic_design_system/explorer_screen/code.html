@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Explorer - Gabay Sibil</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F7F4EF;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .perspective-card {
+            perspective: 1000px;
+        }
+        /* Custom scrollbar for timeline */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed": "#ffdcc3",
+                      "primary-container": "#b15f00",
+                      "tertiary-fixed": "#7ffc97",
+                      "on-tertiary-fixed": "#002109",
+                      "inverse-primary": "#ffb77d",
+                      "background-paper": "#F7F4EF",
+                      "on-secondary-fixed": "#001f28",
+                      "surface-tint": "#904d00",
+                      "tertiary-fixed-dim": "#62df7d",
+                      "outline-variant": "#dbc2b0",
+                      "on-surface": "#1f1b17",
+                      "surface-container-high": "#f0e6e0",
+                      "surface-dim": "#e2d8d2",
+                      "surface-container-lowest": "#ffffff",
+                      "on-background": "#1f1b17",
+                      "on-secondary-container": "#006077",
+                      "surface-container-low": "#fcf2eb",
+                      "border-subtle": "#E8E0D5",
+                      "on-secondary": "#ffffff",
+                      "background": "#fff8f5",
+                      "on-tertiary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#554336",
+                      "surface-container": "#f6ece6",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed": "#2f1500",
+                      "on-tertiary-container": "#f7fff2",
+                      "primary": "#8d4b00",
+                      "state-locked": "#CBD5E1",
+                      "warning-bg": "#FEF3C7",
+                      "secondary": "#006780",
+                      "on-primary-container": "#fffbff",
+                      "surface-container-highest": "#eae1da",
+                      "primary-fixed-dim": "#ffb77d",
+                      "tertiary": "#006b2c",
+                      "on-tertiary-fixed-variant": "#005320",
+                      "on-error-container": "#93000a",
+                      "outline": "#887364",
+                      "secondary-fixed-dim": "#6cd3f7",
+                      "surface-variant": "#eae1da",
+                      "surface-card": "#FFFFFF",
+                      "secondary-container": "#76dcff",
+                      "on-error": "#ffffff",
+                      "tertiary-container": "#00873a",
+                      "on-secondary-fixed-variant": "#004e61",
+                      "inverse-on-surface": "#f9efe8",
+                      "secondary-fixed": "#b7eaff",
+                      "surface": "#fff8f5",
+                      "on-primary-fixed-variant": "#6e3900",
+                      "inverse-surface": "#342f2b",
+                      "error-container": "#ffdad6",
+                      "surface-bright": "#fff8f5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base-unit": "8px",
+                      "margin-horizontal": "20px",
+                      "section-gap": "24px",
+                      "card-padding": "16px",
+                      "stack-gap": "12px"
+              },
+              "fontFamily": {
+                      "page-title": ["Inter"],
+                      "metadata": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "card-title": ["Inter"],
+                      "body-main": ["Inter"]
+              },
+              "fontSize": {
+                      "page-title": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                      "metadata": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "label-caps": ["11px", {"lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "card-title": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                      "body-main": ["13px", {"lineHeight": "18px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-paper text-on-surface mb-20">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim flex justify-between items-center w-full px-margin-horizontal h-16 sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed cursor-pointer hover:bg-surface-container-low transition-colors rounded-full p-2 active:scale-95 duration-150 ease-in-out" data-icon="account_circle">account_circle</span>
+<h1 class="font-page-title text-page-title font-bold text-primary dark:text-primary-fixed-dim">Gabay Sibil</h1>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low transition-colors rounded-full p-2 active:scale-95 duration-150 ease-in-out" data-icon="translate">translate</span>
+</div>
+</header>
+<main class="max-w-xl mx-auto px-margin-horizontal pt-6 space-y-section-gap">
+<!-- Welcome Section -->
+<section class="space-y-1">
+<h2 class="font-page-title text-page-title text-on-surface">I-explore ang mga Dokumento</h2>
+<p class="font-body-main text-on-surface-variant">Gawing simple ang iyong civic journey sa Pilipinas.</p>
+</section>
+<!-- Timeline Path Strip -->
+<section class="relative overflow-hidden">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-widest">Active Path</span>
+<span class="font-metadata text-metadata text-on-surface-variant">3 Steps remaining</span>
+</div>
+<div class="bg-surface-card border border-border-subtle rounded-xl p-card-padding shadow-sm relative">
+<div class="absolute top-1/2 left-0 w-full h-1 bg-surface-container-highest -translate-y-1/2 z-0"></div>
+<div class="flex justify-between items-center relative z-10">
+<!-- Step 1: PSA -->
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center border-4 border-background-paper shadow-md transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-[20px]" data-icon="description">description</span>
+</div>
+<span class="font-label-caps text-label-caps font-bold text-primary">PSA</span>
+</div>
+<!-- Connector -->
+<div class="flex-grow h-1 bg-primary"></div>
+<!-- Step 2: Voter's ID -->
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center border-4 border-background-paper shadow-md transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-[20px]" data-icon="how_to_vote">how_to_vote</span>
+</div>
+<span class="font-label-caps text-label-caps font-bold text-primary">Voter's ID</span>
+</div>
+<!-- Connector -->
+<div class="flex-grow h-1 bg-surface-container-highest"></div>
+<!-- Step 3: Passport -->
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center border-4 border-background-paper transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-[20px]" data-icon="passport">travel</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Passport</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Document Grid (Simple Mode) -->
+<section class="space-y-stack-gap">
+<div class="flex justify-between items-center">
+<h3 class="font-card-title text-card-title text-on-surface">Mabilisang Gabay</h3>
+<button class="text-secondary font-label-caps text-label-caps hover:underline">See All</button>
+</div>
+<div class="grid grid-cols-1 gap-stack-gap">
+<!-- PSA Card -->
+<div class="bg-surface-card border border-border-subtle rounded-xl p-card-padding flex items-center gap-4 hover:bg-surface-container-low transition-all active:scale-[0.98] cursor-pointer shadow-sm">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]" data-icon="child_care">child_care</span>
+</div>
+<div class="flex-1">
+<h4 class="font-card-title text-card-title">Birth Certificate (PSA)</h4>
+<p class="font-metadata text-metadata text-on-surface-variant">Pangunahing dokumento para sa pagkakakilanlan.</p>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- NBI Card -->
+<div class="bg-surface-card border border-border-subtle rounded-xl p-card-padding flex items-center gap-4 hover:bg-surface-container-low transition-all active:scale-[0.98] cursor-pointer shadow-sm">
+<div class="w-12 h-12 rounded-lg bg-secondary-fixed flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[24px]" data-icon="gavel">gavel</span>
+</div>
+<div class="flex-1">
+<h4 class="font-card-title text-card-title">NBI Clearance</h4>
+<p class="font-metadata text-metadata text-on-surface-variant">Katibayan ng kawalan ng criminal record.</p>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- FAQ Accordion -->
+<section class="space-y-stack-gap">
+<h3 class="font-card-title text-card-title text-on-surface">Mga Madalas Itanong (FAQ)</h3>
+<div class="space-y-2">
+<!-- FAQ 1 -->
+<div class="bg-surface-card border border-border-subtle rounded-xl overflow-hidden shadow-sm" x-data="{ open: false }">
+<button class="w-full text-left p-card-padding flex justify-between items-center hover:bg-surface-container-lowest transition-colors" onclick="toggleAccordion('faq1')">
+<span class="font-body-main font-medium text-on-surface">Ano ang kailangan para sa Passport?</span>
+<span class="material-symbols-outlined text-outline transition-transform" data-icon="expand_more" id="faq1-icon">expand_more</span>
+</button>
+<div class="hidden px-card-padding pb-card-padding text-on-surface-variant font-body-main border-t border-border-subtle pt-3" id="faq1-content">
+                        Kailangan mo ng PSA Birth Certificate, isang valid government-issued ID, at kumpirmadong appointment online. Siguraduhing dala ang orihinal at photocopy.
+                    </div>
+</div>
+<!-- FAQ 2 -->
+<div class="bg-surface-card border border-border-subtle rounded-xl overflow-hidden shadow-sm">
+<button class="w-full text-left p-card-padding flex justify-between items-center hover:bg-surface-container-lowest transition-colors" onclick="toggleAccordion('faq2')">
+<span class="font-body-main font-medium text-on-surface">Magkano ang NBI Clearance?</span>
+<span class="material-symbols-outlined text-outline transition-transform" data-icon="expand_more" id="faq2-icon">expand_more</span>
+</button>
+<div class="hidden px-card-padding pb-card-padding text-on-surface-variant font-body-main border-t border-border-subtle pt-3" id="faq2-content">
+                        Ang regular na bayad ay ₱130.00 para sa clearance mismo, at may karagdagang ₱25.000 para sa e-payment service fee, sa kabuuan na ₱155.00.
+                    </div>
+</div>
+</div>
+</section>
+<!-- Agency Warning Callout -->
+<section class="bg-warning-bg border-l-4 border-primary p-card-padding rounded-r-xl flex gap-3 shadow-sm">
+<span class="material-symbols-outlined text-primary" data-icon="warning">warning</span>
+<div class="space-y-1">
+<p class="font-label-caps text-label-caps text-primary uppercase font-bold">Paalala sa Lokasyon</p>
+<p class="font-body-main text-on-surface-variant leading-tight">May ilang sangay ng PSA at NBI na nangangailangan ng mas maagang appointment dahil sa limitadong slot. I-check ang mapa para sa pinakamalapit na Satellite Office.</p>
+</div>
+</section>
+<!-- Visual Anchor (Map Preview) -->
+<div class="relative h-40 w-full rounded-2xl overflow-hidden border border-border-subtle shadow-md">
+<img class="w-full h-full object-cover" data-alt="A stylized overhead map of a modern Filipino metropolitan area featuring clean grid streets and soft pastel color tones. The map is designed with a UI aesthetic in mind, using teal for water bodies and light amber for primary roads, matching the Gabay Sibil brand identity. Subtle location pins in amber orange highlight government service centers against a warm beige background." data-location="Manila" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQqWRBl45jZjM4XL783A0fPlAUyFhzTvPkerJ_SiV04NwgaKwXikFjc_X1SmJRxX509iWs0f6q5_3iPwyE6WgRjdhvjbNTqj81I_7dxFO3fnPvFKSBOKJ3U89vDenhjh5PRdeLjp5UzMWcWoNksueNL2H67_Z499H93gsoPMnxNAgeodkVvK899pa-sxL6VOpB4Dh9J92PxSTGMdxu0NgVTH7yCcfDHselZMmcr2alsMThi_EgZaz-K8uQ74ZkSEj9MI3PpnSnXHVg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+<div class="flex justify-between items-center w-full">
+<span class="text-white font-card-title text-card-title">Galugarin ang mga Sangay</span>
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded-full font-label-caps text-label-caps hover:bg-primary-container transition-colors active:scale-95">Buksan ang Mapa</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center bg-surface px-2 pb-safe border-t border-border-subtle z-50 h-16">
+<div class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 hover:bg-surface-container-high transition-all flex-1 cursor-pointer active:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-caps text-label-caps">Docs</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 hover:bg-surface-container-high transition-all flex-1 cursor-pointer active:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-label-caps text-label-caps">Find ID</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 hover:bg-surface-container-high transition-all flex-1 cursor-pointer active:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-label-caps text-label-caps">Roadmap</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary border-t-2 border-primary pt-2 pb-1 flex-1 cursor-pointer">
+<span class="material-symbols-outlined active-icon" data-icon="explore" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-label-caps text-label-caps font-bold">Explorer</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 hover:bg-surface-container-high transition-all flex-1 cursor-pointer active:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-caps text-label-caps">Higit Pa</span>
+</div>
+</nav>
+<script>
+        function toggleAccordion(id) {
+            const content = document.getElementById(id + '-content');
+            const icon = document.getElementById(id + '-icon');
+            const allContents = document.querySelectorAll('[id$="-content"]');
+            const allIcons = document.querySelectorAll('[id$="-icon"]');
+
+            allContents.forEach((el, index) => {
+                if(el.id !== id + '-content') {
+                    el.classList.add('hidden');
+                    allIcons[index].style.transform = 'rotate(0deg)';
+                }
+            });
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+</body></html>

@@ -333,5 +333,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     fontSize: 11,
     lineHeight: 14,
+    textAlign: 'justify',
   },
 });

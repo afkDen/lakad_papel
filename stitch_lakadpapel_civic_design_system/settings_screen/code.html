@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html lang="fil"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mga Setting - Gabay Sibil</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#ffdcc3",
+                        "primary-container": "#b15f00",
+                        "tertiary-fixed": "#7ffc97",
+                        "on-tertiary-fixed": "#002109",
+                        "inverse-primary": "#ffb77d",
+                        "background-paper": "#F7F4EF",
+                        "on-secondary-fixed": "#001f28",
+                        "surface-tint": "#904d00",
+                        "tertiary-fixed-dim": "#62df7d",
+                        "outline-variant": "#dbc2b0",
+                        "on-surface": "#1f1b17",
+                        "surface-container-high": "#f0e6e0",
+                        "surface-dim": "#e2d8d2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1f1b17",
+                        "on-secondary-container": "#006077",
+                        "surface-container-low": "#fcf2eb",
+                        "border-subtle": "#E8E0D5",
+                        "on-secondary": "#ffffff",
+                        "background": "#fff8f5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#554336",
+                        "surface-container": "#f6ece6",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#2f1500",
+                        "on-tertiary-container": "#f7fff2",
+                        "primary": "#8d4b00",
+                        "state-locked": "#CBD5E1",
+                        "warning-bg": "#FEF3C7",
+                        "secondary": "#006780",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-highest": "#eae1da",
+                        "primary-fixed-dim": "#ffb77d",
+                        "tertiary": "#006b2c",
+                        "on-tertiary-fixed-variant": "#005320",
+                        "on-error-container": "#93000a",
+                        "outline": "#887364",
+                        "secondary-fixed-dim": "#6cd3f7",
+                        "surface-variant": "#eae1da",
+                        "surface-card": "#FFFFFF",
+                        "secondary-container": "#76dcff",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#00873a",
+                        "on-secondary-fixed-variant": "#004e61",
+                        "inverse-on-surface": "#f9efe8",
+                        "secondary-fixed": "#b7eaff",
+                        "surface": "#fff8f5",
+                        "on-primary-fixed-variant": "#6e3900",
+                        "inverse-surface": "#342f2b",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#fff8f5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base-unit": "8px",
+                        "margin-horizontal": "20px",
+                        "section-gap": "24px",
+                        "card-padding": "16px",
+                        "stack-gap": "12px"
+                    },
+                    "fontFamily": {
+                        "page-title": ["Inter"],
+                        "metadata": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "card-title": ["Inter"],
+                        "body-main": ["Inter"]
+                    },
+                    "fontSize": {
+                        "page-title": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "metadata": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "label-caps": ["11px", {"lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "card-title": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-main": ["13px", {"lineHeight": "18px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #F7F4EF;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .shadow-soft {
+            box-shadow: 0 4px 20px -4px rgba(85, 67, 54, 0.08);
+        }
+        .active-scale:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease-out;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-main text-on-surface">
+<!-- Top App Bar -->
+<header class="bg-surface sticky top-0 z-50 flex justify-between items-center w-full px-margin-horizontal h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-[24px]">settings</span>
+<h1 class="font-page-title text-page-title text-primary">Mga Setting</h1>
+</div>
+<div class="flex items-center">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors active-scale">
+<span class="material-symbols-outlined text-on-surface-variant">translate</span>
+</button>
+</div>
+</header>
+<main class="px-margin-horizontal pt-6 pb-32 max-w-2xl mx-auto space-y-section-gap">
+<!-- Account Profile Snippet (Hybrid Context) -->
+<section class="bg-surface-card border border-border-subtle rounded-xl p-card-padding shadow-soft flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined text-[32px]">account_circle</span>
+</div>
+<div>
+<h2 class="font-card-title text-card-title">Juan Dela Cruz</h2>
+<p class="font-metadata text-metadata text-on-surface-variant">Standard User · Lungsod ng Quezon</p>
+</div>
+</section>
+<!-- Hitsura Group -->
+<div class="space-y-3">
+<span class="font-label-caps text-label-caps text-on-surface-variant px-1 uppercase tracking-wider">Hitsura</span>
+<div class="bg-surface-card border border-border-subtle rounded-xl shadow-soft overflow-hidden">
+<div class="flex items-center justify-between p-card-padding border-b border-border-subtle">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">dark_mode</span>
+<span class="font-card-title text-card-title">Dark Mode</span>
+</div>
+<!-- Toggle Switch (OFF State) -->
+<button class="w-12 h-6 bg-surface-container-highest rounded-full relative transition-colors duration-200">
+<div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></div>
+</button>
+</div>
+<div class="flex items-center justify-between p-card-padding">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">format_size</span>
+<span class="font-card-title text-card-title">Laki ng Font</span>
+</div>
+<span class="text-on-surface-variant font-metadata text-metadata">Katamtaman</span>
+</div>
+</div>
+</div>
+<!-- Wika Group -->
+<div class="space-y-3">
+<span class="font-label-caps text-label-caps text-on-surface-variant px-1 uppercase tracking-wider">Wika</span>
+<div class="bg-surface-card border border-border-subtle rounded-xl shadow-soft p-card-padding">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">language</span>
+<span class="font-card-title text-card-title">Pangunahing Wika</span>
+</div>
+<div class="flex bg-surface-container-low p-1 rounded-lg">
+<button class="px-4 py-1.5 rounded-md bg-primary text-white font-card-title text-[13px] active-scale">Filipino</button>
+<button class="px-4 py-1.5 rounded-md text-on-surface-variant font-card-title text-[13px] hover:bg-surface-container-high active-scale">English</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Lokasyon Group -->
+<div class="space-y-3">
+<span class="font-label-caps text-label-caps text-on-surface-variant px-1 uppercase tracking-wider">Lokasyon</span>
+<div class="bg-surface-card border border-border-subtle rounded-xl shadow-soft p-card-padding">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">location_on</span>
+<div class="flex flex-col">
+<span class="font-card-title text-card-title">GPS Access</span>
+<span class="font-metadata text-metadata text-on-surface-variant">Para sa malapit na sangay</span>
+</div>
+</div>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-label-caps px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Pinahintulutan
+                    </span>
+</div>
+</div>
+</div>
+<!-- Data Group -->
+<div class="space-y-3">
+<span class="font-label-caps text-label-caps text-on-surface-variant px-1 uppercase tracking-wider">Data at Seguridad</span>
+<div class="bg-surface-card border border-border-subtle rounded-xl shadow-soft overflow-hidden">
+<button class="w-full flex items-center justify-between p-card-padding border-b border-border-subtle hover:bg-surface-container-low transition-colors active-scale text-left">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#DC2626]">delete_sweep</span>
+<span class="font-card-title text-card-title text-[#DC2626]">I-reset ang Cache</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">chevron_right</span>
+</button>
+<div class="flex items-center justify-between p-card-padding">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">cloud_sync</span>
+<span class="font-card-title text-card-title">Auto-sync ng Roadmap</span>
+</div>
+<button class="w-12 h-6 bg-primary rounded-full relative transition-colors duration-200">
+<div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></div>
+</button>
+</div>
+</div>
+</div>
+<!-- App Metadata / Footer -->
+<footer class="pt-8 pb-12 text-center space-y-4">
+<div class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-low rounded-full border border-border-subtle">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">database</span>
+<span class="font-metadata text-metadata text-on-surface-variant">Database v1.0 · 114 branches · 17 documents</span>
+</div>
+<p class="font-metadata text-metadata text-on-surface-variant/60">
+                Gawa ng komunidad para sa mamamayang Pilipino.<br/>© 2024 Gabay Sibil
+            </p>
+</footer>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center bg-surface border-t border-border-subtle px-2 pb-safe h-16 z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 active-scale" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-caps text-label-caps">Docs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 active-scale" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-label-caps text-label-caps">Find ID</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 active-scale" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-caps text-label-caps">Roadmap</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 active-scale" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-caps text-label-caps">Explorer</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary border-t-2 border-primary pt-2 pb-1 active-scale" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">more_horiz</span>
+<span class="font-label-caps text-label-caps">Higit Pa</span>
+</a>
+</nav>
+<script>
+        // Simple Micro-interactions
+        document.querySelectorAll('button, a').forEach(elem => {
+            elem.addEventListener('click', function(e) {
+                if (this.tagName === 'BUTTON' && this.querySelector('.bg-white')) {
+                    // Logic for toggle switches
+                    const dot = this.querySelector('div');
+                    const isOff = dot.classList.contains('left-1');
+                    if (isOff) {
+                        dot.classList.remove('left-1');
+                        dot.classList.add('right-1');
+                        this.classList.remove('bg-surface-container-highest');
+                        this.classList.add('bg-primary');
+                    } else {
+                        dot.classList.remove('right-1');
+                        dot.classList.add('left-1');
+                        this.classList.remove('bg-primary');
+                        this.classList.add('bg-surface-container-highest');
+                    }
+                }
+            });
+        });
+    </script>
+</body></html>

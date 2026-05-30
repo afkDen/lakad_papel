@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gabay Sibil - Roadmap</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F7F4EF;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-line::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            bottom: -24px;
+            width: 2px;
+            background-color: #E8E0D5;
+        }
+        .step-line-last::before {
+            display: none;
+        }
+        .active-ring {
+            box-shadow: 0 0 0 4px #ffdcc3;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed": "#ffdcc3",
+                      "primary-container": "#b15f00",
+                      "tertiary-fixed": "#7ffc97",
+                      "on-tertiary-fixed": "#002109",
+                      "inverse-primary": "#ffb77d",
+                      "background-paper": "#F7F4EF",
+                      "on-secondary-fixed": "#001f28",
+                      "surface-tint": "#904d00",
+                      "tertiary-fixed-dim": "#62df7d",
+                      "outline-variant": "#dbc2b0",
+                      "on-surface": "#1f1b17",
+                      "surface-container-high": "#f0e6e0",
+                      "surface-dim": "#e2d8d2",
+                      "surface-container-lowest": "#ffffff",
+                      "on-background": "#1f1b17",
+                      "on-secondary-container": "#006077",
+                      "surface-container-low": "#fcf2eb",
+                      "border-subtle": "#E8E0D5",
+                      "on-secondary": "#ffffff",
+                      "background": "#fff8f5",
+                      "on-tertiary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#554336",
+                      "surface-container": "#f6ece6",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed": "#2f1500",
+                      "on-tertiary-container": "#f7fff2",
+                      "primary": "#8d4b00",
+                      "state-locked": "#CBD5E1",
+                      "warning-bg": "#FEF3C7",
+                      "secondary": "#006780",
+                      "on-primary-container": "#fffbff",
+                      "surface-container-highest": "#eae1da",
+                      "primary-fixed-dim": "#ffb77d",
+                      "tertiary": "#006b2c",
+                      "on-tertiary-fixed-variant": "#005320",
+                      "on-error-container": "#93000a",
+                      "outline": "#887364",
+                      "secondary-fixed-dim": "#6cd3f7",
+                      "surface-variant": "#eae1da",
+                      "surface-card": "#FFFFFF",
+                      "secondary-container": "#76dcff",
+                      "on-error": "#ffffff",
+                      "tertiary-container": "#00873a",
+                      "on-secondary-fixed-variant": "#004e61",
+                      "inverse-on-surface": "#f9efe8",
+                      "secondary-fixed": "#b7eaff",
+                      "surface": "#fff8f5",
+                      "on-primary-fixed-variant": "#6e3900",
+                      "inverse-surface": "#342f2b",
+                      "error-container": "#ffdad6",
+                      "surface-bright": "#fff8f5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base-unit": "8px",
+                      "margin-horizontal": "20px",
+                      "section-gap": "24px",
+                      "card-padding": "16px",
+                      "stack-gap": "12px"
+              },
+              "fontFamily": {
+                      "page-title": ["Inter"],
+                      "metadata": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "card-title": ["Inter"],
+                      "body-main": ["Inter"]
+              },
+              "fontSize": {
+                      "page-title": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                      "metadata": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "label-caps": ["11px", {"lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "card-title": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                      "body-main": ["13px", {"lineHeight": "18px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-paper min-h-screen pb-24">
+<!-- TopAppBar Component -->
+<nav class="bg-surface dark:bg-surface-dim flex justify-between items-center w-full px-margin-horizontal h-16 sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">account_circle</span>
+<h1 class="font-page-title text-page-title font-bold text-primary dark:text-primary-fixed-dim">Gabay Sibil</h1>
+</div>
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed hover:bg-surface-container-low transition-colors p-2 rounded-full">
+            translate
+        </button>
+</nav>
+<main class="px-margin-horizontal mt-6 max-w-2xl mx-auto">
+<!-- Stats Bar -->
+<header class="mb-section-gap">
+<h2 class="font-page-title text-page-title text-on-surface mb-4">Iyong Proseso</h2>
+<div class="flex flex-wrap gap-2">
+<div class="bg-primary-fixed px-3 py-1.5 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">account_tree</span>
+<span class="font-label-caps text-label-caps text-on-primary-fixed">3 Hakbang</span>
+</div>
+<div class="bg-primary-fixed px-3 py-1.5 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">payments</span>
+<span class="font-label-caps text-label-caps text-on-primary-fixed">PHP 1,415</span>
+</div>
+<div class="bg-primary-fixed px-3 py-1.5 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">schedule</span>
+<span class="font-label-caps text-label-caps text-on-primary-fixed">~12 Araw</span>
+</div>
+</div>
+</header>
+<!-- Vertical Timeline Content -->
+<div class="space-y-section-gap relative">
+<!-- Step 1: Done -->
+<section class="relative step-line flex gap-4">
+<div class="relative z-10">
+<div class="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+</div>
+<div class="flex-1 pt-2">
+<div class="bg-surface-card border border-border-subtle rounded-xl p-card-padding shadow-sm opacity-60">
+<h3 class="font-card-title text-card-title text-on-surface">Kumuha ng PSA Birth Certificate</h3>
+<p class="font-metadata text-metadata text-on-surface-variant mt-1">Nakumpleto noong Oktubre 12</p>
+</div>
+</div>
+</section>
+<!-- Step 2: Active -->
+<section class="relative step-line flex gap-4">
+<div class="relative z-10">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold active-ring">
+                        2
+                    </div>
+</div>
+<div class="flex-1 pt-2">
+<div class="bg-surface-card border border-primary rounded-xl p-card-padding shadow-md">
+<div class="flex justify-between items-start mb-3">
+<h3 class="font-card-title text-card-title text-on-surface flex-1">Mag-schedule ng DFA appointment</h3>
+<span class="bg-warning-bg text-primary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Kasalukuyan</span>
+</div>
+<!-- Nested BranchCard -->
+<div class="bg-background-paper border border-border-subtle rounded-lg p-3 mt-3">
+<div class="flex gap-3">
+<div class="bg-surface-container-highest p-2 rounded-lg h-fit">
+<span class="material-symbols-outlined text-secondary">location_on</span>
+</div>
+<div class="flex-1">
+<h4 class="font-card-title text-[14px] text-on-surface">DFA Aseana</h4>
+<p class="font-body-main text-metadata text-on-surface-variant leading-tight">Bradco Ave, Parañaque, 1714 Metro Manila</p>
+<div class="flex gap-2 mt-4">
+<button class="flex-1 flex items-center justify-center gap-1 border border-secondary text-secondary font-bold text-[12px] py-2 rounded-lg hover:bg-secondary/5 transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[16px]">directions</span>
+                                            Get Directions
+                                        </button>
+<button class="flex-1 bg-primary text-white font-bold text-[12px] py-2 rounded-lg shadow-sm hover:bg-primary-container transition-colors active:scale-95 duration-150">
+                                            Mark as Done
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Map Preview -->
+<div class="mt-4 rounded-lg overflow-hidden border border-border-subtle h-32 relative">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist vector-style map interface showing a pinpoint location in a city grid. The map uses a soft cream and light grey color palette to match the UI theme, with subtle teal highlights for roads. The overall mood is functional and navigational, maintaining a modern civic-tech aesthetic with clear information hierarchy." data-location="Parañaque" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoIIPnneoZJx2ygj_aXM7xFHAghi0Oy6prII6uAqxuDMeroq4wIcl2oCMeKHN6iBDgRJOCiD-zt4CMqPXF18tX6XBtGXNLTTBfH1Nmb1zTS4S2J1PftA8QlM5JT2FSMSRTbfm5jJuJ_LcrdERjbULxKL-XcZD4C1O3P_BJgCWRNIHi207BeaOAwJGCf6_lTAdqbkYQlujtevrKlPWdNDbGyHj9iwEtyILg5xmkn9beV90A-rdOXYSi1Yabf74xMl3rkQllfAQAC1qx"/>
+<div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Step 3: Upcoming -->
+<section class="relative step-line-last flex gap-4">
+<div class="relative z-10">
+<div class="w-10 h-10 rounded-full bg-slate-200 text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+</div>
+<div class="flex-1 pt-2">
+<div class="bg-surface-card border border-border-subtle rounded-xl p-card-padding shadow-sm opacity-50 grayscale-[0.5]">
+<h3 class="font-card-title text-card-title text-on-surface">Pumunta sa NBI para sa biometric capture</h3>
+<p class="font-metadata text-metadata text-on-surface-variant mt-1">Naka-lock hanggang matapos ang DFA Appointment</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Help Callout -->
+<div class="mt-section-gap bg-warning-bg border-l-4 border-primary p-card-padding rounded-r-xl">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary">warning</span>
+<div>
+<h4 class="font-card-title text-on-surface text-[14px]">Agency Warning</h4>
+<p class="font-body-main text-on-surface-variant text-[12px] mt-1">Ang ilang sangay ay maaaring may limitadong oras ng operasyon dahil sa holiday. Pinapayuhan na mag-check muna bago bumisita.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Component -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center bg-surface px-2 pb-safe h-16 border-t border-border-subtle z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 hover:bg-surface-container-high transition-all flex-1" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-caps text-label-caps">Docs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 hover:bg-surface-container-high transition-all flex-1" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-label-caps text-label-caps">Find ID</span>
+</a>
+<!-- ACTIVE TAB: Roadmap -->
+<a class="flex flex-col items-center justify-center text-primary border-t-2 border-primary pt-2 pb-1 hover:bg-surface-container-high transition-all flex-1" href="#">
+<span class="material-symbols-outlined" data-icon="map" style="font-variation-settings: 'FILL' 1;">map</span>
+<span class="font-label-caps text-label-caps font-bold">Roadmap</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 hover:bg-surface-container-high transition-all flex-1" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="font-label-caps text-label-caps">Explorer</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-1 hover:bg-surface-container-high transition-all flex-1" href="#">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-caps text-label-caps">Higit Pa</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', () => {
+                btn.style.transform = 'scale(0.96)';
+            });
+            btn.addEventListener('touchend', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simple scroll reveal for timeline items
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('translate-y-0', 'opacity-100');
+                    entry.target.classList.remove('translate-y-4', 'opacity-0');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('transition-all', 'duration-500', 'translate-y-4', 'opacity-0');
+            observer.observe(section);
+        });
+    </script>
+</body></html>
