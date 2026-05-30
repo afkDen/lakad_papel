@@ -34,7 +34,7 @@ export default function HeaderBar() {
 
       {/* Brand Logo Image — Centered */}
       <Image
-        source={require('../../assets/logo-header.png')}
+        source={require('../../assets/Untitled design (8).png')}
         style={styles.logoImage}
         resizeMode="contain"
       />

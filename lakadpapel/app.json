@@ -5,10 +5,10 @@
     "scheme": "lakadpapel",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo-splash.png",
+    "icon": "./assets/Untitled design (7).png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo-splash.png",
+      "image": "./assets/Untitled design (7).png",
       "resizeMode": "contain",
       "backgroundColor": "#FFF8F5"
     },
@@ -20,7 +20,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.group4.lakadpapel",
       "splash": {
-        "image": "./assets/logo-splash.png",
+        "image": "./assets/Untitled design (7).png",
         "resizeMode": "contain",
         "backgroundColor": "#FFF8F5"
       }
@@ -29,16 +29,16 @@
       "package": "com.group4.lakadpapel",
       "adaptiveIcon": {
         "backgroundColor": "#FFF8F5",
-        "foregroundImage": "./assets/logo-splash.png"
+        "foregroundImage": "./assets/Untitled design (7).png"
       },
       "splash": {
-        "image": "./assets/logo-splash.png",
+        "image": "./assets/Untitled design (7).png",
         "resizeMode": "contain",
         "backgroundColor": "#FFF8F5"
       }
     },
     "web": {
-      "favicon": "./assets/logo-header.png"
+      "favicon": "./assets/Untitled design (8).png"
     },
     "experiments": {
       "typedRoutes": true

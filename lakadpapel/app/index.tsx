@@ -115,7 +115,7 @@ export default function SplashIndex() {
         ]}
       >
         <Image
-          source={require('../assets/logo-splash.png')}
+          source={require('../assets/Untitled design (7).png')}
           style={styles.logoImage}
           resizeMode="contain"
         />
