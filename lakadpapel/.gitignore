@@ -39,3 +39,8 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# local technical documentation md files
+ALGORITHM_DOCUMENTATION.md
+CODEBASE_OVERVIEW.md
+PSEUDOCODE.md
