@@ -91,7 +91,11 @@ export default function AlgorithmTrace({ trace, subgraphEmpty }: AlgorithmTraceP
     );
   }
 
-  const currentStep = trace[currentIndex];
+  const currentStep = trace[currentIndex] || trace[0] || null;
+
+  if (!currentStep) {
+    return null;
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>

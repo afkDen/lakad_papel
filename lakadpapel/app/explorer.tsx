@@ -182,7 +182,7 @@ export default function ExplorerScreen() {
                   // Agency icon maps
                   const getAgencyIcon = (agency: string) => {
                     switch (agency) {
-                      case 'PSA': return 'child-sharp';
+                      case 'PSA': return 'person-sharp';
                       case 'DFA': return 'airplane-sharp';
                       case 'NBI': return 'finger-print-sharp';
                       case 'LTO': return 'car-sharp';
