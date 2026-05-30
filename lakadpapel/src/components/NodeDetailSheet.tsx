@@ -123,17 +123,17 @@ export default function NodeDetailSheet({
             )}
           </View>
 
-          {/* Detail Grid */}
-          <View style={[styles.detailGrid, { backgroundColor: isDarkMode ? '#18181B' : colors.backgroundPaperLight, borderColor: themeColors.border }]}>
-            <View style={[styles.detailItem, { borderRightColor: themeColors.border }]}>
+          {/* Detail List */}
+          <View style={[styles.detailGrid, { flexDirection: 'column', backgroundColor: isDarkMode ? '#18181B' : colors.backgroundPaperLight, borderColor: themeColors.border }]}>
+            <View style={[styles.detailItem, { borderRightWidth: 0, borderBottomWidth: 1, borderBottomColor: themeColors.border, width: '100%' }]}>
               <Text style={[styles.detailLabel, { color: themeColors.subText }]}>{t.estFees}</Text>
               <Text style={[styles.detailValue, { color: themeColors.text }]}>{node.fees}</Text>
             </View>
-            <View style={[styles.detailItem, { borderRightColor: themeColors.border }]}>
+            <View style={[styles.detailItem, { borderRightWidth: 0, borderBottomWidth: 1, borderBottomColor: themeColors.border, width: '100%' }]}>
               <Text style={[styles.detailLabel, { color: themeColors.subText }]}>{t.processTime}</Text>
               <Text style={[styles.detailValue, { color: themeColors.text }]}>{node.typicalDays}</Text>
             </View>
-            <View style={[styles.detailItem, { borderRightWidth: 0 }]}>
+            <View style={[styles.detailItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '100%' }]}>
               <Text style={[styles.detailLabel, { color: themeColors.subText }]}>{t.issuingOffice}</Text>
               <Text style={[styles.detailValue, { color: themeColors.text }]}>{node.officeType}</Text>
             </View>

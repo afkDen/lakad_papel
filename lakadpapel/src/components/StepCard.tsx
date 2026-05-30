@@ -66,25 +66,25 @@ const StepCard = React.memo(function StepCard({ step, stepNumber, onMarkDone }: 
 
       {/* Fees & Typical Days Info */}
       <View style={styles.infoSection}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
           <Ionicons
             name="cash-outline"
             size={14}
             color={themeColors.subText}
-            style={{ marginRight: 6 }}
+            style={{ marginRight: 6, marginTop: 2 }}
           />
-          <Text style={[styles.infoText, { color: themeColors.subText }]}>
+          <Text style={[styles.infoText, { color: themeColors.subText, flex: 1, paddingRight: 8 }]}>
             {t.fee}: {step.document.fees}
           </Text>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 6 }}>
           <Ionicons
             name="time-outline"
             size={14}
             color={themeColors.subText}
-            style={{ marginRight: 6 }}
+            style={{ marginRight: 6, marginTop: 2 }}
           />
-          <Text style={[styles.infoText, { color: themeColors.subText }]}>
+          <Text style={[styles.infoText, { color: themeColors.subText, flex: 1, paddingRight: 8 }]}>
             {t.processTime}: {step.document.typicalDays}
           </Text>
         </View>
