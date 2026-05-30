@@ -71,9 +71,9 @@ const StepCard = React.memo(function StepCard({ step, stepNumber, onMarkDone }: 
             name="cash-outline"
             size={14}
             color={themeColors.subText}
-            style={{ marginRight: 6, marginTop: 2 }}
+            style={{ marginRight: 6, marginTop: 1 }}
           />
-          <Text style={[styles.infoText, { color: themeColors.subText, flex: 1, paddingRight: 8 }]}>
+          <Text style={[styles.infoText, { color: themeColors.subText, flex: 1 }]}>
             {t.fee}: {step.document.fees}
           </Text>
         </View>
@@ -82,9 +82,9 @@ const StepCard = React.memo(function StepCard({ step, stepNumber, onMarkDone }: 
             name="time-outline"
             size={14}
             color={themeColors.subText}
-            style={{ marginRight: 6, marginTop: 2 }}
+            style={{ marginRight: 6, marginTop: 1 }}
           />
-          <Text style={[styles.infoText, { color: themeColors.subText, flex: 1, paddingRight: 8 }]}>
+          <Text style={[styles.infoText, { color: themeColors.subText, flex: 1 }]}>
             {t.processTime}: {step.document.typicalDays}
           </Text>
         </View>
@@ -243,7 +243,6 @@ const styles = StyleSheet.create({
   infoSection: {
     marginTop: 6,
     marginLeft: 44,
-    marginRight: 12,
   },
   infoText: {
     fontFamily: 'Inter_400Regular',
