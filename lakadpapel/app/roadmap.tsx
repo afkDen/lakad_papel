@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { useDocumentContext } from '../src/hooks/useDocumentContext';
@@ -29,6 +30,64 @@ export default function RoadmapScreen() {
   const [viewMode, setViewMode] = useState<'remaining' | 'full'>('remaining');
   const { colors: themeColors, isDarkMode } = useTheme();
   const { t, language } = useLanguage();
+
+  const [expandedStepId, setExpandedStepId] = useState<string | null>(null);
+  const [userInputs, setUserInputs] = useState<Record<string, Record<string, string>>>({});
+  const [checklistStates, setChecklistStates] = useState<Record<string, Record<string, boolean>>>({});
+
+  // Load user details inputs and checklists from AsyncStorage on mount
+  useEffect(() => {
+    async function loadPersistedState() {
+      try {
+        const inputsJson = await AsyncStorage.getItem('@lakadpapel/user_inputs');
+        if (inputsJson) {
+          setUserInputs(JSON.parse(inputsJson));
+        }
+        const checklistsJson = await AsyncStorage.getItem('@lakadpapel/checklist_states');
+        if (checklistsJson) {
+          setChecklistStates(JSON.parse(checklistsJson));
+        }
+      } catch (err) {
+        console.error('Failed to load user inputs / checklists:', err);
+      }
+    }
+    loadPersistedState();
+  }, []);
+
+  // Save inputs to AsyncStorage when updated
+  const updateUserInput = async (docId: string, key: string, value: string) => {
+    const newInputs = {
+      ...userInputs,
+      [docId]: {
+        ...(userInputs[docId] || {}),
+        [key]: value
+      }
+    };
+    setUserInputs(newInputs);
+    try {
+      await AsyncStorage.setItem('@lakadpapel/user_inputs', JSON.stringify(newInputs));
+    } catch (err) {
+      console.error('Failed to save user inputs:', err);
+    }
+  };
+
+  // Save checklist state to AsyncStorage when toggled
+  const toggleChecklistItem = async (docId: string, item: string) => {
+    const currentDocChecks = checklistStates[docId] || {};
+    const newChecks = {
+      ...checklistStates,
+      [docId]: {
+        ...currentDocChecks,
+        [item]: !currentDocChecks[item]
+      }
+    };
+    setChecklistStates(newChecks);
+    try {
+      await AsyncStorage.setItem('@lakadpapel/checklist_states', JSON.stringify(newChecks));
+    } catch (err) {
+      console.error('Failed to save checklist state:', err);
+    }
+  };
 
   const isSimple = state.userMode === 'simple';
 
@@ -104,6 +163,21 @@ export default function RoadmapScreen() {
   };
 
   const stepsToRender = getRoadmapSteps();
+
+  // Auto-focus the first uncompleted (active) step on load or roadmap update
+  useEffect(() => {
+    if (stepsToRender.length > 0) {
+      const activeStep = stepsToRender.find(step => !step.isDone);
+      if (activeStep) {
+        setExpandedStepId(activeStep.document.id);
+      } else {
+        setExpandedStepId(stepsToRender[0].document.id);
+      }
+    } else {
+      setExpandedStepId(null);
+    }
+  }, [state.targetDocument, state.roadmap, viewMode]);
+
   const remainingCount = state.roadmap.filter((step) => !step.isDone).length;
 
   // Stats derivation
@@ -269,15 +343,43 @@ export default function RoadmapScreen() {
       <FlatList
         data={stepsToRender}
         keyExtractor={(item) => item.document.id}
-        renderItem={({ item, index }) => (
-          <StepCard
-            step={item}
-            stepNumber={index + 1}
-            onMarkDone={() =>
-              dispatch({ type: 'MARK_DONE', payload: item.document.id })
-            }
-          />
-        )}
+        renderItem={({ item, index }) => {
+          const isFirst = index === 0;
+          const isLast = index === stepsToRender.length - 1;
+          const activeIndex = stepsToRender.findIndex(s => !s.isDone);
+          const isActive = index === activeIndex;
+          
+          // A step is locked if any of its prerequisites are not completed yet
+          const isLocked = item.document.prerequisites.some(prereqId => {
+            return !state.possessedDocuments.has(prereqId);
+          });
+
+          return (
+            <StepCard
+              step={item}
+              stepNumber={index + 1}
+              onMarkDone={() =>
+                dispatch({ type: 'MARK_DONE', payload: item.document.id })
+              }
+              isFirst={isFirst}
+              isLast={isLast}
+              isActive={isActive}
+              isLocked={isLocked}
+              focused={expandedStepId === item.document.id}
+              onFocus={() => {
+                if (expandedStepId === item.document.id) {
+                  setExpandedStepId(null);
+                } else {
+                  setExpandedStepId(item.document.id);
+                }
+              }}
+              userInputs={userInputs[item.document.id] || {}}
+              onUpdateInput={(key, val) => updateUserInput(item.document.id, key, val)}
+              checklistState={checklistStates[item.document.id] || {}}
+              onToggleChecklistItem={(req) => toggleChecklistItem(item.document.id, req)}
+            />
+          );
+        }}
         ListHeaderComponent={
           <>
             {renderHeader()}
